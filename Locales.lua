@@ -1,0 +1,124 @@
+--[[
+    ========================================================================
+    WoW Perú - Pase de Batalla (Locales.lua)
+    Reino: Reino Andino | Servidor: https://wow-peru.lat/
+    Cliente Compatible: World of Warcraft 3.3.5a (Build 12340)
+    ========================================================================
+    Localización en Español (esES/esMX) con fallback automático a Inglés.
+]]
+
+WoWPeru_BattlePass = WoWPeru_BattlePass or {}
+local BP = WoWPeru_BattlePass
+
+local L = {}
+
+-- ========================================================================
+-- IDIOMA POR DEFECTO: ESPAÑOL (Reino Andino)
+-- ========================================================================
+L["TITLE"] = "Pase de Batalla"
+L["SUBTITLE"] = "Reino Andino - Temporada 1"
+L["HEADER_SEASON"] = "Temporada 1: El Despertar Andino"
+L["DAYS_REMAINING"] = "%d días restantes"
+L["LEVEL_FORMAT"] = "Nivel %d"
+L["MAX_LEVEL_REACHED"] = "¡Nivel Máximo!"
+L["XP_FORMAT"] = "%d / %d XP (%d%%)"
+L["XP_TOTAL_FORMAT"] = "%d XP Total"
+
+-- Pestañas
+L["TAB_REWARDS"] = "Recompensas"
+L["TAB_QUESTS"] = "Misiones"
+L["TAB_VIP"] = "Pase VIP"
+
+-- Pistas de Recompensas
+L["TRACK_FREE"] = "Vía Gratuita"
+L["TRACK_PREMIUM"] = "Vía Premium (VIP)"
+L["CLAIM"] = "Reclamar"
+L["CLAIMED"] = "Reclamado"
+L["LOCKED"] = "Bloqueado"
+L["REQUIRES_VIP"] = "Requiere VIP"
+L["PAGE_FORMAT"] = "Página %d de %d (Niveles %d - %d)"
+L["PREV_PAGE"] = "Anterior"
+L["NEXT_PAGE"] = "Siguiente"
+
+-- Misiones
+L["QUESTS_DAILY_TITLE"] = "Misiones Diarias (Reseteo 04:00 AM)"
+L["QUESTS_WEEKLY_TITLE"] = "Misiones Semanales (Reseteo Miércoles)"
+L["QUEST_REWARD_XP"] = "+%d XP"
+L["QUEST_STATUS_COMPLETE"] = "|cFF00FF00¡Completada!|r"
+L["QUEST_STATUS_PROGRESS"] = "%d / %d"
+L["NO_QUESTS_AVAILABLE"] = "No hay misiones disponibles en este momento."
+
+-- Pase VIP
+L["VIP_TITLE"] = "Beneficios del Pase Premium VIP"
+L["VIP_STATUS_ACTIVE"] = "|cFF00FF00ACTIVO|r - Tienes acceso a todas las recompensas Premium."
+L["VIP_STATUS_INACTIVE"] = "|cFFFF4444INACTIVO|r - Desbloquea el Pase VIP en la tienda web."
+L["VIP_DESCRIPTION"] = "El Pase VIP te otorga acceso inmediato al carril inferior de recompensas en todos los 50 niveles:\n\n• Monturas exclusivas de temporada no obtenibles por otros medios.\n• Auras visuales y efectos épicos para tu personaje.\n• Ilusiones de armas y transformaciones únicas.\n• 100% de recompensas acumuladas: si compras el VIP en nivel 30, ¡desbloquearás al instante las recompensas VIP de los niveles 1 al 30!\n\nVisita nuestra página web oficial para adquirirlo y apoyar el crecimiento de WoW Perú."
+L["VIP_STORE_LINK"] = "Visita: |cFFD4AF37https://wow-peru.lat/|r"
+
+-- Tooltip de Minimapa
+L["MINIMAP_TOOLTIP_TITLE"] = "|cFFD4AF37WoW Perú|r - Pase de Batalla"
+L["MINIMAP_TOOLTIP_DESC"] = "Haz clic izquierdo para abrir/cerrar la ventana.\nHaz clic derecho y arrastra para mover el botón."
+L["MINIMAP_TOOLTIP_LEVEL"] = "Nivel del Pase: |cFFFFD100%d|r"
+L["MINIMAP_TOOLTIP_XP"] = "Progreso XP: |cFFFFFFFF%d / %d (%d%%)|r"
+L["MINIMAP_TOOLTIP_VIP"] = "Estado VIP: %s"
+L["MINIMAP_TOOLTIP_DAILY"] = "Misiones de Hoy: |cFFFFD100%d / %d|r"
+
+-- Notificaciones del Sistema en Chat
+L["MSG_LEVEL_UP"] = "|cFFD4AF37[Pase de Batalla]|r ¡Felicidades! Has alcanzado el |cFF00FF00Nivel %d|r. ¡Revisa tus recompensas!"
+L["MSG_CLAIM_SUCCESS"] = "|cFFD4AF37[Pase de Batalla]|r Has reclamado la recompensa del Nivel %d (%s)."
+L["MSG_CLAIM_MAIL"] = "|cFFD4AF37[Pase de Batalla]|r Tus bolsas estaban llenas. La recompensa fue enviada a tu buzón de correo."
+L["MSG_VIP_UNLOCKED"] = "|cFFD4AF37[Pase de Batalla]|r ¡Pase VIP activado! Todas las recompensas exclusivas están desbloqueadas."
+L["MSG_QUEST_PROGRESS"] = "|cFFD4AF37[Pase de Batalla]|r Misión: %s (%d/%d) (+%d XP)"
+L["MSG_QUEST_COMPLETE"] = "|cFFD4AF37[Pase de Batalla]|r ¡Misión completada: %s! Ganaste %d XP."
+L["MSG_COMMAND_HELP"] = "|cFFD4AF37Comandos del Pase de Batalla:|r\n  /bp o /pase - Abre o cierra la ventana principal.\n  /bp minimap - Muestra u oculta el botón del minimapa.\n  /bp reset - Restaura la posición de la ventana."
+
+-- Idioma Inglés (Fallback)
+local locale = GetLocale()
+if locale ~= "esES" and locale ~= "esMX" then
+    L["TITLE"] = "Battle Pass"
+    L["SUBTITLE"] = "Reino Andino - Season 1"
+    L["HEADER_SEASON"] = "Season 1: Andean Awakening"
+    L["DAYS_REMAINING"] = "%d days remaining"
+    L["LEVEL_FORMAT"] = "Level %d"
+    L["MAX_LEVEL_REACHED"] = "Max Level Reached!"
+    L["XP_FORMAT"] = "%d / %d XP (%d%%)"
+    L["XP_TOTAL_FORMAT"] = "%d Total XP"
+    L["TAB_REWARDS"] = "Rewards"
+    L["TAB_QUESTS"] = "Quests"
+    L["TAB_VIP"] = "VIP Pass"
+    L["TRACK_FREE"] = "Free Track"
+    L["TRACK_PREMIUM"] = "Premium Track (VIP)"
+    L["CLAIM"] = "Claim"
+    L["CLAIMED"] = "Claimed"
+    L["LOCKED"] = "Locked"
+    L["REQUIRES_VIP"] = "Requires VIP"
+    L["PAGE_FORMAT"] = "Page %d of %d (Levels %d - %d)"
+    L["PREV_PAGE"] = "Previous"
+    L["NEXT_PAGE"] = "Next"
+    L["QUESTS_DAILY_TITLE"] = "Daily Quests (Reset 04:00 AM)"
+    L["QUESTS_WEEKLY_TITLE"] = "Weekly Quests (Reset Wednesday)"
+    L["QUEST_REWARD_XP"] = "+%d XP"
+    L["QUEST_STATUS_COMPLETE"] = "|cFF00FF00Completed!|r"
+    L["QUEST_STATUS_PROGRESS"] = "%d / %d"
+    L["NO_QUESTS_AVAILABLE"] = "No quests available at this moment."
+    L["VIP_TITLE"] = "Premium VIP Pass Benefits"
+    L["VIP_STATUS_ACTIVE"] = "|cFF00FF00ACTIVE|r - You have full access to all Premium rewards."
+    L["VIP_STATUS_INACTIVE"] = "|cFFFF4444INACTIVE|r - Unlock your VIP Pass on our web store."
+    L["VIP_DESCRIPTION"] = "The VIP Pass unlocks instant access to the lower reward track across all 50 levels:\n\n• Exclusive seasonal mounts not obtainable through other means.\n• Visual auras and epic character effects.\n• Unique weapon illusions and transformations.\n• 100% retroactive rewards: buy at level 30 and instantly unlock VIP rewards for levels 1 to 30!\n\nVisit our official website to acquire it and support WoW Perú."
+    L["VIP_STORE_LINK"] = "Visit: |cFFD4AF37https://wow-peru.lat/|r"
+    L["MINIMAP_TOOLTIP_TITLE"] = "|cFFD4AF37WoW Perú|r - Battle Pass"
+    L["MINIMAP_TOOLTIP_DESC"] = "Left click to toggle window.\nRight click and drag to move icon."
+    L["MINIMAP_TOOLTIP_LEVEL"] = "Battle Pass Level: |cFFFFD100%d|r"
+    L["MINIMAP_TOOLTIP_XP"] = "XP Progress: |cFFFFFFFF%d / %d (%d%%)|r"
+    L["MINIMAP_TOOLTIP_VIP"] = "VIP Status: %s"
+    L["MINIMAP_TOOLTIP_DAILY"] = "Today's Quests: |cFFFFD100%d / %d|r"
+    L["MSG_LEVEL_UP"] = "|cFFD4AF37[Battle Pass]|r Congratulations! You reached |cFF00FF00Level %d|r. Check your rewards!"
+    L["MSG_CLAIM_SUCCESS"] = "|cFFD4AF37[Battle Pass]|r You claimed Level %d reward (%s)."
+    L["MSG_CLAIM_MAIL"] = "|cFFD4AF37[Battle Pass]|r Bags full. Reward sent to your in-game mailbox."
+    L["MSG_VIP_UNLOCKED"] = "|cFFD4AF37[Battle Pass]|r VIP Pass active! All exclusive rewards unlocked."
+    L["MSG_QUEST_PROGRESS"] = "|cFFD4AF37[Battle Pass]|r Quest: %s (%d/%d) (+%d XP)"
+    L["MSG_QUEST_COMPLETE"] = "|cFFD4AF37[Battle Pass]|r Quest complete: %s! Gained %d XP."
+    L["MSG_COMMAND_HELP"] = "|cFFD4AF37Battle Pass Commands:|r\n  /bp or /pase - Open or close the main window.\n  /bp minimap - Show or hide minimap button.\n  /bp reset - Reset window position."
+end
+
+BP.L = L
