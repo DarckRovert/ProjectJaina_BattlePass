@@ -2,7 +2,7 @@
 
 **Versión:** 1.0.0  
 **Fecha de Vigencia:** 27 de Septiembre de 2026  
-**Responsable de Seguridad:** DarckRovert (Thesaviour)  
+**Responsable de Seguridad:** DarckRovert (Elnazzareno)  
 
 ---
 
@@ -48,7 +48,7 @@ Si descubres una vulnerabilidad de seguridad crítica o un fallo que permita la 
 
 1. **NO divulgarla públicamente:** No crear issues públicos en GitHub ni compartirla en canales de chat abiertos.
 2. **Canal de Contacto Directo:**
-   - Discord oficial de WoW Perú: Contactar directamente a `DarckRovert` (Thesaviour).
+   - Discord oficial de WoW Perú: Contactar directamente a `DarckRovert` (Elnazzareno).
    - Servidor: [https://wow-peru.lat/](https://wow-peru.lat/)
 3. **Información a Proporcionar:**
    - Pasos detallados para reproducir el comportamiento.

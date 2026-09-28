@@ -1,7 +1,7 @@
 # 🤖 Reglas de Contexto y Memoria para Agentes de IA - WoWPeru_BattlePass
 
 > **Repositorio Oficial:** [DarckRovert/WoWPeru_BattlePass](https://github.com/DarckRovert/WoWPeru_BattlePass)  
-> **Líder del Proyecto:** DarckRovert (Ingame: `Thesaviour`)  
+> **Líder del Proyecto:** DarckRovert (Ingame: `Elnazzareno`)  
 > **Servidor Destino:** [WoW Perú](https://wow-peru.lat/) - Reino Andino  
 > **Entorno:** WotLK 3.3.5a (Build 12340) | Motor Eluna Lua Engine  
 

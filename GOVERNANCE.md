@@ -2,7 +2,7 @@
 
 **Versión del Documento:** 1.0.0  
 **Fecha de Entrada en Vigor:** 27 de Septiembre de 2026  
-**Líder del Proyecto / Autor:** DarckRovert (Ingame: Thesaviour)  
+**Líder del Proyecto / Autor:** DarckRovert (Ingame: Elnazzareno)  
 **Servidor Destino:** [WoW Perú](https://wow-peru.lat/) - Reino Andino  
 **Entorno de Ejecución:** World of Warcraft 3.3.5a (Build 12340) | Eluna Lua Engine (TrinityCore / AzerothCore)  
 
@@ -27,7 +27,7 @@ El proyecto se rige bajo un modelo de **Liderazgo Técnico Centralizado**:
 ```
        ┌─────────────────────────────────────────┐
        │   Líder del Proyecto (Project Lead)     │
-       │     DarckRovert (Thesaviour)             │
+       │     DarckRovert (Elnazzareno)            │
        └────────────────────┬────────────────────┘
                             │
        ┌────────────────────▼────────────────────┐
@@ -42,7 +42,7 @@ El proyecto se rige bajo un modelo de **Liderazgo Técnico Centralizado**:
 ```
 
 ### 2.1. Project Lead (Líder del Proyecto)
-- **Titular:** DarckRovert (Thesaviour).
+- **Titular:** DarckRovert (Elnazzareno).
 - **Atribuciones:**
   - Control de la visión arquitectónica, balance de experiencia y recompensas estacionales.
   - Aprobación y fusión final de código en la rama `main` del repositorio oficial.

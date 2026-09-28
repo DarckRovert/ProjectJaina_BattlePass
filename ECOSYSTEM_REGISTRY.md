@@ -2,7 +2,7 @@
 
 **Versión del Registro:** 1.0.0  
 **Fecha de Actualización:** 27 de Septiembre de 2026  
-**Líder Técnico / Arquitecto:** DarckRovert (Ingame: `Thesaviour`)  
+**Líder Técnico / Arquitecto:** DarckRovert (Ingame: `Elnazzareno`)  
 **Servidor Destino:** [WoW Perú](https://wow-peru.lat/) - Reino Andino  
 **Entorno:** WotLK 3.3.5a (Build 12340) | TrinityCore / AzerothCore con Eluna Lua Engine  
 
