@@ -2,7 +2,7 @@
 ## Title: |cFFD4AF37WoW Perú|r - Pase de Batalla
 ## Notes: Sistema estacional de Pase de Batalla (Free y Premium VIP) con misiones diarias y recompensas exclusivas para el Reino Andino.
 ## Author: DarckRovert & WoW Perú Team
-## Version: 1.0.0
+## Version: 2.0.0
 ## SavedVariables: WoWPeru_BattlePass_GlobalDB
 ## SavedVariablesPerCharacter: WoWPeru_BattlePass_CharDB
 

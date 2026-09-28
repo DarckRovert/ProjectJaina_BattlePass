@@ -646,13 +646,17 @@ end
 function UI:RenderQuests()
     local dailyList = BP.Config.Quests and BP.Config.Quests.Daily or {}
     local weeklyList = BP.Config.Quests and BP.Config.Quests.Weekly or {}
+    local ecosystemList = BP.Config.Quests and BP.Config.Quests.Ecosystem or {}
     local allQuests = {}
 
     for _, q in ipairs(dailyList) do
-        table.insert(allQuests, { data = q, isWeekly = false })
+        table.insert(allQuests, { data = q, isWeekly = false, isEcosystem = false })
     end
     for _, q in ipairs(weeklyList) do
-        table.insert(allQuests, { data = q, isWeekly = true })
+        table.insert(allQuests, { data = q, isWeekly = true, isEcosystem = false })
+    end
+    for _, q in ipairs(ecosystemList) do
+        table.insert(allQuests, { data = q, isWeekly = false, isEcosystem = true })
     end
 
     -- Ajustar la altura del ScrollChild según la cantidad de misiones
@@ -679,7 +683,7 @@ function UI:RenderQuests()
         local qState = BP.Data.quests and BP.Data.quests[q.id] or { progress = 0, completed = false }
 
         card.icon:SetTexture(q.icon or "Interface\\Icons\\INV_Misc_QuestionMark")
-        local catTag = item.isWeekly and "|cFF00FFFF[SEMANAL]|r" or "|cFFFFD100[DIARIA]|r"
+        local catTag = item.isEcosystem and "|cFF00FF7F[ECOSISTEMA]|r" or (item.isWeekly and "|cFF00FFFF[SEMANAL]|r" or "|cFFFFD100[DIARIA]|r")
         card.title:SetText(catTag .. " " .. q.title)
         card.desc:SetText(q.desc)
         card.xp:SetText(string.format(L["QUEST_REWARD_XP"], q.xpReward or 0))

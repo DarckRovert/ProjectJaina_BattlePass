@@ -16,8 +16,8 @@ local L = {}
 -- IDIOMA POR DEFECTO: ESPAÑOL (Reino Andino)
 -- ========================================================================
 L["TITLE"] = "Pase de Batalla"
-L["SUBTITLE"] = "Reino Andino - Temporada 1"
-L["HEADER_SEASON"] = "Temporada 1: El Despertar Andino"
+L["SUBTITLE"] = "Reino Andino - Temporada 2"
+L["HEADER_SEASON"] = "Temporada 2: La Forja Andina"
 L["DAYS_REMAINING"] = "%d días restantes"
 L["LEVEL_FORMAT"] = "Nivel %d"
 L["MAX_LEVEL_REACHED"] = "¡Nivel Máximo!"
@@ -76,8 +76,8 @@ L["MSG_COMMAND_HELP"] = "|cFFD4AF37Comandos del Pase de Batalla:|r\n  /bp o /pas
 local locale = GetLocale()
 if locale ~= "esES" and locale ~= "esMX" then
     L["TITLE"] = "Battle Pass"
-    L["SUBTITLE"] = "Reino Andino - Season 1"
-    L["HEADER_SEASON"] = "Season 1: Andean Awakening"
+    L["SUBTITLE"] = "Reino Andino - Season 2"
+    L["HEADER_SEASON"] = "Season 2: The Andean Forge"
     L["DAYS_REMAINING"] = "%d days remaining"
     L["LEVEL_FORMAT"] = "Level %d"
     L["MAX_LEVEL_REACHED"] = "Max Level Reached!"
