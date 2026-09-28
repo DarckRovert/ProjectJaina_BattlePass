@@ -12,8 +12,8 @@ local BP = WoWPeru_BattlePass
 
 BP.Config = {
     -- Información de la Temporada
-    SeasonId = 1,
-    SeasonName = "Temporada 1: El Despertar Andino",
+    SeasonId = 2,
+    SeasonName = "Temporada 2: La Forja Andina",
     SeasonDaysTotal = 60,
     XPPerLevel = 1000,
     MaxLevel = 50,
@@ -107,6 +107,42 @@ BP.Config = {
                 target = 40,
                 xpReward = 550,
                 category = "PVP",
+            },
+        },
+
+        -- Retos de Ecosistema (Temporada 2 — via WoWPeru_RaidSuite)
+        -- Estos IDs (201-210) son reportados automaticamente por EcosystemBridge.lua
+        Ecosystem = {
+            {
+                id = 201,
+                title = "Guardian de Banda",
+                desc = "Completa 1 estancia de raid con tu banda del Reino Andino usando RaidSuite.",
+                icon = "Interface\\Icons\\Achievement_Boss_LichKing",
+                target = 1,
+                xpReward = 400,
+                category = "RAID",
+                source = "RaidSuite",  -- Alimentado por EcosystemBridge
+            },
+            {
+                id = 202,
+                title = "Mazmorrista del Andino",
+                desc = "Completa 3 mazmorras en una semana con el grupo.",
+                icon = "Interface\\Icons\\INV_Helmet_08",
+                target = 3,
+                xpReward = 350,
+                category = "PVE",
+                source = "RaidSuite",
+            },
+            {
+                id = 203,
+                title = "Superviviente Hardcore",
+                desc = "Completa 1 raid en modo Hardcore sin morir.",
+                icon = "Interface\\Icons\\Spell_Holy_ChampionsGrace",
+                target = 1,
+                xpReward = 750,
+                category = "RAID",
+                source = "RaidSuite",
+                requireMode = "HARDCORE",  -- Solo para jugadores Hardcore
             },
         },
     },
