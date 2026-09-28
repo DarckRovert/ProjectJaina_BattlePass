@@ -17,7 +17,7 @@ Para evitar colisiones entre sistemas, cada módulo tiene un prefijo reservado e
 | **`WP_BP`** | `WoWPeru_BattlePass` | `"WHISPER"` | `BP_REQ_SYNC`<br>`BP_CLAIM:<lvl>:<track>`<br>`BP_RES_SYNC:...`<br>`BP_RES_CLAIM:...`<br>`BP_RES_XP:...`<br>`BP_RES_QUEST:...` | Delimitado por dos puntos (`:`). Máscara de bits hexadecimal para niveles. | 255 bytes (Límite estricto 3.3.5a) |
 | **`WP_GAMEMODE`** | `WoWPeru_GameModes` | `"WHISPER"` | `SET_MODE:<ID>`<br>`GM_RES_STATUS:...` | Delimitado por dos puntos (`:`). | 255 bytes |
 | **`WP_VISUAL`** | `WowPeruVisualShop` | `"WHISPER"` | `REQ_CATALOG`<br>`BUY_VISUAL:<id>`<br>`EQUIP_VISUAL:<id>` | IDs numéricos estables indexados a `Catalog.lua`. | 255 bytes |
-| **`SEQUITO`** | `SEQUITO` | Canales de Raid/Party/Guild | Prefijos modulares internos (`RSYNC`, `ALERTHUB`, `VOTE`) | Serialización compacta AceSerializer / Custom. | 255 bytes |
+| **`SEQUITO`** | `WoWPeru_RaidSuite` | Canales de Raid/Party/Guild | Prefijos modulares internos (`RSYNC`, `ALERTHUB`, `VOTE`) | Serialización compacta AceSerializer / Custom. | 255 bytes |
 
 ---
 
@@ -79,7 +79,7 @@ El servidor distribuye las modificaciones cliente a través de dos mecanismos:
    - Contiene los archivos embebidos que no deben ser eliminados por el usuario.
    - Embebe `WoWPeru_GameModes`, `WowPeruVisualShop`, texturas personalizadas e iconos `.tga`.
 2. **Carpeta de Addons (`Interface/AddOns/`):**
-   - Módulos actualizables independientemente: `WoWPeru_BattlePass`, `SEQUITO`.
+   - Módulos actualizables independientemente: `WoWPeru_BattlePass`, `WoWPeru_RaidSuite`.
    - Distribución directa o empaquetada mediante releases oficiales en GitHub.
 
 ---
