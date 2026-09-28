@@ -1,4 +1,29 @@
+# WoW Cache & archivos temporales
 *.bak
 *.tmp
+*.old
+*.log
 .DS_Store
 Thumbs.db
+
+# WoW SavedVariables (datos de jugadores - no versionar)
+**/SavedVariables/*.lua
+**/SavedVariables/*.lua.bak
+
+# Archivos de parche MPQ (binarios pesados)
+*.mpq
+*.MPQ
+
+# Paquetes de distribución (se generan con create_zip.py)
+*.zip
+
+# IDEs y editores
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Python cache (scripts de auditoría)
+__pycache__/
+*.pyc
+*.pyo
