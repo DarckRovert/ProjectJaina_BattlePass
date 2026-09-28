@@ -145,70 +145,6 @@ local GetOrRefreshQuestState -- Declaración previa para SendQuestSync
 local GetOrLoadPlayerData   -- Declaración previa para SendSync y SendQuestSync
 
 
--- ========================================================================
--- HANDLER: BP_QUEST_PROGRESS (enviado por WoWPeru_RaidSuite/EcosystemBridge)
--- Protocolo: BP_QUEST_PROGRESS:<questId>:<delta>
--- ========================================================================
-local function HandleQuestProgress(player, message)
-    local parts = {}
-    for part in message:gmatch("[^:]+") do table.insert(parts, part) end
-
-    if parts[1] ~= "BP_QUEST_PROGRESS" then return end
-    local questId = tonumber(parts[2]) or 0
-    local delta   = tonumber(parts[3]) or 1
-
-    if questId < 1 or delta < 1 or delta > 10 then return end
-
-    -- Sanitizar nombre de jugador para queries
-    local guidLow = player:GetGUIDLow()
-    local data    = GetOrLoadPlayerData(player)
-    if not data then return end
-
-    data.quests = data.quests or {}
-    local qData = data.quests[questId] or { progress = 0, completed = false, resetTime = 0 }
-    if qData.completed then return end  -- idempotente: ya completada
-
-    -- Obtener target de la misión desde la tabla de definiciones
-    local QUEST_TARGETS = {
-        [1]=1, [2]=1, [3]=2, [4]=25, [5]=5,
-        [101]=3, [102]=15, [103]=40,
-        [201]=1, [202]=3, [203]=1,
-    }
-    local target = QUEST_TARGETS[questId] or 1
-
-    qData.progress = math.min(qData.progress + delta, target)
-    if qData.progress >= target then
-        qData.completed = true
-    end
-    data.quests[questId] = qData
-
-    -- Persistir en DB
-    CharDBExecute(string.format(
-        [[INSERT INTO character_battlepass_quests (guid, season_id, quest_id, progress, completed, reset_time)
-          VALUES (%d, %d, %d, %d, %d, %d)
-          ON DUPLICATE KEY UPDATE progress = %d, completed = %d]],
-        guidLow, SEASON_ID, questId,
-        qData.progress, qData.completed and 1 or 0, qData.resetTime,
-        qData.progress, qData.completed and 1 or 0
-    ))
-
-    -- Si se completo, otorgar XP automáticamente
-    if qData.completed then
-        local XP_BY_QUEST = {
-            [1]=250, [2]=300, [3]=200, [4]=150, [5]=150,
-            [101]=650, [102]=500, [103]=550,
-            [201]=400, [202]=350, [203]=750,
-        }
-        local xpGain = XP_BY_QUEST[questId] or 200
-        -- Reutilizar lógica AddXP existente (definida más abajo en el script)
-        AddXP(player, data, xpGain, "Quest:" .. questId)
-    end
-
-    -- Confirmar al cliente
-    local compFlag = qData.completed and "1" or "0"
-    SendClientPacket(player, string.format("BP_RES_QUEST:%d:%d:%s", questId, qData.progress, compFlag))
-end
-
 local ACTIVE_QUEST_IDS = { 1, 2, 3, 4, 5, 101, 102, 103, 201, 202, 203 }
 
 local function SendQuestSync(player)
@@ -597,6 +533,30 @@ local function ProcessAddonMessage(player, message)
         local status = DeliverReward(player, rewardDef, level)
 
         SendClientPacket(player, string.format("BP_RES_CLAIM:%d:%s:1:%s", level, track, tostring(status or "OK")))
+
+    -- Progreso de Misión reportado por el Ecosistema (WoWPeru_RaidSuite / EcosystemBridge)
+    elseif opCode == "BP_QUEST_PROGRESS" then
+        local questId = tonumber(parts[2]) or 0
+        local delta   = tonumber(parts[3]) or 1
+        if questId > 0 and delta > 0 and delta <= 10 then
+            local QUEST_DEFS = {
+                [1]   = { target = 1,  xp = 250 },
+                [2]   = { target = 1,  xp = 300 },
+                [3]   = { target = 2,  xp = 200 },
+                [4]   = { target = 25, xp = 150 },
+                [5]   = { target = 5,  xp = 150 },
+                [101] = { target = 3,  xp = 650 },
+                [102] = { target = 15, xp = 500 },
+                [103] = { target = 40, xp = 550 },
+                [201] = { target = 1,  xp = 400 },
+                [202] = { target = 3,  xp = 350 },
+                [203] = { target = 1,  xp = 750 },
+            }
+            local def = QUEST_DEFS[questId]
+            if def then
+                AdvanceQuestProgress(player, questId, delta, def.target, def.xp)
+            end
+        end
     end
 end
 

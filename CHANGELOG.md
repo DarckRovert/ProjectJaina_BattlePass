@@ -5,6 +5,21 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 
 ---
 
+## [2.0.0] - 2026-09-28
+
+### 🎉 Temporada 2: La Forja Andina
+
+### ✨ Nuevas Funcionalidades
+- **Season 2 activa:** `SeasonId = 2`, nombre "Temporada 2: La Forja Andina", 60 días de duración.
+- **Misiones del Ecosistema (IDs 201-203):** Integración con `WoWPeru_RaidSuite` via `EcosystemBridge.lua`:
+  - `201` — **Guardián de Banda** (1 raid con el grupo, +400 XP)
+  - `202` — **Mazmorrista del Andino** (3 mazmorras semanales, +350 XP)
+  - `203` — **Superviviente Hardcore** (1 raid sin morir en modo Hardcore, +750 XP)
+- **Handler `BP_QUEST_PROGRESS`:** El servidor Eluna procesa los paquetes del cliente enviados por `EcosystemBridge.lua` de manera idempotente y con persistencia MySQL directa.
+- **`ACTIVE_QUEST_IDS`** ampliado a `{ 1, 2, 3, 4, 5, 101, 102, 103, 201, 202, 203 }`.
+
+---
+
 ## [1.0.0] - 2026-09-27
 
 ### 🎉 Lanzamiento Oficial - Temporada 1: Reino Andino
