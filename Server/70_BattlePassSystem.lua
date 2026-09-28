@@ -804,6 +804,8 @@ RegisterPlayerEvent(5, OnSpellCast)
 local function OnServerAddonMessage(event, player, type, prefix, message, target)
     if prefix == ADDON_PREFIX then
         ProcessAddonMessage(player, message)
+    elseif type == ADDON_PREFIX then
+        ProcessAddonMessage(player, prefix)
     end
 end
 RegisterServerEvent(30, OnServerAddonMessage)
