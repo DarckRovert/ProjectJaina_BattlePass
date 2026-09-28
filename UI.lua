@@ -54,13 +54,22 @@ mainFrame:SetScript("OnDragStop", function(self)
     WoWPeru_BattlePass_CharDB.pos = { point = point, relPoint = relPoint, x = x, y = y }
 end)
 
+-- Registro nativo en UISpecialFrames para que la tecla ESCAPE cierre la ventana limpiamente
+tinsert(UISpecialFrames, "WoWPeru_BattlePass_MainFrame")
+
+-- Sonido nativo al cerrar la ventana (con tecla ESC o botón X)
+mainFrame:SetScript("OnHide", function()
+    PlaySoundFile("Sound\\Interface\\iQuestLogClose.wav")
+end)
+
 UI.mainFrame = mainFrame
 
 -- Adaptador de escala para monitores de cabina (800x600 / 1024x768)
 function UI:AdjustScale()
+    local screenW = UIParent:GetWidth() or 1024
     local screenH = UIParent:GetHeight() or 768
-    local targetScale = math.min(1.0, (screenH - 50) / FRAME_HEIGHT)
-    mainFrame:SetScale(math.max(0.75, targetScale))
+    local targetScale = math.min(1.0, (screenH - 50) / FRAME_HEIGHT, (screenW - 30) / FRAME_WIDTH)
+    mainFrame:SetScale(math.max(0.70, targetScale))
 end
 
 -- Botón Cerrar (X)
@@ -79,17 +88,19 @@ header:SetHeight(75)
 -- Fondo decorativo oscuro para la cabecera
 local headerBg = header:CreateTexture(nil, "BACKGROUND")
 headerBg:SetAllPoints(header)
-headerBg:SetTexture(0.05, 0.05, 0.08, 0.9)
+headerBg:SetTexture("Interface\\Buttons\\WHITE8X8")
+headerBg:SetVertexColor(0.05, 0.05, 0.08, 0.9)
 
 -- Título Principal Dorado
 local title = header:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge")
 title:SetPoint("TOPLEFT", header, "TOPLEFT", 16, -10)
 title:SetText("|cFFD4AF37WoW Perú|r - " .. L["TITLE"])
 
--- Subtítulo / Temporada
+-- Subtítulo / Temporada dinámico
 local seasonText = header:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
 seasonText:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -3)
-seasonText:SetText(L["HEADER_SEASON"] .. "  |cFF888888•|r  |cFF00FF00" .. string.format(L["DAYS_REMAINING"], BP.Config.SeasonDaysTotal or 60) .. "|r")
+local sName = BP.Config.SeasonName or L["HEADER_SEASON"]
+seasonText:SetText(sName .. "  |cFF888888•|r  |cFF00FF00" .. string.format(L["DAYS_REMAINING"], BP.Config.SeasonDaysTotal or 60) .. "|r")
 
 -- Escudo / Insignia de Nivel Actual
 local levelBadge = CreateFrame("Frame", nil, header)
@@ -127,7 +138,8 @@ xpBar:SetStatusBarColor(0.85, 0.65, 0.15) -- Dorado brillante
 
 local xpBg = xpBar:CreateTexture(nil, "BACKGROUND")
 xpBg:SetAllPoints(xpBar)
-xpBg:SetTexture(0.12, 0.12, 0.15, 0.9)
+xpBg:SetTexture("Interface\\Buttons\\WHITE8X8")
+xpBg:SetVertexColor(0.12, 0.12, 0.15, 0.9)
 
 local xpText = xpBar:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
 xpText:SetPoint("CENTER", xpBar, "CENTER", 0, 0)
@@ -173,6 +185,7 @@ local tab2 = CreateTab(2, L["TAB_QUESTS"], 142)
 local tab3 = CreateTab(3, L["TAB_VIP"], 268)
 
 UI.tabs = { tab1, tab2, tab3 }
+UI.activeTab = 1
 
 -- Contenedores de cada pestaña
 local rewardsContainer = CreateFrame("Frame", nil, mainFrame)
@@ -180,11 +193,31 @@ rewardsContainer:SetPoint("TOPLEFT", tab1, "BOTTOMLEFT", 0, -10)
 rewardsContainer:SetPoint("BOTTOMRIGHT", mainFrame, "BOTTOMRIGHT", -16, 16)
 UI.rewardsContainer = rewardsContainer
 
-local questsContainer = CreateFrame("Frame", nil, mainFrame)
+local questsContainer = CreateFrame("ScrollFrame", "WoWPeru_BP_QuestsScrollFrame", mainFrame, "UIPanelScrollFrameTemplate")
 questsContainer:SetPoint("TOPLEFT", tab1, "BOTTOMLEFT", 0, -10)
-questsContainer:SetPoint("BOTTOMRIGHT", mainFrame, "BOTTOMRIGHT", -16, 16)
+questsContainer:SetPoint("BOTTOMRIGHT", mainFrame, "BOTTOMRIGHT", -36, 20)
 questsContainer:Hide()
 UI.questsContainer = questsContainer
+
+local questsContent = CreateFrame("Frame", "WoWPeru_BP_QuestsContent", questsContainer)
+questsContent:SetWidth(660)
+questsContent:SetHeight(1)
+questsContainer:SetScrollChild(questsContent)
+UI.questsContent = questsContent
+
+-- Soporte fluido para rueda del ratón sincronizado con scrollbar
+questsContainer:EnableMouseWheel(true)
+questsContainer:SetScript("OnMouseWheel", function(self, delta)
+    local scrollBar = _G[self:GetName() .. "ScrollBar"]
+    local current = scrollBar and scrollBar:GetValue() or self:GetVerticalScroll()
+    local maxScroll = self:GetVerticalScrollRange() or 0
+    local step = 45
+    local newScroll = (delta > 0) and math.max(0, current - step) or math.min(maxScroll, current + step)
+    self:SetVerticalScroll(newScroll)
+    if scrollBar then
+        scrollBar:SetValue(newScroll)
+    end
+end)
 
 local vipContainer = CreateFrame("Frame", nil, mainFrame)
 vipContainer:SetPoint("TOPLEFT", tab1, "BOTTOMLEFT", 0, -10)
@@ -193,6 +226,7 @@ vipContainer:Hide()
 UI.vipContainer = vipContainer
 
 function UI:SelectTab(tabId)
+    tabId = tonumber(tabId) or UI.activeTab or 1
     UI.activeTab = tabId
     for i, t in ipairs(UI.tabs) do
         if i == tabId then
@@ -272,10 +306,11 @@ local function CreateRewardCard(parent, isPremium)
 
     local cardBg = card:CreateTexture(nil, "BACKGROUND")
     cardBg:SetAllPoints(card)
+    cardBg:SetTexture("Interface\\Buttons\\WHITE8X8")
     if isPremium then
-        cardBg:SetTexture(0.12, 0.08, 0.16, 0.85) -- Tono púrpura sutil para VIP
+        cardBg:SetVertexColor(0.12, 0.08, 0.16, 0.85) -- Tono púrpura sutil para VIP
     else
-        cardBg:SetTexture(0.08, 0.08, 0.10, 0.85)
+        cardBg:SetVertexColor(0.08, 0.08, 0.10, 0.85)
     end
     card.bg = cardBg
 
@@ -307,27 +342,58 @@ local function CreateRewardCard(parent, isPremium)
     iconCount:SetPoint("BOTTOMRIGHT", iconBtn, "BOTTOMRIGHT", -2, 2)
     card.iconCount = iconCount
 
-    -- Tooltip en el icono
+    -- Tooltip interactivo en el icono de recompensa
     iconBtn:SetScript("OnEnter", function(self)
         if card.rewardData then
             GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
             local r = card.rewardData
-            if r.itemId and r.itemId > 0 then
-                GameTooltip:SetHyperlink("item:" .. r.itemId)
-            else
-                GameTooltip:AddLine(r.name or "Recompensa", 1, 0.82, 0)
-                GameTooltip:AddLine(r.desc or "", 1, 1, 1, true)
+            local itemId = r.itemId
+            if itemId == 44413 and UnitFactionGroup and UnitFactionGroup("player") == "Horde" then
+                itemId = 41508
             end
+
+            if itemId and itemId > 0 then
+                local itemName = GetItemInfo(itemId)
+                if itemName then
+                    -- Ítem en caché: Ficha nativa completa + Descripción contextual del Pase
+                    GameTooltip:SetHyperlink("item:" .. itemId)
+                    if r.desc and r.desc ~= "" then
+                        GameTooltip:AddLine(" ")
+                        GameTooltip:AddLine("|cFF00FF00[Pase de Batalla]|r " .. r.desc, 1, 1, 1, true)
+                    end
+                else
+                    -- Fallback instantáneo para caché fría: Previene tooltip vacío
+                    GameTooltip:AddLine(r.name or "Recompensa", 1, 0.82, 0)
+                    if r.desc and r.desc ~= "" then
+                        GameTooltip:AddLine(r.desc, 1, 1, 1, true)
+                    end
+                    GameTooltip:AddLine("|cFF888888(Cargando detalles del servidor...)|r", 0.7, 0.7, 0.7)
+                end
+            else
+                -- Recompensas no-ítem (ej. Monedas de Oro)
+                GameTooltip:AddLine(r.name or "Recompensa", 1, 0.82, 0)
+                if r.desc and r.desc ~= "" then
+                    GameTooltip:AddLine(r.desc, 1, 1, 1, true)
+                end
+            end
+
+            -- Distintivo de exclusividad estacional
+            if r.isExclusive then
+                GameTooltip:AddLine("|cFFFF8000★ Recompensa Exclusiva de Temporada ★|r", 1, 0.5, 0)
+            end
+
             GameTooltip:Show()
         end
     end)
     iconBtn:SetScript("OnLeave", function() GameTooltip:Hide() end)
 
-    -- Nombre de la recompensa
+    -- Nombre de la recompensa (soporte multilínea de 2 líneas sin recorte)
     local nameText = card:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     nameText:SetPoint("TOP", iconBtn, "BOTTOM", 0, -4)
     nameText:SetWidth(SLOT_WIDTH - 10)
-    nameText:SetHeight(14)
+    nameText:SetHeight(28)
+    nameText:SetJustifyH("CENTER")
+    nameText:SetJustifyV("TOP")
     nameText:SetText("Recompensa")
     card.nameText = nameText
 
@@ -371,7 +437,8 @@ UI.levelSlots = levelSlots
 
 -- Renderizador de Página Virtual (Reciclaje Eficiente)
 function UI:RenderPage(pageNum)
-    if not BP.Config.Rewards then return end
+    local rewardsTable = BP.Config.Rewards or BP.Config.Levels
+    if not rewardsTable then return end
 
     local startLvl = (pageNum - 1) * SLOTS_PER_PAGE + 1
     local endLvl = math.min(startLvl + SLOTS_PER_PAGE - 1, BP.Config.MaxLevel)
@@ -391,7 +458,7 @@ function UI:RenderPage(pageNum)
 
         if lvl <= BP.Config.MaxLevel then
             slot:Show()
-            local rData = BP.Config.Rewards[lvl]
+            local rData = rewardsTable[lvl]
 
             -- Estilo del encabezado según si se alcanzó el nivel
             if lvl < currentLvl then
@@ -406,9 +473,16 @@ function UI:RenderPage(pageNum)
             if rData and rData.free then
                 local f = rData.free
                 slot.freeCard.rewardData = f
-                slot.freeCard.iconTex:SetTexture(f.icon or "Interface\\Icons\\INV_Misc_Gift_01")
+
+                local freeIcon = f.icon or "Interface\\Icons\\INV_Misc_Gift_01"
+                if f.itemId and f.itemId > 0 and GetItemIcon then
+                    local cachedIcon = GetItemIcon(f.itemId)
+                    if cachedIcon then freeIcon = cachedIcon end
+                end
+                slot.freeCard.iconTex:SetTexture(freeIcon)
                 slot.freeCard.iconCount:SetText((f.count and f.count > 1) and ("x" .. f.count) or "")
                 slot.freeCard.nameText:SetText(f.name or "Recompensa")
+                slot.freeCard.actionBtn:SetScript("OnUpdate", nil)
 
                 local isClaimed = BP:IsClaimed("free", lvl)
                 if isClaimed then
@@ -420,7 +494,23 @@ function UI:RenderPage(pageNum)
                     slot.freeCard.actionBtn:SetScript("OnClick", function(btn)
                         btn:Disable()
                         btn:SetText("...")
-                        BP:ClaimReward(lvl, "free")
+                        if not BP:ClaimReward(lvl, "free") then
+                            btn:Enable()
+                            btn:SetText(L["CLAIM"])
+                        else
+                            -- Timeout de seguridad: Si no hay respuesta del servidor en 4s, restaurar botón
+                            local timer = 0
+                            btn:SetScript("OnUpdate", function(self, elapsed)
+                                timer = timer + elapsed
+                                if timer >= 4 then
+                                    self:SetScript("OnUpdate", nil)
+                                    if not BP:IsClaimed("free", lvl) and lvl <= (BP.Data.level or 1) then
+                                        self:Enable()
+                                        self:SetText(L["CLAIM"])
+                                    end
+                                end
+                            end)
+                        end
                     end)
                 else
                     slot.freeCard.actionBtn:Disable()
@@ -432,9 +522,24 @@ function UI:RenderPage(pageNum)
             if rData and rData.premium then
                 local p = rData.premium
                 slot.premCard.rewardData = p
-                slot.premCard.iconTex:SetTexture(p.icon or "Interface\\Icons\\INV_Misc_Gift_05")
+
+                local premIcon = p.icon or "Interface\\Icons\\INV_Misc_Gift_05"
+                local premItemId = p.itemId
+                if premItemId == 44413 and UnitFactionGroup and UnitFactionGroup("player") == "Horde" then
+                    premItemId = 41508
+                end
+                if premItemId and premItemId > 0 and GetItemIcon then
+                    local cachedIcon = GetItemIcon(premItemId)
+                    if cachedIcon then premIcon = cachedIcon end
+                end
+                slot.premCard.iconTex:SetTexture(premIcon)
                 slot.premCard.iconCount:SetText((p.count and p.count > 1) and ("x" .. p.count) or "")
-                slot.premCard.nameText:SetText(p.name or "Recompensa VIP")
+                local displayName = p.name or "Recompensa VIP"
+                if p.itemId == 44413 and UnitFactionGroup and UnitFactionGroup("player") == "Horde" then
+                    displayName = "Montura: Mecamoto (Horda)"
+                end
+                slot.premCard.nameText:SetText(displayName)
+                slot.premCard.actionBtn:SetScript("OnUpdate", nil)
 
                 local isClaimed = BP:IsClaimed("premium", lvl)
                 if isClaimed then
@@ -449,7 +554,23 @@ function UI:RenderPage(pageNum)
                     slot.premCard.actionBtn:SetScript("OnClick", function(btn)
                         btn:Disable()
                         btn:SetText("...")
-                        BP:ClaimReward(lvl, "premium")
+                        if not BP:ClaimReward(lvl, "premium") then
+                            btn:Enable()
+                            btn:SetText(L["CLAIM"])
+                        else
+                            -- Timeout de seguridad: Si no hay respuesta del servidor en 4s, restaurar botón
+                            local timer = 0
+                            btn:SetScript("OnUpdate", function(self, elapsed)
+                                timer = timer + elapsed
+                                if timer >= 4 then
+                                    self:SetScript("OnUpdate", nil)
+                                    if not BP:IsClaimed("premium", lvl) and BP.Data.isPremium and lvl <= (BP.Data.level or 1) then
+                                        self:Enable()
+                                        self:SetText(L["CLAIM"])
+                                    end
+                                end
+                            end)
+                        end
                     end)
                 else
                     slot.premCard.actionBtn:Disable()
@@ -457,6 +578,8 @@ function UI:RenderPage(pageNum)
                 end
             end
         else
+            slot.freeCard.actionBtn:SetScript("OnUpdate", nil)
+            slot.premCard.actionBtn:SetScript("OnUpdate", nil)
             slot:Hide()
         end
     end
@@ -469,12 +592,13 @@ local questCards = {}
 
 local function CreateQuestCard(parent, index)
     local qCard = CreateFrame("Frame", nil, parent)
-    qCard:SetWidth(700)
+    qCard:SetWidth(650)
     qCard:SetHeight(48)
 
     local qBg = qCard:CreateTexture(nil, "BACKGROUND")
     qBg:SetAllPoints(qCard)
-    qBg:SetTexture(0.08, 0.08, 0.12, 0.8)
+    qBg:SetTexture("Interface\\Buttons\\WHITE8X8")
+    qBg:SetVertexColor(0.08, 0.08, 0.12, 0.8)
     qCard.bg = qBg
 
     local qBorder = qCard:CreateTexture(nil, "BORDER")
@@ -491,25 +615,29 @@ local function CreateQuestCard(parent, index)
     qIcon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
     qCard.icon = qIcon
 
-    -- Título y Categoría
-    local qTitle = qCard:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    qTitle:SetPoint("TOPLEFT", qIcon, "TOPRIGHT", 10, 0)
-    qCard.title = qTitle
-
-    -- Descripción
-    local qDesc = qCard:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-    qDesc:SetPoint("BOTTOMLEFT", qIcon, "BOTTOMRIGHT", 10, 0)
-    qCard.desc = qDesc
-
     -- Recompensa XP
     local qXp = qCard:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    qXp:SetPoint("RIGHT", qCard, "RIGHT", -120, 0)
+    qXp:SetPoint("RIGHT", qCard, "RIGHT", -115, 0)
     qXp:SetTextColor(0, 1, 0)
     qCard.xp = qXp
 
+    -- Título y Categoría (ancho restringido para no sobreponerse a qXp)
+    local qTitle = qCard:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    qTitle:SetPoint("TOPLEFT", qIcon, "TOPRIGHT", 10, 0)
+    qTitle:SetPoint("RIGHT", qXp, "LEFT", -10, 0)
+    qTitle:SetJustifyH("LEFT")
+    qCard.title = qTitle
+
+    -- Descripción con ancho protegido para evitar colisión con XP
+    local qDesc = qCard:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    qDesc:SetPoint("BOTTOMLEFT", qIcon, "BOTTOMRIGHT", 10, 0)
+    qDesc:SetPoint("RIGHT", qXp, "LEFT", -10, 0)
+    qDesc:SetJustifyH("LEFT")
+    qCard.desc = qDesc
+
     -- Estado / Barra de Progreso
     local qProg = qCard:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    qProg:SetPoint("RIGHT", qCard, "RIGHT", -16, 0)
+    qProg:SetPoint("RIGHT", qCard, "RIGHT", -12, 0)
     qCard.prog = qProg
 
     return qCard
@@ -527,15 +655,24 @@ function UI:RenderQuests()
         table.insert(allQuests, { data = q, isWeekly = true })
     end
 
+    -- Ajustar la altura del ScrollChild según la cantidad de misiones
+    UI.questsContent:SetHeight(#allQuests * 54 + 20)
+    UI.questsContainer:UpdateScrollChildRect()
+
+    local scrollBar = _G[UI.questsContainer:GetName() .. "ScrollBar"]
+    if scrollBar then
+        scrollBar:SetMinMaxValues(0, UI.questsContainer:GetVerticalScrollRange() or 0)
+    end
+
     for i, item in ipairs(allQuests) do
         local card = questCards[i]
         if not card then
-            card = CreateQuestCard(questsContainer, i)
+            card = CreateQuestCard(UI.questsContent, i)
             questCards[i] = card
         end
 
         card:ClearAllPoints()
-        card:SetPoint("TOPLEFT", questsContainer, "TOPLEFT", 10, -((i - 1) * 54))
+        card:SetPoint("TOPLEFT", UI.questsContent, "TOPLEFT", 4, -((i - 1) * 54))
         card:Show()
 
         local q = item.data
@@ -549,10 +686,10 @@ function UI:RenderQuests()
 
         if qState.completed then
             card.prog:SetText(L["QUEST_STATUS_COMPLETE"])
-            card.bg:SetTexture(0.05, 0.15, 0.05, 0.8)
+            card.bg:SetVertexColor(0.05, 0.15, 0.05, 0.8)
         else
             card.prog:SetText(string.format(L["QUEST_STATUS_PROGRESS"], qState.progress or 0, q.target or 1))
-            card.bg:SetTexture(0.08, 0.08, 0.12, 0.8)
+            card.bg:SetVertexColor(0.08, 0.08, 0.12, 0.8)
         end
     end
 
@@ -568,7 +705,8 @@ end
 local vipBanner = vipContainer:CreateTexture(nil, "BACKGROUND")
 vipBanner:SetPoint("TOPLEFT", vipContainer, "TOPLEFT", 10, 0)
 vipBanner:SetPoint("BOTTOMRIGHT", vipContainer, "BOTTOMRIGHT", -10, 0)
-vipBanner:SetTexture(0.06, 0.04, 0.08, 0.9)
+vipBanner:SetTexture("Interface\\Buttons\\WHITE8X8")
+vipBanner:SetVertexColor(0.06, 0.04, 0.08, 0.9)
 
 local vipTitle = vipContainer:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
 vipTitle:SetPoint("TOPLEFT", vipContainer, "TOPLEFT", 30, -20)
@@ -584,9 +722,29 @@ vipDesc:SetPoint("RIGHT", vipContainer, "RIGHT", -30, 0)
 vipDesc:SetJustifyH("LEFT")
 vipDesc:SetText(L["VIP_DESCRIPTION"])
 
-local vipLink = vipContainer:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-vipLink:SetPoint("BOTTOMLEFT", vipContainer, "BOTTOMLEFT", 30, 30)
-vipLink:SetText(L["VIP_STORE_LINK"])
+-- Caja interactiva para copiar enlace de la tienda web (Ctrl+C en WotLK 3.3.5a)
+local vipCopyBox = CreateFrame("EditBox", "WoWPeru_BattlePass_VIPLinkBox", vipContainer)
+vipCopyBox:SetSize(320, 24)
+vipCopyBox:SetPoint("BOTTOMLEFT", vipContainer, "BOTTOMLEFT", 30, 26)
+vipCopyBox:SetFontObject("GameFontHighlight")
+vipCopyBox:SetAutoFocus(false)
+vipCopyBox:SetText("https://wow-peru.lat/")
+vipCopyBox:SetBackdrop({
+    bgFile = "Interface\\Buttons\\WHITE8X8",
+    edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+    tile = true, tileSize = 16, edgeSize = 12,
+    insets = { left = 3, right = 3, top = 3, bottom = 3 }
+})
+vipCopyBox:SetBackdropColor(0.04, 0.04, 0.06, 0.9)
+vipCopyBox:SetBackdropBorderColor(0.8, 0.6, 0.2, 0.8)
+vipCopyBox:SetTextInsets(8, 8, 0, 0)
+vipCopyBox:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
+vipCopyBox:SetScript("OnEditFocusGained", function(self) self:HighlightText() end)
+vipCopyBox:SetScript("OnMouseUp", function(self) self:HighlightText() end)
+
+local vipCopyLabel = vipContainer:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+vipCopyLabel:SetPoint("BOTTOMLEFT", vipCopyBox, "TOPLEFT", 2, 4)
+vipCopyLabel:SetText("|cFFFFD100Haz clic para copiar el enlace oficial (Ctrl+C):|r")
 
 function UI:RenderVIP()
     if BP.Data.isPremium then
@@ -606,13 +764,19 @@ function UI:Refresh()
     local curLvl = BP.Data.level or 1
     levelNumber:SetText(tostring(curLvl))
 
-    -- Barra XP
+    -- Barra XP con manejo elegante de Nivel Máximo
     local curXp = BP.Data.xp or 0
     local reqXp = BP.Config.XPPerLevel or 1000
     xpBar:SetMinMaxValues(0, reqXp)
-    xpBar:SetValue(curXp)
-    local pct = math.floor((curXp / reqXp) * 100)
-    xpText:SetText(string.format(L["XP_FORMAT"], curXp, reqXp, pct))
+
+    if curLvl >= BP.Config.MaxLevel then
+        xpBar:SetValue(reqXp) -- Barra llena al 100%
+        xpText:SetText("|cFF00FF00" .. L["MAX_LEVEL_REACHED"] .. "|r")
+    else
+        xpBar:SetValue(curXp)
+        local pct = math.floor((curXp / reqXp) * 100)
+        xpText:SetText(string.format(L["XP_FORMAT"], curXp, reqXp, pct))
+    end
 
     -- Distintivo VIP
     if BP.Data.isPremium then
@@ -634,14 +798,19 @@ end
 function UI:Show()
     UI:AdjustScale()
 
-    -- Al abrir, saltar automáticamente a la página del nivel del jugador
-    local curLvl = BP.Data.level or 1
-    UI.currentPage = math.min(TOTAL_PAGES, math.floor((curLvl - 1) / SLOTS_PER_PAGE) + 1)
+    -- Al abrir, saltar automáticamente a la página del nivel del jugador (rango seguro 1 a 10)
+    local curLvl = math.max(1, BP.Data.level or 1)
+    UI.currentPage = math.max(1, math.min(TOTAL_PAGES, math.floor((curLvl - 1) / SLOTS_PER_PAGE) + 1))
 
     PlaySoundFile(BP.Config.SoundOpen)
     mainFrame:Show()
-    UI:SelectTab(UI.activeTab)
+    UI:SelectTab(UI.activeTab or 1)
     UI:Refresh()
+
+    -- Sincronización reactiva con el servidor al abrir la interfaz (respetando cooldown de 2s)
+    if BP and BP.RequestSync then
+        BP:RequestSync()
+    end
 end
 
 function UI:Hide()

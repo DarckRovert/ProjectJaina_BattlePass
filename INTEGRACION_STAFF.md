@@ -86,13 +86,14 @@ Cuando un jugador adquiere el Pase VIP en la página web ([wow-peru.lat](https:/
 El backend web (PHP/Node/Python) ejecuta la siguiente consulta en la base de datos `characters`:
 
 ```sql
-UPDATE character_battlepass 
-SET is_premium = 1 
-WHERE guid = (SELECT guid FROM characters WHERE name = 'NOMBRE_PERSONAJE') 
-  AND season_id = 1;
+INSERT INTO character_battlepass (guid, season_id, level, xp, is_premium, claimed_free, claimed_premium)
+SELECT guid, 1, 1, 0, 1, '0000000000000', '0000000000000' 
+FROM characters 
+WHERE name = 'NOMBRE_PERSONAJE'
+ON DUPLICATE KEY UPDATE is_premium = 1;
 ```
 
-Si el jugador está conectado, al reloguear o al ejecutar `.bp sync` / hacer clic derecho en el botón de minimapa, su Pase VIP se activará de inmediato y podrá reclamar todas las recompensas acumuladas.
+> **Nota de Resiliencia:** Este query utiliza `UPSERT`. Si el jugador nunca antes ha logueado en la Temporada 1, crea su fila directamente con VIP activado (`is_premium = 1`). Si ya existía, únicamente actualiza su estado VIP preservando su nivel y recompensas. Si el jugador está conectado, al reloguear o al ejecutar `.bp sync` / hacer clic derecho en el botón de minimapa, su Pase VIP se activará de inmediato.
 
 ### Opción 2: Despacho por Soap / RA Console
 Si tu tienda web cuenta con conexión SOAP o Remote Access a la consola de AzerothCore/TrinityCore:

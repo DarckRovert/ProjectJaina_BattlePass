@@ -39,7 +39,7 @@ btn:SetHeight(32)
 btn:SetFrameLevel(8)
 btn:EnableMouse(true)
 btn:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-btn:RegisterForDrag("LeftButton", "RightButton")
+btn:RegisterForDrag("RightButton")
 btn:SetMovable(true)
 
 -- Icono Central (Blasón Dorado / Escudo Épico)
@@ -68,35 +68,35 @@ highlight:SetTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight")
 btn.highlight = highlight
 
 -- ========================================================================
--- EVENTOS DE RATÓN (ARRASTRE Y CLIC)
+-- EVENTOS DE RATÓN (ARRASTRE EFICIENTE Y CLIC)
 -- ========================================================================
-local isDragging = false
+local wasDragged = false
+
+local function OnDragUpdate(self)
+    local mx, my = Minimap:GetCenter()
+    local px, py = GetCursorPosition()
+    local scale = Minimap:GetEffectiveScale()
+    px, py = px / scale, py / scale
+
+    local angle = math.deg(math.atan2(py - my, px - mx))
+    if angle < 0 then angle = angle + 360 end
+
+    WoWPeru_BattlePass_CharDB = WoWPeru_BattlePass_CharDB or {}
+    WoWPeru_BattlePass_CharDB.minimapAngle = angle
+
+    UpdatePosition(self, angle)
+    wasDragged = true
+end
 
 btn:SetScript("OnDragStart", function(self)
+    wasDragged = false
     self:LockHighlight()
-    isDragging = true
+    self:SetScript("OnUpdate", OnDragUpdate)
 end)
 
 btn:SetScript("OnDragStop", function(self)
     self:UnlockHighlight()
-    isDragging = false
-end)
-
-btn:SetScript("OnUpdate", function(self)
-    if isDragging then
-        local mx, my = Minimap:GetCenter()
-        local px, py = GetCursorPosition()
-        local scale = Minimap:GetEffectiveScale()
-        px, py = px / scale, py / scale
-
-        local angle = math.deg(math.atan2(py - my, px - mx))
-        if angle < 0 then angle = angle + 360 end
-
-        WoWPeru_BattlePass_CharDB = WoWPeru_BattlePass_CharDB or {}
-        WoWPeru_BattlePass_CharDB.minimapAngle = angle
-
-        UpdatePosition(self, angle)
-    end
+    self:SetScript("OnUpdate", nil)
 end)
 
 btn:SetScript("OnClick", function(self, button)
@@ -104,9 +104,11 @@ btn:SetScript("OnClick", function(self, button)
         if BP.UI and BP.UI.Toggle then
             BP.UI:Toggle()
         end
-    elseif button == "RightButton" then
+    elseif button == "RightButton" and not wasDragged then
+        BP:Print("Sincronizando con el servidor...")
         BP:RequestSync()
     end
+    wasDragged = false
 end)
 
 -- ========================================================================
@@ -127,10 +129,16 @@ btn:SetScript("OnEnter", function(self)
     GameTooltip:AddLine(lvlText, 1, 1, 1)
 
     -- Barra de Progreso XP
+    local curLvl = BP.Data.level or 1
     local curXp = BP.Data.xp or 0
     local reqXp = BP.Config.XPPerLevel or 1000
-    local pct = math.floor((curXp / reqXp) * 100)
-    GameTooltip:AddLine(string.format(L["MINIMAP_TOOLTIP_XP"], curXp, reqXp, pct), 0.8, 0.8, 0.8)
+
+    if curLvl >= BP.Config.MaxLevel then
+        GameTooltip:AddLine("Progreso XP: |cFF00FF00" .. L["MAX_LEVEL_REACHED"] .. "|r", 0.8, 0.8, 0.8)
+    else
+        local pct = math.floor((curXp / reqXp) * 100)
+        GameTooltip:AddLine(string.format(L["MINIMAP_TOOLTIP_XP"], curXp, reqXp, pct), 0.8, 0.8, 0.8)
+    end
 
     -- Estado VIP
     local vipStatus = BP.Data.isPremium and "|cFF00FF00VIP ACTIVO|r" or "|cFFFF4444VIP INACTIVO|r"
@@ -171,6 +179,15 @@ function MM:Init()
         btn:Hide()
     else
         btn:Show()
+    end
+end
+
+function MM:UpdateTooltip()
+    if btn:IsShown() and btn:IsMouseOver() then
+        local onEnter = btn:GetScript("OnEnter")
+        if onEnter then
+            onEnter(btn)
+        end
     end
 end
 

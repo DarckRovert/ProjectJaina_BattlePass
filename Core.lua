@@ -24,6 +24,7 @@ BP.Data = {
     claimedPrem = "0000000000000",
     quests = {},
     lastSyncTime = 0,
+    hasSyncedOnce = false,
 }
 
 local HEX_CHARS = "0123456789ABCDEF"
@@ -101,26 +102,34 @@ end
 -- FUNCIONES DE COMUNICACIÓN DE RED (SENDADDONMESSAGE RESILIENTE)
 -- ========================================================================
 function BP:Print(msg)
-    DEFAULT_CHAT_FRAME:AddMessage("|cFFD4AF37[WoW Perú BP]|r " .. tostring(msg))
+    local chatFrame = DEFAULT_CHAT_FRAME or ChatFrame1
+    if chatFrame and chatFrame.AddMessage then
+        chatFrame:AddMessage("|cFFD4AF37[WoW Perú BP]|r " .. tostring(msg))
+    end
 end
 
 function BP:DebugPrint(msg)
-    if BP.Config.Debug then
-        DEFAULT_CHAT_FRAME:AddMessage("|cFF888888[BP Debug]|r " .. tostring(msg))
+    if BP.Config and BP.Config.Debug then
+        local chatFrame = DEFAULT_CHAT_FRAME or ChatFrame1
+        if chatFrame and chatFrame.AddMessage then
+            chatFrame:AddMessage("|cFF888888[BP Debug]|r " .. tostring(msg))
+        end
     end
 end
 
 function BP:SendPacket(payload)
-    if not payload or payload == "" then return end
+    if not payload or payload == "" then return false end
     self:DebugPrint("Enviando paquete: " .. payload)
 
-    local prefix = BP.Config.AddonPrefix
-    local channel = "WHISPER"
-    local target = UnitName("player")
+    local prefix = (BP.Config and BP.Config.AddonPrefix) or "WP_BP"
+    local playerName = UnitName("player")
+    if not playerName or playerName == "" or playerName == UNKNOWNOBJECT then
+        self:DebugPrint("UnitName('player') aún no disponible, paquete pospuesto.")
+        return false
+    end
 
-    -- Eluna captura OnAddonMessage de cualquier canal. "WHISPER" a sí mismo
-    -- funciona en 3.3.5a incluso sin grupo ni hermandad.
-    SendAddonMessage(prefix, payload, channel, target)
+    SendAddonMessage(prefix, payload, "WHISPER", playerName)
+    return true
 end
 
 function BP:RequestSync()
@@ -129,34 +138,34 @@ function BP:RequestSync()
         self:DebugPrint("Sincronización en cooldown.")
         return
     end
-    self.Data.lastSyncTime = now
-    self:SendPacket("BP_REQ_SYNC")
+    if self:SendPacket("BP_REQ_SYNC") then
+        self.Data.lastSyncTime = now
+    end
 end
 
 function BP:ClaimReward(level, track)
-    if level < 1 or level > BP.Config.MaxLevel then return end
-    if track ~= "free" and track ~= "premium" then return end
+    if level < 1 or level > BP.Config.MaxLevel then return false end
+    if track ~= "free" and track ~= "premium" then return false end
 
     -- Validaciones locales preventivas
     if level > self.Data.level then
         self:Print("Aún no alcanzas el Nivel " .. level .. " para reclamar esta recompensa.")
-        return
+        return false
     end
 
     if track == "premium" and not self.Data.isPremium then
         self:Print("Esta recompensa requiere el Pase VIP.")
-        return
+        return false
     end
 
     if self:IsClaimed(track, level) then
         self:Print("Ya has reclamado la recompensa del Nivel " .. level .. ".")
-        return
+        return false
     end
 
     -- Envío de paquete seguro
     local payload = string.format("BP_CLAIM:%d:%s", level, track:upper())
-    self:SendPacket(payload)
-    PlaySoundFile(BP.Config.SoundClaim)
+    return self:SendPacket(payload)
 end
 
 -- ========================================================================
@@ -178,6 +187,8 @@ function BP:OnAddonMessage(prefix, message, channel, sender)
     -- BP_RES_SYNC:<SEASON>:<LEVEL>:<XP>:<IS_PREMIUM>:<HEX_FREE>:<HEX_PREM>
     if opCode == "BP_RES_SYNC" then
         self.Data.seasonId = tonumber(parts[2]) or 1
+        local isInitialSync = not self.Data.hasSyncedOnce
+        self.Data.hasSyncedOnce = true
         local oldLevel = self.Data.level
         self.Data.level = tonumber(parts[3]) or 1
         self.Data.xp = tonumber(parts[4]) or 0
@@ -188,7 +199,7 @@ function BP:OnAddonMessage(prefix, message, channel, sender)
         self:SaveToCharDB()
         self:OnDataUpdated()
 
-        if self.Data.level > oldLevel and oldLevel > 1 then
+        if not isInitialSync and oldLevel and self.Data.level > oldLevel then
             PlaySoundFile(BP.Config.SoundLevelUp)
             self:Print(string.format(L["MSG_LEVEL_UP"], self.Data.level))
         end
@@ -202,6 +213,7 @@ function BP:OnAddonMessage(prefix, message, channel, sender)
         local msgCode = parts[5] or "OK"
 
         if success and lvl >= 1 then
+            PlaySoundFile(BP.Config.SoundClaim)
             if trk == "free" then
                 self.Data.claimedFree = self:SetLevelClaimedInHex(self.Data.claimedFree, lvl)
             elseif trk == "premium" then
@@ -264,6 +276,20 @@ function BP:LoadFromCharDB()
     WoWPeru_BattlePass_CharDB = WoWPeru_BattlePass_CharDB or {}
     local db = WoWPeru_BattlePass_CharDB
 
+    local currentSeason = BP.Config.SeasonId or 1
+
+    -- Detección de cambio de temporada: Reinicio atómico de estado local obsoleto
+    if db.seasonId and db.seasonId ~= currentSeason then
+        db.seasonId = currentSeason
+        db.level = 1
+        db.xp = 0
+        db.isPremium = false
+        db.claimedFree = "0000000000000"
+        db.claimedPrem = "0000000000000"
+        db.quests = {}
+    end
+
+    self.Data.seasonId = db.seasonId or currentSeason
     self.Data.level = db.level or 1
     self.Data.xp = db.xp or 0
     self.Data.isPremium = db.isPremium or false
@@ -276,6 +302,7 @@ function BP:SaveToCharDB()
     WoWPeru_BattlePass_CharDB = WoWPeru_BattlePass_CharDB or {}
     local db = WoWPeru_BattlePass_CharDB
 
+    db.seasonId = self.Data.seasonId or BP.Config.SeasonId or 1
     db.level = self.Data.level
     db.xp = self.Data.xp
     db.isPremium = self.Data.isPremium
@@ -289,7 +316,7 @@ function BP:OnDataUpdated()
         BP.UI:Refresh()
     end
     if BP.Minimap and BP.Minimap.UpdateTooltip then
-        -- Actualiza datos del tooltip si estuviese abierto
+        BP.Minimap:UpdateTooltip()
     end
 end
 
@@ -301,6 +328,18 @@ eventFrame:RegisterEvent("ADDON_LOADED")
 eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 eventFrame:RegisterEvent("CHAT_MSG_ADDON")
 eventFrame:RegisterEvent("PLAYER_LOGOUT")
+
+-- Temporizador estático reciclable para sincronización inicial segura (1.5s post-carga)
+local syncDelayFrame = CreateFrame("Frame")
+syncDelayFrame:Hide()
+local syncDelayElapsed = 0
+syncDelayFrame:SetScript("OnUpdate", function(self, elapsed)
+    syncDelayElapsed = syncDelayElapsed + elapsed
+    if syncDelayElapsed >= 1.5 then
+        self:Hide()
+        BP:RequestSync()
+    end
+end)
 
 eventFrame:SetScript("OnEvent", function(self, event, ...)
     if event == "ADDON_LOADED" then
@@ -314,8 +353,9 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
         if RegisterAddonMessagePrefix then
             RegisterAddonMessagePrefix(BP.Config.AddonPrefix)
         end
-        -- Solicitar estado del pase al servidor tras breve delay
-        BP:RequestSync()
+        -- Solicitar estado del pase al servidor tras breve delay seguro (1.5s)
+        syncDelayElapsed = 0
+        syncDelayFrame:Show()
 
     elseif event == "CHAT_MSG_ADDON" then
         local prefix, message, channel, sender = ...
@@ -334,26 +374,45 @@ SLASH_WOWPERUBP2 = "/pase"
 SLASH_WOWPERUBP3 = "/battlepass"
 
 SlashCmdList["WOWPERUBP"] = function(msg)
-    local cmd = (msg or ""):lower():match("^%s*(.-)%s*$")
+    local args = {}
+    for w in (msg or ""):gmatch("%S+") do
+        table.insert(args, w)
+    end
+    local sub = (args[1] or ""):lower()
 
-    if cmd == "" or cmd == "toggle" then
+    if sub == "" or sub == "toggle" then
         if BP.UI and BP.UI.Toggle then
             BP.UI:Toggle()
         else
             BP:Print("La interfaz de usuario no está cargada.")
         end
-    elseif cmd == "sync" then
+    elseif sub == "claim" then
+        local lvl = tonumber(args[2])
+        local trk = (args[3] or "free"):lower()
+        if trk == "vip" or trk == "prem" then trk = "premium" end
+        if trk == "gratis" then trk = "free" end
+
+        if lvl and lvl >= 1 and lvl <= BP.Config.MaxLevel then
+            if trk == "free" or trk == "premium" then
+                BP:ClaimReward(lvl, trk)
+            else
+                BP:Print("Vía de pase inválida. Usa: |cFFFFD100free|r o |cFFFFD100premium|r.")
+            end
+        else
+            BP:Print("Uso: /bp claim <nivel 1-" .. BP.Config.MaxLevel .. "> [free|premium]")
+        end
+    elseif sub == "sync" then
         BP:Print("Solicitando sincronización al servidor...")
         BP:RequestSync()
-    elseif cmd == "minimap" then
+    elseif sub == "minimap" then
         if BP.Minimap and BP.Minimap.Toggle then
             BP.Minimap:Toggle()
         end
-    elseif cmd == "reset" then
+    elseif sub == "reset" then
         if BP.UI and BP.UI.ResetPosition then
             BP.UI:ResetPosition()
         end
-    elseif cmd == "debug" then
+    elseif sub == "debug" then
         BP.Config.Debug = not BP.Config.Debug
         BP:Print("Modo depuración: " .. (BP.Config.Debug and "|cFF00FF00ACTIVO|r" or "|cFFFF0000INACTIVO|r"))
     else

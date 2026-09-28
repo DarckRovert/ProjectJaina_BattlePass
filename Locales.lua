@@ -64,13 +64,13 @@ L["MINIMAP_TOOLTIP_VIP"] = "Estado VIP: %s"
 L["MINIMAP_TOOLTIP_DAILY"] = "Misiones de Hoy: |cFFFFD100%d / %d|r"
 
 -- Notificaciones del Sistema en Chat
-L["MSG_LEVEL_UP"] = "|cFFD4AF37[Pase de Batalla]|r ¡Felicidades! Has alcanzado el |cFF00FF00Nivel %d|r. ¡Revisa tus recompensas!"
-L["MSG_CLAIM_SUCCESS"] = "|cFFD4AF37[Pase de Batalla]|r Has reclamado la recompensa del Nivel %d (%s)."
-L["MSG_CLAIM_MAIL"] = "|cFFD4AF37[Pase de Batalla]|r Tus bolsas estaban llenas. La recompensa fue enviada a tu buzón de correo."
-L["MSG_VIP_UNLOCKED"] = "|cFFD4AF37[Pase de Batalla]|r ¡Pase VIP activado! Todas las recompensas exclusivas están desbloqueadas."
-L["MSG_QUEST_PROGRESS"] = "|cFFD4AF37[Pase de Batalla]|r Misión: %s (%d/%d) (+%d XP)"
-L["MSG_QUEST_COMPLETE"] = "|cFFD4AF37[Pase de Batalla]|r ¡Misión completada: %s! Ganaste %d XP."
-L["MSG_COMMAND_HELP"] = "|cFFD4AF37Comandos del Pase de Batalla:|r\n  /bp o /pase - Abre o cierra la ventana principal.\n  /bp minimap - Muestra u oculta el botón del minimapa.\n  /bp reset - Restaura la posición de la ventana."
+L["MSG_LEVEL_UP"] = "¡Felicidades! Has alcanzado el |cFF00FF00Nivel %d|r. ¡Revisa tus recompensas!"
+L["MSG_CLAIM_SUCCESS"] = "Has reclamado la recompensa del Nivel %d (%s)."
+L["MSG_CLAIM_MAIL"] = "Tus bolsas estaban llenas. La recompensa fue enviada a tu buzón de correo."
+L["MSG_VIP_UNLOCKED"] = "¡Pase VIP activado! Todas las recompensas exclusivas están desbloqueadas."
+L["MSG_QUEST_PROGRESS"] = "Misión: %s (%d/%d) (+%d XP)"
+L["MSG_QUEST_COMPLETE"] = "¡Misión completada: %s! Ganaste %d XP."
+L["MSG_COMMAND_HELP"] = "|cFFD4AF37Comandos del Pase de Batalla:|r\n  /bp o /pase - Abre o cierra la ventana principal.\n  /bp claim <nivel> [free|premium] - Reclama la recompensa del nivel indicado.\n  /bp sync - Sincroniza datos con el servidor.\n  /bp minimap - Muestra u oculta el botón del minimapa.\n  /bp reset - Restaura la posición de la ventana."
 
 -- Idioma Inglés (Fallback)
 local locale = GetLocale()
@@ -112,13 +112,13 @@ if locale ~= "esES" and locale ~= "esMX" then
     L["MINIMAP_TOOLTIP_XP"] = "XP Progress: |cFFFFFFFF%d / %d (%d%%)|r"
     L["MINIMAP_TOOLTIP_VIP"] = "VIP Status: %s"
     L["MINIMAP_TOOLTIP_DAILY"] = "Today's Quests: |cFFFFD100%d / %d|r"
-    L["MSG_LEVEL_UP"] = "|cFFD4AF37[Battle Pass]|r Congratulations! You reached |cFF00FF00Level %d|r. Check your rewards!"
-    L["MSG_CLAIM_SUCCESS"] = "|cFFD4AF37[Battle Pass]|r You claimed Level %d reward (%s)."
-    L["MSG_CLAIM_MAIL"] = "|cFFD4AF37[Battle Pass]|r Bags full. Reward sent to your in-game mailbox."
-    L["MSG_VIP_UNLOCKED"] = "|cFFD4AF37[Battle Pass]|r VIP Pass active! All exclusive rewards unlocked."
-    L["MSG_QUEST_PROGRESS"] = "|cFFD4AF37[Battle Pass]|r Quest: %s (%d/%d) (+%d XP)"
-    L["MSG_QUEST_COMPLETE"] = "|cFFD4AF37[Battle Pass]|r Quest complete: %s! Gained %d XP."
-    L["MSG_COMMAND_HELP"] = "|cFFD4AF37Battle Pass Commands:|r\n  /bp or /pase - Open or close the main window.\n  /bp minimap - Show or hide minimap button.\n  /bp reset - Reset window position."
+    L["MSG_LEVEL_UP"] = "Congratulations! You reached |cFF00FF00Level %d|r. Check your rewards!"
+    L["MSG_CLAIM_SUCCESS"] = "You claimed Level %d reward (%s)."
+    L["MSG_CLAIM_MAIL"] = "Bags full. Reward sent to your in-game mailbox."
+    L["MSG_VIP_UNLOCKED"] = "VIP Pass active! All exclusive rewards unlocked."
+    L["MSG_QUEST_PROGRESS"] = "Quest: %s (%d/%d) (+%d XP)"
+    L["MSG_QUEST_COMPLETE"] = "Quest complete: %s! Gained %d XP."
+    L["MSG_COMMAND_HELP"] = "|cFFD4AF37Battle Pass Commands:|r\n  /bp or /pase - Open or close the main window.\n  /bp claim <level> [free|premium] - Claim reward for the specified level.\n  /bp sync - Sync data with the server.\n  /bp minimap - Show or hide minimap button.\n  /bp reset - Reset window position."
 end
 
 BP.L = L
