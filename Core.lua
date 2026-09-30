@@ -16,7 +16,7 @@ local L = BP.L or {}
 -- ESTADO EN MEMORIA Y VALORES POR DEFECTO
 -- ========================================================================
 BP.Data = {
-    seasonId = 1,
+    seasonId = 2,
     level = 1,
     xp = 0,
     isPremium = false,
