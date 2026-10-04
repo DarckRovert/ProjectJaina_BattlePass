@@ -159,6 +159,7 @@ btn:SetScript("OnEnter", function(self)
     GameTooltip:AddLine(" ")
     GameTooltip:AddLine(L["MINIMAP_TOOLTIP_DESC"], 0.6, 0.6, 0.6)
     GameTooltip:AddLine("|cFF888888Clic derecho para sincronizar con el servidor.|r", 0.5, 0.5, 0.5)
+    GameTooltip:AddLine("|cFFD4AF37Desarrollo:|r DarckRovert (Elnazzareno)", 0.8, 0.7, 0.3)
 
     GameTooltip:Show()
 end)

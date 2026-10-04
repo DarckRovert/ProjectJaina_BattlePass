@@ -91,9 +91,15 @@ headerBg:SetAllPoints(header)
 headerBg:SetTexture("Interface\\Buttons\\WHITE8X8")
 headerBg:SetVertexColor(0.05, 0.05, 0.08, 0.9)
 
+-- Logo Oficial de WoW Perú
+local logo = header:CreateTexture(nil, "ARTWORK")
+logo:SetSize(100, 50)
+logo:SetPoint("LEFT", header, "LEFT", 10, 0)
+logo:SetTexture("Interface\\AddOns\\WoWPeru_BattlePass\\Textures\\wowperu_logo.tga")
+
 -- Título Principal Dorado
 local title = header:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge")
-title:SetPoint("TOPLEFT", header, "TOPLEFT", 16, -10)
+title:SetPoint("TOPLEFT", header, "TOPLEFT", 118, -10)
 title:SetText("|cFFD4AF37WoW Perú|r - " .. L["TITLE"])
 
 -- Subtítulo / Temporada dinámico
@@ -131,7 +137,7 @@ levelLabel:SetText("|cFFFFD100NIVEL|r")
 -- Barra de Experiencia (XP)
 local xpBar = CreateFrame("StatusBar", nil, header)
 xpBar:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -26)
-xpBar:SetWidth(460)
+xpBar:SetWidth(410)
 xpBar:SetHeight(16)
 xpBar:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
 xpBar:SetStatusBarColor(0.85, 0.65, 0.15) -- Dorado brillante

@@ -137,8 +137,8 @@ end
 -- ========================================================================
 local function SendClientPacket(player, payload)
     if not player or not payload then return end
-    -- Tipo 0 = Normal / Whisper al jugador
-    player:SendAddonMessage(ADDON_PREFIX, payload, 0, player)
+    -- Tipo 7 = CHAT_MSG_WHISPER (Canal oficial para CHAT_MSG_ADDON en WoW 3.3.5a)
+    player:SendAddonMessage(ADDON_PREFIX, payload, 7, player)
 end
 
 local GetOrRefreshQuestState -- Declaración previa para SendQuestSync
@@ -538,22 +538,36 @@ local function ProcessAddonMessage(player, message)
     elseif opCode == "BP_QUEST_PROGRESS" then
         local questId = tonumber(parts[2]) or 0
         local delta   = tonumber(parts[3]) or 1
-        if questId > 0 and delta > 0 and delta <= 10 then
-            local QUEST_DEFS = {
-                [1]   = { target = 1,  xp = 250 },
-                [2]   = { target = 1,  xp = 300 },
-                [3]   = { target = 2,  xp = 200 },
-                [4]   = { target = 25, xp = 150 },
-                [5]   = { target = 5,  xp = 150 },
-                [101] = { target = 3,  xp = 650 },
-                [102] = { target = 15, xp = 500 },
-                [103] = { target = 40, xp = 550 },
-                [201] = { target = 1,  xp = 400 },
-                [202] = { target = 3,  xp = 350 },
-                [203] = { target = 1,  xp = 750 },
+
+        -- SEGURIDAD AUTORITATIVA: Solo se aceptan misiones exclusivas de ecosistema (201-203).
+        -- Las misiones 1 a 103 son 100% autoritativas del core y no admiten reporte por addon.
+        if questId >= 201 and questId <= 203 and delta > 0 then
+            delta = 1 -- Normalización estricta: previene inyecciones en ráfaga
+
+            local map = player:GetMap()
+            if not map or not player:IsAlive() then return end
+
+            local ECO_QUEST_DEFS = {
+                [201] = { target = 1, xp = 400, requireRaid = true },
+                [202] = { target = 3, xp = 350, requireDungeon = true },
+                [203] = { target = 1, xp = 750, requireRaid = true, requireHardcore = true },
             }
-            local def = QUEST_DEFS[questId]
+
+            local def = ECO_QUEST_DEFS[questId]
             if def then
+                -- Validación espacial de estancia
+                if def.requireRaid and not map:IsRaid() then return end
+                if def.requireDungeon and not map:IsDungeon() then return end
+
+                -- Validación de Muerte Permanente / Modo Hardcore para misión 203
+                if def.requireHardcore then
+                    local qMode = CharDBQuery(string.format(
+                        "SELECT mode, is_dead FROM character_gamemodes WHERE guid = %d", guid))
+                    if not qMode or qMode:GetString(0) ~= "HARDCORE" or qMode:GetUInt8(1) == 1 then
+                        return
+                    end
+                end
+
                 AdvanceQuestProgress(player, questId, delta, def.target, def.xp)
             end
         end
@@ -666,21 +680,15 @@ local function OnCreatureKill(event, player, creature)
 end
 RegisterPlayerEvent(7, OnCreatureKill)
 
--- 4. Al Completar Misiones del Mundo (Eluna Event ID 54: PLAYER_EVENT_ON_QUEST_STATUS_CHANGED)
-local function OnQuestStatusChanged(event, player, questId, status)
-    if not player then return end
-
-    -- Filtrar únicamente cuando la misión es entregada y recompensada (status 6 = QUEST_STATUS_REWARDED)
-    -- Previene doble crédito (status 1 al completar objetivos + status 6 al entregar) y exploit por abandono
-    if status and status ~= 6 then
-        return
-    end
+-- 4. Al Completar Misiones del Mundo (Eluna Event ID 54: PLAYER_EVENT_ON_COMPLETE_QUEST)
+local function OnPlayerCompleteQuest(event, player, quest)
+    if not player or not quest then return end
 
     AddBattlePassXP(player, 35, "Misión Completada")
     -- Progreso Misión Semanal #102: Héroe del Reino (target 15, +500 XP)
     AdvanceQuestProgress(player, 102, 1, 15, 500)
 end
-RegisterPlayerEvent(54, OnQuestStatusChanged)
+RegisterPlayerEvent(54, OnPlayerCompleteQuest)
 
 -- 5. Al Conseguir Muertes con Honor (PVP) con soporte para grupo/banda
 local function OnPvpKill(event, killer, victim)
@@ -742,18 +750,25 @@ local function OnBattlegroundEnd(event, bg, bgId, instanceId, winner)
 
     if isArena then
         -- MODALIDAD ARENA (1v1, 2v2, 3v3) -> Misión Diaria #3: Duelo de Titanes
-        -- Identificar ganadores de forma infalible (supervivientes y compañeros de grupo)
         local arenaWinners = {}
-        for _, p in pairs(players) do
-            if p and p:IsInWorld() and p:IsAlive() then
-                arenaWinners[p:GetGUIDLow()] = true
-                local grp = p:GetGroup()
-                if grp then
-                    local members = grp:GetMembers()
-                    if members then
-                        for _, m in ipairs(members) do
-                            if m and m:IsInWorld() then
-                                arenaWinners[m:GetGUIDLow()] = true
+
+        -- Solo se adjudica victoria si hubo un ganador claro (0 = Alianza/Verde, 1 = Horda/Amarillo)
+        -- Si winner == 2 (TEAM_NEUTRAL / Empate por tiempo), nadie recibe bonificación de victoria
+        if winner == 0 or winner == 1 then
+            local aliveWinnerCount = (bg.GetAlivePlayersCountByTeam and bg:GetAlivePlayersCountByTeam(winner)) or 0
+            if aliveWinnerCount > 0 then
+                for _, p in pairs(players) do
+                    if p and p:IsInWorld() and p:IsAlive() then
+                        arenaWinners[p:GetGUIDLow()] = true
+                        local grp = p:GetGroup()
+                        if grp then
+                            local members = grp:GetMembers()
+                            if members then
+                                for _, m in ipairs(members) do
+                                    if m and m:IsInWorld() then
+                                        arenaWinners[m:GetGUIDLow()] = true
+                                    end
+                                end
                             end
                         end
                     end
@@ -767,7 +782,7 @@ local function OnBattlegroundEnd(event, bg, bgId, instanceId, winner)
                 -- Progreso Misión Diaria #3: Duelo de Titanes (target 2, +200 XP)
                 AdvanceQuestProgress(p, 3, 1, 2, 200)
 
-                -- Bonificación al ganador del encuentro
+                -- Bonificación exclusiva al ganador legítimo del encuentro
                 if arenaWinners[p:GetGUIDLow()] then
                     AddBattlePassXP(p, 25, "Victoria en Arena")
                 end
@@ -776,10 +791,15 @@ local function OnBattlegroundEnd(event, bg, bgId, instanceId, winner)
     else
         -- MODALIDAD CAMPO DE BATALLA (BG) -> Misión Diaria #2: Gloria en Batalla
         for _, p in pairs(players) do
-            if p and p:IsInWorld() and DidPlayerWinBG(p, winner) then
-                AddBattlePassXP(p, 75, "Victoria en Campo de Batalla")
-                -- Progreso Misión Diaria #2: Gloria en Batalla (target 1, +300 XP)
-                AdvanceQuestProgress(p, 2, 1, 1, 300)
+            if p and p:IsInWorld() then
+                -- Incentivo de retención: XP por completar el Campo de Batalla sin desertar
+                AddBattlePassXP(p, 35, "Participación en Campo de Batalla")
+
+                if DidPlayerWinBG(p, winner) then
+                    AddBattlePassXP(p, 75, "Victoria en Campo de Batalla")
+                    -- Progreso Misión Diaria #2: Gloria en Batalla (target 1, +300 XP)
+                    AdvanceQuestProgress(p, 2, 1, 1, 300)
+                end
             end
         end
     end
@@ -798,34 +818,44 @@ local function OnLootItem(event, player, item, count)
 end
 RegisterPlayerEvent(32, OnLootItem)
 
--- 8. Al Fabricar Objetos con Profesiones (Eluna Event ID 5: PLAYER_EVENT_ON_SPELL_CAST)
+-- ========================================================================
+-- 8. Al Crear Objetos con Profesiones (Eluna Event ID 52: PLAYER_EVENT_ON_CREATE_ITEM)
+-- ========================================================================
+local function OnPlayerCreateItem(event, player, item, count)
+    if not player or not item then return end
+    local amount = math.max(1, tonumber(count) or 1)
+    -- Progreso Misión Diaria #5: Artesano Andino (target 5, +150 XP)
+    -- Se elimina AddBattlePassXP no regulado para erradicar el exploit de fundición/vendajes masivos
+    AdvanceQuestProgress(player, 5, amount, 5, 150)
+end
+RegisterPlayerEvent(52, OnPlayerCreateItem)
+
+-- ========================================================================
+-- 9. Al Aplicar Encantamientos sobre Equipo (Eluna Event ID 5: PLAYER_EVENT_ON_SPELL_CAST)
+-- ========================================================================
 local function OnSpellCast(event, player, spell, skipCheck)
     if not player or not spell then return end
 
-    local spellId = (type(spell) == "number") and spell or (spell.GetEntry and spell:GetEntry())
-    if not spellId then return end
-
-    local spellInfo = GetSpellInfo(spellId)
-    if not spellInfo then return end
-
-    local isCraft = false
-    if spellInfo.IsLootCrafting and spellInfo:IsLootCrafting() then
-        isCraft = true
-    elseif spellInfo.IsAbilityLearnedWithProfession and spellInfo:IsAbilityLearnedWithProfession() then
-        isCraft = true
-    elseif spellInfo.GetEffectItemType and ((spellInfo:GetEffectItemType(0) or 0) > 0 or (spellInfo:GetEffectItemType(1) or 0) > 0 or (spellInfo:GetEffectItemType(2) or 0) > 0) then
-        isCraft = true
-    end
-
-    if isCraft then
-        -- Progreso Misión Diaria #5: Artesano Andino (target 5, +150 XP)
-        AdvanceQuestProgress(player, 5, 1, 5, 150)
-        AddBattlePassXP(player, 30, "Creación de Objeto")
+    -- Optimización de alto rendimiento: Solo inspeccionar hechizos cuyo objetivo sea un ítem
+    if type(spell) == "userdata" and spell.GetTarget then
+        local okTarget, targetObj = pcall(function() return spell:GetTarget() end)
+        if okTarget and targetObj and targetObj.ToItem and targetObj:ToItem() then
+            -- El objetivo es inequívocamente un ítem; verificar consumo legítimo de reactivos de oficio
+            if spell.GetReagentCost then
+                local okReagents, reagents = pcall(function() return spell:GetReagentCost() end)
+                if okReagents and reagents and next(reagents) ~= nil then
+                    -- Artesanía directa sobre equipo: avanza Misión Diaria #5 sin generar ítems huérfanos
+                    AdvanceQuestProgress(player, 5, 1, 5, 150)
+                end
+            end
+        end
     end
 end
 RegisterPlayerEvent(5, OnSpellCast)
 
--- 8. Captura de Mensajes del Addon (RegisterServerEvent 30)
+-- ========================================================================
+-- 10. Captura de Mensajes del Addon (RegisterServerEvent 30)
+-- ========================================================================
 local function OnServerAddonMessage(event, player, type, prefix, message, target)
     if prefix == ADDON_PREFIX then
         ProcessAddonMessage(player, message)
@@ -838,32 +868,57 @@ RegisterServerEvent(30, OnServerAddonMessage)
 -- ========================================================================
 -- COMANDOS PARA EL STAFF Y TIENDA WEB (.bp)
 -- ========================================================================
-local function OnStaffCommand(event, player, command)
+-- ========================================================================
+-- COMANDOS PARA EL STAFF Y TIENDA WEB (.bp) (SOAP & CONSOLE RESILIENTE)
+-- ========================================================================
+local function SendCommandReply(player, chatHandler, msg)
+    if player then
+        player:SendBroadcastMessage(msg)
+    elseif chatHandler and chatHandler.SendSysMessage then
+        chatHandler:SendSysMessage(msg)
+    else
+        print(string.format("[WoW Perú - BP] %s", tostring(msg):gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")))
+    end
+end
+
+local function OnStaffCommand(event, player, command, chatHandler)
     local args = {}
     for w in command:gmatch("%S+") do table.insert(args, w) end
 
     local cmd = (args[1] or ""):lower()
     if cmd == "bp" or cmd == ".bp" then
         local sub = (args[2] or ""):lower()
+        local isConsole = (player == nil)
+        local gmRank = isConsole and 3 or player:GetGMRank()
 
         -- Menú de ayuda interactivo (.bp o .bp help)
         if sub == "" or sub == "help" or sub == "ayuda" then
-            player:SendBroadcastMessage("|cFFD4AF37=== Pase de Batalla (WoW Perú) ===|r")
-            player:SendBroadcastMessage("  |cFFFFD100.bp sync|r - Sincroniza tu progreso con el servidor.")
-            player:SendBroadcastMessage("  |cFFFFD100.bp claim <nivel> [free|premium]|r - Reclama una recompensa.")
-            if player:GetGMRank() >= 2 then
-                player:SendBroadcastMessage("  |cFFFF8000.bp vip <jugador> <1|0>|r - Activa/revoca el Pase VIP.")
-                player:SendBroadcastMessage("  |cFFFF8000.bp addxp <jugador> <cantidad>|r - Otorga XP del Pase.")
+            SendCommandReply(player, chatHandler, "|cFFD4AF37=== Pase de Batalla (WoW Perú) ===|r")
+            if not isConsole then
+                SendCommandReply(player, chatHandler, "  |cFFFFD100.bp sync|r - Sincroniza tu progreso con el servidor.")
+                SendCommandReply(player, chatHandler, "  |cFFFFD100.bp claim <nivel> [free|premium]|r - Reclama una recompensa.")
+            end
+            if gmRank >= 2 then
+                SendCommandReply(player, chatHandler, "  |cFFFF8000.bp vip <jugador> <1|0>|r - Activa/revoca el Pase VIP.")
+                SendCommandReply(player, chatHandler, "  |cFFFF8000.bp addxp <jugador> <cantidad>|r - Otorga XP del Pase.")
             end
             return false
 
-        -- .bp sync
+        -- .bp sync (Exclusivo para jugadores in-game)
         elseif sub == "sync" then
+            if isConsole then
+                SendCommandReply(player, chatHandler, "El comando .bp sync solo puede ejecutarse in-game por un jugador.")
+                return false
+            end
             SendSync(player)
             return false
 
-        -- .bp claim <nivel> [free|premium] (Fallback seguro para jugadores solitarios o macros)
+        -- .bp claim (Exclusivo para jugadores in-game)
         elseif sub == "claim" then
+            if isConsole then
+                SendCommandReply(player, chatHandler, "El comando .bp claim solo puede ejecutarse in-game por un jugador.")
+                return false
+            end
             local lvl = tonumber(args[3]) or 0
             local trk = (args[4] or "free"):lower()
             if trk == "" or trk == "gratis" then trk = "free" end
@@ -871,20 +926,20 @@ local function OnStaffCommand(event, player, command)
             ProcessAddonMessage(player, string.format("BP_CLAIM:%d:%s", lvl, trk))
             return false
 
-        -- .bp vip <jugador> <1|0|on|off>
+        -- .bp vip <jugador> <1|0|on|off> (Válido para GM y Consola/SOAP)
         elseif sub == "vip" then
-            if player:GetGMRank() < 2 then
-                player:SendBroadcastMessage("|cFFFF4444[WoW Perú]|r No tienes permisos para usar este comando.")
+            if gmRank < 2 then
+                SendCommandReply(player, chatHandler, "|cFFFF4444[WoW Perú]|r No tienes permisos para usar este comando.")
                 return false
             end
             local targetName = args[3]
             if not targetName or targetName == "" then
-                player:SendBroadcastMessage("|cFFFF4444[WoW Perú]|r Uso: .bp vip <nombre_jugador> <1|0|on|off>")
+                SendCommandReply(player, chatHandler, "|cFFFF4444[WoW Perú]|r Uso: .bp vip <nombre_jugador> <1|0|on|off>")
                 return false
             end
 
             if targetName:find("['\"\\;%s]") or #targetName < 2 or #targetName > 24 then
-                player:SendBroadcastMessage("|cFFFF4444[WoW Perú]|r Nombre de personaje inválido.")
+                SendCommandReply(player, chatHandler, "|cFFFF4444[WoW Perú]|r Nombre de personaje inválido.")
                 return false
             end
 
@@ -902,61 +957,61 @@ local function OnStaffCommand(event, player, command)
                 SavePlayerData(tGuid)
                 SendSync(target)
                 target:SendBroadcastMessage(flag == 1 and "|cFFD4AF37[WoW Perú]|r ¡Pase VIP activado!" or "|cFFFF4444[WoW Perú]|r Pase VIP revocado.")
-                player:SendBroadcastMessage(string.format("|cFFD4AF37[WoW Perú]|r Estado VIP actualizado a %d para %s (conectado).", flag, targetName))
+                SendCommandReply(player, chatHandler, string.format("|cFFD4AF37[WoW Perú]|r Estado VIP actualizado a %d para %s (conectado).", flag, targetName))
             else
                 -- Jugador desconectado: Validar existencia real en 'characters'
                 local qChar = CharDBQuery(string.format("SELECT guid FROM characters WHERE name = '%s'", targetName))
                 if not qChar then
-                    player:SendBroadcastMessage(string.format("|cFFFF4444[WoW Perú]|r El personaje '%s' no existe en el reino.", targetName))
+                    SendCommandReply(player, chatHandler, string.format("|cFFFF4444[WoW Perú]|r El personaje '%s' no existe en el reino.", targetName))
                     return false
                 end
                 local tGuid = qChar:GetUInt32(0)
 
-                -- UPSERT seguro: Si no ha iniciado sesión en la temporada actual, crea el registro con VIP activo
+                -- UPSERT seguro en MySQL
                 CharDBExecute(string.format([[
                     INSERT INTO character_battlepass (guid, season_id, level, xp, is_premium, claimed_free, claimed_premium)
                     VALUES (%d, %d, 1, 0, %d, '0000000000000', '0000000000000')
                     ON DUPLICATE KEY UPDATE is_premium = %d
                 ]], tGuid, SEASON_ID, flag, flag))
-                player:SendBroadcastMessage(string.format("|cFFD4AF37[WoW Perú]|r Estado VIP actualizado a %d para %s (desconectado, guardado en BD).", flag, targetName))
+                SendCommandReply(player, chatHandler, string.format("|cFFD4AF37[WoW Perú]|r Estado VIP actualizado a %d para %s (desconectado, guardado en BD).", flag, targetName))
             end
             return false
 
-        -- .bp addxp <jugador> <cantidad>
+        -- .bp addxp <jugador> <cantidad> (Válido para GM y Consola/SOAP)
         elseif sub == "addxp" then
-            if player:GetGMRank() < 2 then
-                player:SendBroadcastMessage("|cFFFF4444[WoW Perú]|r No tienes permisos para usar este comando.")
+            if gmRank < 2 then
+                SendCommandReply(player, chatHandler, "|cFFFF4444[WoW Perú]|r No tienes permisos para usar este comando.")
                 return false
             end
             local targetName = args[3]
             if not targetName or targetName == "" then
-                player:SendBroadcastMessage("|cFFFF4444[WoW Perú]|r Uso: .bp addxp <nombre_jugador> <cantidad>")
+                SendCommandReply(player, chatHandler, "|cFFFF4444[WoW Perú]|r Uso: .bp addxp <nombre_jugador> <cantidad>")
                 return false
             end
 
             if targetName:find("['\"\\;%s]") or #targetName < 2 or #targetName > 24 then
-                player:SendBroadcastMessage("|cFFFF4444[WoW Perú]|r Nombre de personaje inválido.")
+                SendCommandReply(player, chatHandler, "|cFFFF4444[WoW Perú]|r Nombre de personaje inválido.")
                 return false
             end
 
             local amount = tonumber(args[4])
             if not amount or amount <= 0 then
-                player:SendBroadcastMessage("|cFFFF4444[WoW Perú]|r Cantidad inválida. Debe ser un número mayor a 0.")
+                SendCommandReply(player, chatHandler, "|cFFFF4444[WoW Perú]|r Cantidad inválida. Debe ser un número mayor a 0.")
                 return false
             end
 
             local target = GetPlayerByName(targetName)
             if target then
                 AddBattlePassXP(target, amount, "Comando Staff")
-                player:SendBroadcastMessage(string.format("|cFFD4AF37[WoW Perú]|r Se otorgaron %d XP a %s", amount, targetName))
+                SendCommandReply(player, chatHandler, string.format("|cFFD4AF37[WoW Perú]|r Se otorgaron %d XP a %s", amount, targetName))
             else
-                player:SendBroadcastMessage(string.format("|cFFFF4444[WoW Perú]|r Jugador '%s' no encontrado o desconectado.", targetName))
+                SendCommandReply(player, chatHandler, string.format("|cFFFF4444[WoW Perú]|r Jugador '%s' no encontrado o desconectado.", targetName))
             end
             return false
 
         -- Subcomando desconocido
         else
-            player:SendBroadcastMessage("|cFFFF4444[WoW Perú]|r Subcomando desconocido. Usa |cFFFFD100.bp help|r.")
+            SendCommandReply(player, chatHandler, "|cFFFF4444[WoW Perú]|r Subcomando desconocido. Usa |cFFFFD100.bp help|r.")
             return false
         end
     end
