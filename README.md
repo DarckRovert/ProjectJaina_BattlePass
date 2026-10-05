@@ -58,8 +58,24 @@ WoWPeru_BattlePass/
 
 ---
 
+## 📄 Licencia
+
+Este proyecto está licenciado bajo los términos de la **Licencia MIT**. Consulta el archivo [LICENSE](LICENSE) para más detalles.
+
+---
+
+## 📚 Documentación del Ecosistema
+
+* [Ficha Técnica Oficial del Ecosistema](ECOSYSTEM_REGISTRY.md)
+* [Historial de Cambios](CHANGELOG.md)
+* [Guía de Contribución](CONTRIBUTING.md)
+* [Política de Seguridad](SECURITY.md)
+* [Gobernanza del Proyecto](GOVERNANCE.md)
+* [Licencia MIT](LICENSE)
+
+---
+
 ## 👥 Créditos
 
 * **Desarrollo y Arquitectura:** DarckRovert (Ingame: Elnazzareno) & Equipo de WoW Perú
 * **Sitio Web Oficial:** [https://wow-peru.lat/](https://wow-peru.lat/)
-* **Licencia:** MIT License. Libre para uso, mejora y adaptación en el proyecto WoW Perú.
