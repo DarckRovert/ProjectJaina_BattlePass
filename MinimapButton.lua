@@ -71,12 +71,23 @@ btn.highlight = highlight
 -- EVENTOS DE RATÓN (ARRASTRE EFICIENTE Y CLIC)
 -- ========================================================================
 local wasDragged = false
+local dragStartX, dragStartY = 0, 0
+local DRAG_THRESHOLD_SQ = 16 -- 4 píxeles de tolerancia física para diferenciar clic de arrastre
 
 local function OnDragUpdate(self)
+    local curX, curY = GetCursorPosition()
+    if not wasDragged then
+        local dx = curX - dragStartX
+        local dy = curY - dragStartY
+        if (dx * dx + dy * dy) < DRAG_THRESHOLD_SQ then
+            return
+        end
+        wasDragged = true
+    end
+
     local mx, my = Minimap:GetCenter()
-    local px, py = GetCursorPosition()
     local scale = Minimap:GetEffectiveScale()
-    px, py = px / scale, py / scale
+    local px, py = curX / scale, curY / scale
 
     local angle = math.deg(math.atan2(py - my, px - mx))
     if angle < 0 then angle = angle + 360 end
@@ -85,11 +96,11 @@ local function OnDragUpdate(self)
     WoWPeru_BattlePass_CharDB.minimapAngle = angle
 
     UpdatePosition(self, angle)
-    wasDragged = true
 end
 
 btn:SetScript("OnDragStart", function(self)
     wasDragged = false
+    dragStartX, dragStartY = GetCursorPosition()
     self:LockHighlight()
     self:SetScript("OnUpdate", OnDragUpdate)
 end)
