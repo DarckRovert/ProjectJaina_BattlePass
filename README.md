@@ -1,5 +1,6 @@
 # 🇵🇪 WoW Perú - Pase de Batalla (Battle Pass Suite v2.0.0)
 
+[![GitHub](https://img.shields.io/badge/GitHub-DarckRovert%2FWoWPeru__BattlePass-black?logo=github)](https://github.com/DarckRovert/WoWPeru_BattlePass)
 [![WoW Client](https://img.shields.io/badge/WoW%20Client-3.3.5a%20(Build%2012340)-blue.svg)](https://wow-peru.lat/)
 [![Server](https://img.shields.io/badge/Servidor-WoW%20Perú-gold.svg)](https://wow-peru.lat/)
 [![Realm](https://img.shields.io/badge/Reino-Reino%20Andino-red.svg)](https://wow-peru.lat/)
