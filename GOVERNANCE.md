@@ -3,7 +3,7 @@
 **Versión del Documento:** 1.0.0  
 **Fecha de Entrada en Vigor:** 27 de Septiembre de 2026  
 **Líder del Proyecto / Autor:** DarckRovert (Ingame: Elnazzareno)  
-**Servidor Destino:** [Project Jaina](https://worldofwanos.com/) - Project Jaina  
+**Servidor Destino:** [Project Jaina](https://projectjaina.com/) - Project Jaina  
 **Entorno de Ejecución:** World of Warcraft 3.3.5a (Build 12340) | Eluna Lua Engine (TrinityCore / AzerothCore)  
 
 ---
@@ -53,7 +53,7 @@ El proyecto se rige bajo un modelo de **Liderazgo Técnico Centralizado**:
 - **Responsabilidades:**
   - Mantenimiento del script de servidor (`Server/70_BattlePassSystem.lua`) y del addon cliente (`Core.lua`, `UI.lua`, `MinimapButton.lua`, `Config.lua`).
   - Verificación estricta de compatibilidad de ítems con el DBC de WotLK 3.3.5a (Build 12340).
-  - Integración del pipeline de donaciones web (`https://worldofwanos.com/`) con las tablas `character_battlepass`.
+  - Integración del pipeline de donaciones web (`https://projectjaina.com/`) con las tablas `character_battlepass`.
   - Asegurar la integridad de sintaxis Lua (balance de bloques sin fugas).
 
 ### 2.3. Game Masters (Staff de Soporte)

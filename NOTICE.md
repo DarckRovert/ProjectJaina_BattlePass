@@ -7,7 +7,7 @@ Contiene el sistema de Pase de Batalla Estacional (Free y VIP) para el cliente W
 
 ## 1. Autoría y Desarrollo Oficial
 * **Desarrollador Principal:** DarckRovert (Ingame: `Elnazzareno`) & Project Jaina Team
-* **Ecosistema:** [Project Jaina — Project Jaina](https://worldofwanos.com/)
+* **Ecosistema:** [Project Jaina — Project Jaina](https://projectjaina.com/)
 * **Repositorio Oficial:** [DarckRovert/Jaina_BattlePass](https://github.com/DarckRovert/Jaina_BattlePass)
 
 ---

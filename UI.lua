@@ -1,7 +1,7 @@
 --[[
     ========================================================================
     Project Jaina - Pase de Batalla (UI.lua)
-    Reino: Project Jaina | Servidor: https://worldofwanos.com/
+    Reino: Project Jaina | Servidor: https://projectjaina.com/
     Cliente Compatible: World of Warcraft 3.3.5a (Build 12340)
     ========================================================================
     Interfaz de Usuario: Carrusel virtual de 5 slots reciclables (Cero lag),
@@ -738,7 +738,7 @@ vipCopyBox:SetSize(320, 24)
 vipCopyBox:SetPoint("BOTTOMLEFT", vipContainer, "BOTTOMLEFT", 30, 26)
 vipCopyBox:SetFontObject("GameFontHighlight")
 vipCopyBox:SetAutoFocus(false)
-vipCopyBox:SetText("https://worldofwanos.com/")
+vipCopyBox:SetText("https://projectjaina.com/")
 vipCopyBox:SetBackdrop({
     bgFile = "Interface\\Buttons\\WHITE8X8",
     edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",

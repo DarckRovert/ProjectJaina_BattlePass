@@ -1,6 +1,6 @@
 # 🛡️ Guía Técnica de Integración para el Staff: Project Jaina Battle Pass (v1.0.0)
 
-> **Servidor Destino:** [Project Jaina](https://worldofwanos.com/) - Project Jaina  
+> **Servidor Destino:** [Project Jaina](https://projectjaina.com/) - Project Jaina  
 > **Motor Compatible:** AzerothCore o TrinityCore con **Eluna Lua Engine**  
 > **Cliente:** World of Warcraft 3.3.5a (Build 12340)
 
@@ -52,7 +52,7 @@ Para que los jugadores disfruten del Pase de Batalla sin necesidad de configurac
 2. Abre el archivo de parches del servidor: `Data/patch-Z-Project Jaina.MPQ`.
 3. Navega hasta:
    ```
-   Interface\AddOns\Jaina_BattlePass\
+   Interface\AddOns\ProjectJaina_BattlePass\
    ```
 4. Añade todos los archivos del addon:
    * `Jaina_BattlePass.toc`
@@ -80,7 +80,7 @@ El script de servidor incluye comandos para Game Masters (Rango GM $\ge 2$):
 
 ## 5. Integración con la Tienda Web de Donaciones
 
-Cuando un jugador adquiere el Pase VIP en la página web ([worldofwanos.com](https://worldofwanos.com/)):
+Cuando un jugador adquiere el Pase VIP en la página web ([projectjaina.com](https://projectjaina.com/)):
 
 ### Opción 1: Inyección Directa en Base de Datos (Recomendada)
 El backend web (PHP/Node/Python) ejecuta la siguiente consulta en la base de datos `characters`:

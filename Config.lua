@@ -1,7 +1,7 @@
 --[[
     ========================================================================
     Project Jaina - Pase de Batalla (Config.lua)
-    Reino: Project Jaina | Servidor: https://worldofwanos.com/
+    Reino: Project Jaina | Servidor: https://projectjaina.com/
     Cliente Compatible: World of Warcraft 3.3.5a (Build 12340)
     ========================================================================
     Configuración de Temporadas, Niveles (1-50), Recompensas y Misiones.

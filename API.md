@@ -1,7 +1,7 @@
 # 🔌 Especificación Técnica y API — Jaina_BattlePass
 
 [![GitHub](https://img.shields.io/badge/GitHub-DarckRovert%2FJaina_BattlePass-black?logo=github)](https://github.com/DarckRovert/Jaina_BattlePass)
-[![Ecosistema](https://img.shields.io/badge/Ecosistema-WoW%20Per%C3%BA%203.3.5a-gold.svg)](https://worldofwanos.com/)
+[![Ecosistema](https://img.shields.io/badge/Ecosistema-WoW%20Per%C3%BA%203.3.5a-gold.svg)](https://projectjaina.com/)
 
 ## 📌 Resumen Arquitectónico
 Sistema estacional de Pase de Batalla con 50 niveles de progresión, desafíos diarios/semanales, recompensas exclusivas y sincronización de auras de cuenta.

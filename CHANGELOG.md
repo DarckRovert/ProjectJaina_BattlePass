@@ -30,7 +30,7 @@ Primera versión de producción del sistema de Pase de Batalla de Project Jaina,
 - **Sistema de Progresión de 50 Niveles:** Vía Gratuita y Vía Premium (VIP) completas con recompensas balanceadas (oro, pociones, gemas, bolsas, emblemas de triunfo/escarcha, mascotas, monturas y títulos).
 - **Carrusel Virtual de 5 Ranuras:** Renderizado de alto rendimiento en [UI.lua](UI.lua) mediante un pool virtual reciclable en memoria, garantizando 60 FPS estables en PCs de cabinas de internet ($800\times600$ a $4\text{K}$).
 - **Protocolo Hexadecimal Bitmask:** Sincronización atómica de los 50 niveles en 13 caracteres hexadecimales (`3FFFFFFFFFFFF`), inmune al límite estricto de 255 bytes por paquete de `SendAddonMessage`.
-- **Caja de Enlace VIP Interactiva:** Widget `EditBox` con auto-selección (`HighlightText()`) para copiar el enlace de donación de [worldofwanos.com](https://worldofwanos.com/) sin fricción en el cliente 3.3.5a.
+- **Caja de Enlace VIP Interactiva:** Widget `EditBox` con auto-selección (`HighlightText()`) para copiar el enlace de donación de [projectjaina.com](https://projectjaina.com/) sin fricción en el cliente 3.3.5a.
 - **Botón de Minimapa Reactivo:** Blasón dorado con órbita circular suave y tooltip en tiempo real con estadísticas de nivel, porcentaje y misiones diarias.
 - **Misiones Diarias y Semanales:** Motor de misiones con reinicio determinista a las 04:00 AM (diario) y miércoles 04:00 AM (semanal).
 - **Comandos de Administración `.bp`:** Herramientas para Game Masters (`.bp addxp`, `.bp setlevel`, `.bp setvip`, `.bp resetquests`, `.bp reload`).
