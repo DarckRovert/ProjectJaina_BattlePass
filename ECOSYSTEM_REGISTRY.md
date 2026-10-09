@@ -115,7 +115,7 @@ Cuando se planifique crear un nuevo sistema para Project Jaina:
 | 15 | [Project JainaVisualShop](https://github.com/DarckRovert/Project JainaVisualShop) | `Project JainaVisualShop` | 1.0.1 | MIT | Tienda oficial de efectos visuales, auras y alas con backend Eluna (59_SpellVisualCatalog.lua). |
 | 16 | [ProjectJaina_Voice](https://github.com/DarckRovert/ProjectJaina_Voice) | `ProjectJaina_Voice` | 1.0.0 | MIT | Voz espacial 3D por proximidad y vinculación WebRTC con backend Eluna (65_VoiceProximitySync.lua). |
 
-### B. Suites Comunitarias Monorepositorio Pre-instaladas (`WoW_Peru_Lab\AddOns\`)
+### B. Suites Comunitarias Monorepositorio Pre-instaladas (`ProjectJaina_Lab\AddOns\`)
 
 | # | Repositorio GitHub | Carpeta Local | Versión | Tipo / Licencia | Propósito en el Ecosistema |
 |:---:|---|---|:---:|:---:|---|
