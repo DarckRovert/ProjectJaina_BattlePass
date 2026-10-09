@@ -1,7 +1,7 @@
 --[[
     ========================================================================
     Project Jaina - Pase de Batalla (70_BattlePassSystem.lua)
-    Reino: Project Jaina | Servidor: https://projectjaina.com/
+    Reino: Project Jaina | Servidor: https://darckrovert.github.io/ProjectJaina_Web/
     Motor: AzerothCore / TrinityCore con Eluna Lua Engine
     ========================================================================
     Backend de Servidor: Gestión de niveles (1-50), persistencia en MySQL,

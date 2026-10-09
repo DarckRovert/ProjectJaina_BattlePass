@@ -49,7 +49,7 @@ Si descubres una vulnerabilidad de seguridad crítica o un fallo que permita la 
 1. **NO divulgarla públicamente:** No crear issues públicos en GitHub ni compartirla en canales de chat abiertos.
 2. **Canal de Contacto Directo:**
    - Discord oficial de Project Jaina: Contactar directamente a `DarckRovert` (Elnazzareno).
-   - Servidor: [https://projectjaina.com/](https://projectjaina.com/)
+   - Servidor: [https://darckrovert.github.io/ProjectJaina_Web/](https://darckrovert.github.io/ProjectJaina_Web/)
 3. **Información a Proporcionar:**
    - Pasos detallados para reproducir el comportamiento.
    - Capturas de paquetes o logs del emulador (si aplica).

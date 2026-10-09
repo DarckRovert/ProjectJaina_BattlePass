@@ -1,6 +1,6 @@
 # 📦 Guía de Instalación y Despliegue — Jaina_BattlePass
 
-[![WoW Version](https://img.shields.io/badge/WoW-3.3.5a%20(12340)-blue.svg)](https://projectjaina.com/)
+[![WoW Version](https://img.shields.io/badge/WoW-3.3.5a%20(12340)-blue.svg)](https://darckrovert.github.io/ProjectJaina_Web/)
 [![Repositorio](https://img.shields.io/badge/GitHub-DarckRovert%2FJaina_BattlePass-black?logo=github)](https://github.com/DarckRovert/Jaina_BattlePass)
 
 ## 📋 Requisitos Previos

@@ -1,9 +1,9 @@
-# 🇵🇪 Project Jaina - Pase de Batalla (Battle Pass Suite v2.0.0)
+# ❄️ Project Jaina - Pase de Batalla (Battle Pass Suite v2.0.0)
 
-[![GitHub](https://img.shields.io/badge/GitHub-DarckRovert%2FWanos__BattlePass-black?logo=github)](https://github.com/DarckRovert/Jaina_BattlePass)
-[![WoW Client](https://img.shields.io/badge/WoW%20Client-3.3.5a%20(Build%2012340)-blue.svg)](https://projectjaina.com/)
-[![Server](https://img.shields.io/badge/Servidor-WoW%20Perú-gold.svg)](https://projectjaina.com/)
-[![Realm](https://img.shields.io/badge/Reino-Reino%20Andino-red.svg)](https://projectjaina.com/)
+[![GitHub](https://img.shields.io/badge/GitHub-DarckRovert%2FProjectJaina__BattlePass-black?logo=github)](https://github.com/DarckRovert/Jaina_BattlePass)
+[![WoW Client](https://img.shields.io/badge/WoW%20Client-3.3.5a%20(Build%2012340)-blue.svg)](https://darckrovert.github.io/ProjectJaina_Web/)
+[![Server](https://img.shields.io/badge/Servidor-Project%20Jaina-00ccff.svg)](https://darckrovert.github.io/ProjectJaina_Web/)
+[![Realm](https://img.shields.io/badge/Reino-Reino%20Andino-red.svg)](https://darckrovert.github.io/ProjectJaina_Web/)
 [![License](https://img.shields.io/badge/Licencia-MIT-green.svg)](LICENSE)
 
 Sistema estacional de Pase de Batalla (Free y Premium VIP) con **50 niveles de progresión**, misiones diarias/semanales y recompensas exclusivas diseñado específicamente para el servidor **Project Jaina** (Project Jaina, 3.3.5a Build 12340).
@@ -15,7 +15,7 @@ Sistema estacional de Pase de Batalla (Free y Premium VIP) con **50 niveles de p
 * **Progresión Estacional de 50 Niveles:** Sube de nivel realizando actividades cotidianas: mazmorras, campos de batalla (CFBG), arenas 1v1, misiones de mundo y muertes de monstruos.
 * **Modelo Dual Justo:**
   * **Vía Gratuita:** Oro, pociones, bolsas, gemas épicas, emblemas de triunfo/escarcha, mascotas y títulos al alcance de todos los jugadores.
-  * **Vía Premium (VIP):** Monturas exclusivas de temporada, auras visuales y efectos épicos para jugadores que apoyan el proyecto en [projectjaina.com](https://projectjaina.com/).
+  * **Vía Premium (VIP):** Monturas exclusivas de temporada, auras visuales y efectos épicos para jugadores que apoyan el proyecto en [projectjaina.com](https://darckrovert.github.io/ProjectJaina_Web/).
 * **Carrusel Virtual de Alto Rendimiento:** Utiliza un pool de 5 ranuras reciclables en memoria. Cero caídas de FPS incluso en ordenadores de cabinas de internet ($800\times600$ a $4\text{K}$).
 * **Botón de Minimapa Interactivo:** Botón circular con el blasón dorado de Project Jaina, órbita radial libre y tooltip reactivo con el nivel, porcentaje de XP y misiones completadas hoy.
 * **Protocolo Bitmask Seguro (Inmune al límite de 255 bytes de la 3.3.5a):** Los 50 niveles se sincronizan en 13 caracteres hexadecimales, garantizando estabilidad absoluta y cero duplicación de recompensas.
@@ -79,4 +79,4 @@ Este proyecto está licenciado bajo los términos de la **Licencia MIT**. Consul
 ## 👥 Créditos
 
 * **Desarrollo y Arquitectura:** DarckRovert (Ingame: Elnazzareno) & Equipo de Project Jaina
-* **Sitio Web Oficial:** [https://projectjaina.com/](https://projectjaina.com/)
+* **Sitio Web Oficial:** [https://darckrovert.github.io/ProjectJaina_Web/](https://darckrovert.github.io/ProjectJaina_Web/)

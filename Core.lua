@@ -1,7 +1,7 @@
 --[[
     ========================================================================
     Project Jaina - Pase de Batalla (Core.lua)
-    Reino: Project Jaina | Servidor: https://projectjaina.com/
+    Reino: Project Jaina | Servidor: https://darckrovert.github.io/ProjectJaina_Web/
     Cliente Compatible: World of Warcraft 3.3.5a (Build 12340)
     ========================================================================
     Motor central: Máquina de estados, codificador/decodificador bitmask hex,
