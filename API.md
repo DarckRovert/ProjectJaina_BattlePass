@@ -1,13 +1,13 @@
-# 🔌 Especificación Técnica y API — Jaina_BattlePass
+# 🔌 Especificación Técnica y API — ProjectJaina_BattlePass
 
-[![GitHub](https://img.shields.io/badge/GitHub-DarckRovert%2FJaina_BattlePass-black?logo=github)](https://github.com/DarckRovert/Jaina_BattlePass)
+[![GitHub](https://img.shields.io/badge/GitHub-DarckRovert%2FProjectJaina_BattlePass-black?logo=github)](https://github.com/DarckRovert/ProjectJaina_BattlePass)
 [![Ecosistema](https://img.shields.io/badge/Ecosistema-WoW%20Per%C3%BA%203.3.5a-gold.svg)](https://darckrovert.github.io/ProjectJaina_Web/)
 
 ## 📌 Resumen Arquitectónico
 Sistema estacional de Pase de Batalla con 50 niveles de progresión, desafíos diarios/semanales, recompensas exclusivas y sincronización de auras de cuenta.
 
 - **Rol en el Ecosistema:** Módulo Oficial #12 — Pase de Batalla
-- **Archivo Principal TOC:** `Jaina_BattlePass.toc`
+- **Archivo Principal TOC:** `ProjectJaina_BattlePass.toc`
 - **Compatibilidad del Motor:** World of Warcraft 3.3.5a (Build 12340)
 
 ---
@@ -30,8 +30,8 @@ Sistema estacional de Pase de Batalla con 50 niveles de progresión, desafíos d
 ---
 
 ## 💾 Persistencia de Datos (SavedVariables)
-- `Jaina_BattlePass_CharDB`: Almacenamiento estructurado de configuración y estado persistente.
-- `Jaina_BattlePass_GlobalDB`: Almacenamiento estructurado de configuración y estado persistente.
+- `ProjectJaina_BattlePass_CharDB`: Almacenamiento estructurado de configuración y estado persistente.
+- `ProjectJaina_BattlePass_GlobalDB`: Almacenamiento estructurado de configuración y estado persistente.
 
 ---
 

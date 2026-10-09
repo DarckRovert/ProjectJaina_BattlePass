@@ -1,6 +1,6 @@
 # ❄️ Project Jaina - Pase de Batalla (Battle Pass Suite v2.0.0)
 
-[![GitHub](https://img.shields.io/badge/GitHub-DarckRovert%2FProjectJaina__BattlePass-black?logo=github)](https://github.com/DarckRovert/Jaina_BattlePass)
+[![GitHub](https://img.shields.io/badge/GitHub-DarckRovert%2FProjectJaina__BattlePass-black?logo=github)](https://github.com/DarckRovert/ProjectJaina_BattlePass)
 [![WoW Client](https://img.shields.io/badge/WoW%20Client-3.3.5a%20(Build%2012340)-blue.svg)](https://darckrovert.github.io/ProjectJaina_Web/)
 [![Server](https://img.shields.io/badge/Servidor-Project%20Jaina-00ccff.svg)](https://darckrovert.github.io/ProjectJaina_Web/)
 [![Realm](https://img.shields.io/badge/Reino-Reino%20Andino-red.svg)](https://darckrovert.github.io/ProjectJaina_Web/)
@@ -36,8 +36,8 @@ Sistema estacional de Pase de Batalla (Free y Premium VIP) con **50 niveles de p
 ## 📁 Estructura del Módulo
 
 ```
-Jaina_BattlePass/
-├── Jaina_BattlePass.toc      # Metadatos del Addon
+ProjectJaina_BattlePass/
+├── ProjectJaina_BattlePass.toc      # Metadatos del Addon
 ├── Config.lua                  # Temporada, 50 niveles de recompensas y misiones
 ├── Locales.lua                 # Localización Español (Project Jaina) / Inglés
 ├── Core.lua                    # Motor de eventos, parser bitmask y red

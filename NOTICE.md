@@ -1,4 +1,4 @@
-# 📜 Aviso Legal y Atribución — Jaina_BattlePass
+# 📜 Aviso Legal y Atribución — ProjectJaina_BattlePass
 
 Este repositorio forma parte del ecosistema oficial de **Project Jaina - Project Jaina**.
 Contiene el sistema de Pase de Batalla Estacional (Free y VIP) para el cliente World of Warcraft 3.3.5a (Build 12340).
@@ -8,7 +8,7 @@ Contiene el sistema de Pase de Batalla Estacional (Free y VIP) para el cliente W
 ## 1. Autoría y Desarrollo Oficial
 * **Desarrollador Principal:** DarckRovert (Ingame: `Elnazzareno`) & Antigravity (Mythos 5)
 * **Ecosistema:** [Project Jaina — Project Jaina](https://darckrovert.github.io/ProjectJaina_Web/)
-* **Repositorio Oficial:** [DarckRovert/Jaina_BattlePass](https://github.com/DarckRovert/Jaina_BattlePass)
+* **Repositorio Oficial:** [DarckRovert/ProjectJaina_BattlePass](https://github.com/DarckRovert/ProjectJaina_BattlePass)
 
 ---
 

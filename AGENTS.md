@@ -1,6 +1,6 @@
-# 🤖 Reglas de Contexto y Memoria para Agentes de IA - Jaina_BattlePass
+# 🤖 Reglas de Contexto y Memoria para Agentes de IA - ProjectJaina_BattlePass
 
-> **Repositorio Oficial:** [DarckRovert/Jaina_BattlePass](https://github.com/DarckRovert/Jaina_BattlePass)  
+> **Repositorio Oficial:** [DarckRovert/ProjectJaina_BattlePass](https://github.com/DarckRovert/ProjectJaina_BattlePass)  
 > **Líder del Proyecto:** DarckRovert (Ingame: `Elnazzareno`)  
 > **Servidor Destino:** [Project Jaina](https://darckrovert.github.io/ProjectJaina_Web/) - Project Jaina  
 > **Entorno:** WotLK 3.3.5a (Build 12340) | Motor Eluna Lua Engine  

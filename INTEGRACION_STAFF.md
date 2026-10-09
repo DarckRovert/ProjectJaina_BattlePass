@@ -9,7 +9,7 @@
 ## 1. Visión General de la Arquitectura
 
 El sistema de Pase de Batalla de Project Jaina consta de tres capas desacopladas:
-1. **Frontend (Addon Cliente):** `Jaina_BattlePass` embebido en el MPQ del cliente o distribuido en `Interface/AddOns/`.
+1. **Frontend (Addon Cliente):** `ProjectJaina_BattlePass` embebido en el MPQ del cliente o distribuido en `Interface/AddOns/`.
 2. **Backend (Script Eluna):** `70_BattlePassSystem.lua` ejecutado en el emulador del servidor.
 3. **Persistencia (MySQL):** Tablas `character_battlepass` y `character_battlepass_quests` en la base de datos `characters`.
 
@@ -52,10 +52,10 @@ Para que los jugadores disfruten del Pase de Batalla sin necesidad de configurac
 2. Abre el archivo de parches del servidor: `Data/patch-Z-Project Jaina.MPQ`.
 3. Navega hasta:
    ```
-   Interface\AddOns\ProjectJaina_BattlePass\
+   Interface\AddOns\ProjectProjectJaina_BattlePass\
    ```
 4. Añade todos los archivos del addon:
-   * `Jaina_BattlePass.toc`
+   * `ProjectJaina_BattlePass.toc`
    * `Config.lua`
    * `Locales.lua`
    * `Core.lua`

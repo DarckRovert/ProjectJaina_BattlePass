@@ -1,4 +1,4 @@
-# 🌐 Registro de Ecosistema — Jaina_BattlePass
+# 🌐 Registro de Ecosistema — ProjectJaina_BattlePass
 
 Ficha técnica oficial de registro en la infraestructura multi-addon de **Project Jaina - Project Jaina**.
 
@@ -8,12 +8,12 @@ Ficha técnica oficial de registro en la infraestructura multi-addon de **Projec
 
 | Campo | Valor |
 |---|---|
-| **Nombre Técnico** | `Jaina_BattlePass` |
-| **Carpeta Local** | `Jaina_BattlePass` |
+| **Nombre Técnico** | `ProjectJaina_BattlePass` |
+| **Carpeta Local** | `ProjectJaina_BattlePass` |
 | **Versión Actual** | `2.0.0` |
 | **Clasificación** | Cliente / Gameplay |
 | **Licencia Formal** | MIT |
-| **Repositorio GitHub** | [Jaina_BattlePass](https://github.com/DarckRovert/Jaina_BattlePass) |
+| **Repositorio GitHub** | [ProjectJaina_BattlePass](https://github.com/DarckRovert/ProjectJaina_BattlePass) |
 | **Entorno de Juego** | World of Warcraft 3.3.5a (Build 12340) / AzerothCore |
 
 ---
@@ -26,8 +26,8 @@ Todo sistema que persista datos en la base de datos `characters` debe respetar e
 
 | Tabla MySQL | Sistema Propietario | Clave Primaria / Índices | Propósito | Limpieza en Delete (`PLAYER_EVENT_ON_CHARACTER_DELETE`) |
 | :--- | :--- | :--- | :--- | :--- |
-| **`character_battlepass`** | `Jaina_BattlePass` | `guid` (INT UNSIGNED, PK) | Almacena nivel actual, XP, estado VIP (0/1), y máscaras de bits hexadecimales de recompensas reclamadas (`free_claims`, `premium_claims`). | **Obligatoria** (Previene herencia indebida de recompensas en LowGUID reciclado). |
-| **`character_battlepass_quests`** | `Jaina_BattlePass` | `(guid, quest_id)` (Composite PK) | Almacena el progreso de objetivos (`progress`), estado de completado (`completed`) y timestamp del último reinicio (`last_reset`). | **Obligatoria** (Eliminación en cascada por `guid`). |
+| **`character_battlepass`** | `ProjectJaina_BattlePass` | `guid` (INT UNSIGNED, PK) | Almacena nivel actual, XP, estado VIP (0/1), y máscaras de bits hexadecimales de recompensas reclamadas (`free_claims`, `premium_claims`). | **Obligatoria** (Previene herencia indebida de recompensas en LowGUID reciclado). |
+| **`character_battlepass_quests`** | `ProjectJaina_BattlePass` | `(guid, quest_id)` (Composite PK) | Almacena el progreso de objetivos (`progress`), estado de completado (`completed`) y timestamp del último reinicio (`last_reset`). | **Obligatoria** (Eliminación en cascada por `guid`). |
 | **`character_gamemodes`** | `ProjectJaina_GameModes` | `guid` (INT UNSIGNED, PK) | Almacena el modo seleccionado (Normal, Hardcore, Desafíos), vidas restantes y marcas de tiempo de activación. | **Obligatoria**. |
 | **`character_visuals`** | `Project JainaVisualShop` | `(guid, visual_id)` (Composite PK) | Almacena los efectos visuales, auras y cosméticos adquiridos por el personaje. | **Obligatoria**. |
 
@@ -76,7 +76,7 @@ El servidor distribuye las modificaciones cliente a través de dos mecanismos:
    - Contiene los archivos embebidos que no deben ser eliminados por el usuario.
    - Embebe `ProjectJaina_GameModes`, `Project JainaVisualShop`, texturas personalizadas e iconos `.tga`.
 2. **Carpeta de Addons (`Interface/AddOns/`):**
-   - Módulos actualizables independientemente: `Jaina_BattlePass`, `ProjectJaina_RaidSuite`.
+   - Módulos actualizables independientemente: `ProjectJaina_BattlePass`, `ProjectJaina_RaidSuite`.
    - Distribución directa o empaquetada mediante releases oficiales en GitHub.
 
 ---
@@ -99,7 +99,7 @@ Cuando se planifique crear un nuevo sistema para Project Jaina:
 | # | Repositorio GitHub | Carpeta Local | Versión | Tipo / Licencia | Propósito en el Ecosistema |
 |:---:|---|---|:---:|:---:|---|
 | 01 | [ProjectJaina_AbbreviatedStatus](https://github.com/DarckRovert/ProjectJaina_AbbreviatedStatus) | `AbbreviatedStatus` | 1.2.1 | MIT / Fork | Abreviación compacta y formateo legible de salud y maná sin división por cero. |
-| 02 | [Jaina_BattlePass](https://github.com/DarckRovert/Jaina_BattlePass) | `Jaina_BattlePass` | 2.0.0 | MIT | Pase de Batalla estacional de 50 niveles con backend Eluna y bitmask de progreso. |
+| 02 | [ProjectJaina_BattlePass](https://github.com/DarckRovert/ProjectJaina_BattlePass) | `ProjectJaina_BattlePass` | 2.0.0 | MIT | Pase de Batalla estacional de 50 niveles con backend Eluna y bitmask de progreso. |
 | 03 | [ProjectJaina_Carbonite](https://github.com/DarckRovert/ProjectJaina_Carbonite) | `ProjectJaina_Carbonite` | 3.3.4-WP | Other / EULA | Suite satelital HD de cartografía, navegación multi-zona y misiones. |
 | 04 | [ProjectJaina_Companion](https://github.com/DarckRovert/ProjectJaina_Companion) | `ProjectJaina_Companion` | 1.0.3 | MIT | Hub social ligero, cross-faction (/comerciar, /invitar) y telemetría de grupo. |
 | 05 | [ProjectJaina_DragonflightUI](https://github.com/DarckRovert/ProjectJaina_DragonflightUI) | `cDF` | 1.0.0 | MIT / BSD | Re-implementación visual moderna estilo Dragonflight 10.x para cliente 3.3.5a. |

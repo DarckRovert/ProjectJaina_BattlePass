@@ -1,7 +1,7 @@
-# 📦 Guía de Instalación y Despliegue — Jaina_BattlePass
+# 📦 Guía de Instalación y Despliegue — ProjectJaina_BattlePass
 
 [![WoW Version](https://img.shields.io/badge/WoW-3.3.5a%20(12340)-blue.svg)](https://darckrovert.github.io/ProjectJaina_Web/)
-[![Repositorio](https://img.shields.io/badge/GitHub-DarckRovert%2FJaina_BattlePass-black?logo=github)](https://github.com/DarckRovert/Jaina_BattlePass)
+[![Repositorio](https://img.shields.io/badge/GitHub-DarckRovert%2FProjectJaina_BattlePass-black?logo=github)](https://github.com/DarckRovert/ProjectJaina_BattlePass)
 
 ## 📋 Requisitos Previos
 - **Cliente:** World of Warcraft 3.3.5a (Build 12340), en español (`esES`) o inglés (`enUS`).
@@ -18,16 +18,16 @@
 2. **Copiar o Clonar el Addon:**  
    Coloca la carpeta del addon dentro de `AddOns\`:  
    ```bash
-   git clone https://github.com/DarckRovert/Jaina_BattlePass.git
+   git clone https://github.com/DarckRovert/ProjectJaina_BattlePass.git
    ```
 
 3. **Verificación de Estructura:**  
-   Asegúrate de que el archivo `Jaina_BattlePass.toc` se encuentre directamente dentro de la carpeta del addon y no anidado en una subcarpeta redundante:  
-   `Interface\AddOns\ProjectJaina_BattlePass\Jaina_BattlePass.toc`
+   Asegúrate de que el archivo `ProjectJaina_BattlePass.toc` se encuentre directamente dentro de la carpeta del addon y no anidado en una subcarpeta redundante:  
+   `Interface\AddOns\ProjectProjectJaina_BattlePass\ProjectJaina_BattlePass.toc`
 
 4. **Activación en el Juego:**  
    - Inicia el cliente del juego o escribe `/reload` si ya estás conectado.
-   - En la pantalla de selección de personajes, haz clic en el botón **Accesorios** (esquina inferior izquierda) y marca la casilla de `Jaina_BattlePass`.
+   - En la pantalla de selección de personajes, haz clic en el botón **Accesorios** (esquina inferior izquierda) y marca la casilla de `ProjectJaina_BattlePass`.
    - Asegúrate de tener marcada la opción **"Cargar accesorios antiguos"**.
 
 5. **Prueba de Funcionamiento:**  

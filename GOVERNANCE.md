@@ -10,7 +10,7 @@
 
 ## 1. Misión y Alcance
 
-**Jaina_BattlePass** es el sistema estacional oficial de progresión y recompensas del servidor Project Jaina. Proporciona una experiencia de 50 niveles con vías Duales (Gratuita y Premium VIP), misiones diarias y semanales, y entrega de ítems, monturas y títulos mediante arquitectura distribuida cliente-servidor.
+**ProjectJaina_BattlePass** es el sistema estacional oficial de progresión y recompensas del servidor Project Jaina. Proporciona una experiencia de 50 niveles con vías Duales (Gratuita y Premium VIP), misiones diarias y semanales, y entrega de ítems, monturas y títulos mediante arquitectura distribuida cliente-servidor.
 
 ### Objetivos Primordiales del Sistema:
 1. **Rendimiento Extremo (Cabinas de Internet):** Funcionamiento fluido a 60 FPS sin caídas de framerate en resoluciones bajas ($800\times600$, $1024\times768$) típicas de cabinas de internet en Perú, utilizando un pool virtual de 5 ranuras reciclables en memoria.
@@ -113,5 +113,5 @@ Antes de generar un nuevo release o comprimir el archivo distribuible:
 1. [ ] Ejecutar el verificador de sintaxis `check_lua_syntax.py` y constatar balance de bloques en cero.
 2. [ ] Ejecutar `verify_rewards_sync.py` y constatar 0 discrepancias entre `Config.lua` y `70_BattlePassSystem.lua`.
 3. [ ] Ejecutar `check_items.py` y confirmar que todos los IDs de recompensa existan en el DBC de WotLK 3.3.5a.
-4. [ ] Generar el paquete ZIP `Jaina_BattlePass_vX.Y.Z.zip` e incluirlo en la sección de Releases de GitHub.
+4. [ ] Generar el paquete ZIP `ProjectJaina_BattlePass_vX.Y.Z.zip` e incluirlo en la sección de Releases de GitHub.
 5. [ ] Notificar al Sysadmin para aplicar posibles migraciones SQL si hubo cambio de versión mayor.

@@ -44,4 +44,4 @@ Primera versión de producción del sistema de Pase de Batalla de Project Jaina,
 - **Compatibilidad Gráfica 3.3.5a:** Sustitución de llamadas inválidas `SetTexture(r, g, b, a)` por `SetTexture("Interface\\Buttons\\WHITE8X8")` y `SetVertexColor(r, g, b, a)`.
 - **Protección de Registro de Prefijo:** Envoltura condicional en `if RegisterAddonMessagePrefix then ... end`.
 - **Verificación DBC al 100%:** Auditoría empírica de los 100 IDs de recompensa contra el archivo `item_template` y DBC oficial de WotLK 3.3.5a.
-- **Unificación de Git:** Eliminación de rama redundante `master` y establecimiento de `main` como rama canónica única en el repositorio oficial [DarckRovert/Jaina_BattlePass](https://github.com/DarckRovert/Jaina_BattlePass).
+- **Unificación de Git:** Eliminación de rama redundante `master` y establecimiento de `main` como rama canónica única en el repositorio oficial [DarckRovert/ProjectJaina_BattlePass](https://github.com/DarckRovert/ProjectJaina_BattlePass).

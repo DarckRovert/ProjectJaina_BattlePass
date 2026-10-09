@@ -1,6 +1,6 @@
 # 🤝 Guía de Contribución - Project Jaina Battle Pass
 
-¡Gracias por tu interés en contribuir a **Jaina_BattlePass**! Este documento establece las pautas de calidad, arquitectura y flujo de trabajo necesarias para que cualquier aporte sea aceptado en el proyecto oficial de Project Jaina.
+¡Gracias por tu interés en contribuir a **ProjectJaina_BattlePass**! Este documento establece las pautas de calidad, arquitectura y flujo de trabajo necesarias para que cualquier aporte sea aceptado en el proyecto oficial de Project Jaina.
 
 ---
 
@@ -46,7 +46,7 @@ Antes de solicitar la integración de código, debes ejecutar y verificar:
 ## 4. Estilo de Código
 
 - Indentación: 4 espacios (no tabs).
-- Nombres de funciones y tablas globales: Prefijo `Jaina_BattlePass_` o dentro del namespace `WP_BP`.
+- Nombres de funciones y tablas globales: Prefijo `ProjectJaina_BattlePass_` o dentro del namespace `WP_BP`.
 - Variables locales: Declarar siempre como `local` para no contaminar el entorno global `_G`.
 - Comentarios: Explicar el "por qué" de las decisiones arquitectónicas, no solo el "qué".
 

@@ -8,7 +8,7 @@
 
 ## 1. Modelo de Seguridad y Confianza Cero (Zero Trust)
 
-El sistema **Jaina_BattlePass** opera bajo el principio de **Autoridad Exclusiva del Servidor**:
+El sistema **ProjectJaina_BattlePass** opera bajo el principio de **Autoridad Exclusiva del Servidor**:
 - El cliente (Addon Lua) actúa únicamente como una terminal visual de presentación.
 - **Ninguna acción de progresión, entrega de ítems, adición de oro o desbloqueo de niveles se decide en el cliente.**
 - Todo reclamo emitido por el cliente (`BP_CLAIM:<nivel>:<track>`) es validado estrictamente por el script de servidor [70_BattlePassSystem.lua](Server/70_BattlePassSystem.lua) antes de interactuar con la base de datos o el inventario del jugador.
