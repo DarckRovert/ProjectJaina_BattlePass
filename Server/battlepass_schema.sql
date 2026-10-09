@@ -1,6 +1,6 @@
 -- ========================================================================
--- WoW Perú - Pase de Batalla (battlepass_schema.sql)
--- Reino: Reino Andino | Servidor: https://wow-peru.lat/
+-- Project JAIna - Pase de Batalla (battlepass_schema.sql)
+-- Reino: Theramore | Servidor: https://darckrovert.github.io/ProjectJaina_Web/
 -- Motor Compatible: AzerothCore / TrinityCore con Eluna Lua Engine
 -- ========================================================================
 -- Importar en la base de datos de 'characters'.
@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS `character_battlepass` (
     `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`guid`, `season_id`),
     KEY `idx_season_level` (`season_id`, `level`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='WoW Perú - Estado del Pase de Batalla';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Project JAIna - Estado del Pase de Batalla';
 
 CREATE TABLE IF NOT EXISTS `character_battlepass_quests` (
     `guid` INT UNSIGNED NOT NULL COMMENT 'GUID del personaje',
