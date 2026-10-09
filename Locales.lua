@@ -1,22 +1,22 @@
 --[[
     ========================================================================
-    WoW Perú - Pase de Batalla (Locales.lua)
-    Reino: Reino Andino | Servidor: https://wow-peru.lat/
+    Project Jaina - Pase de Batalla (Locales.lua)
+    Reino: Project Jaina | Servidor: Portal Oficial de Project Jaina
     Cliente Compatible: World of Warcraft 3.3.5a (Build 12340)
     ========================================================================
     Localización en Español (esES/esMX) con fallback automático a Inglés.
 ]]
 
-WoWPeru_BattlePass = WoWPeru_BattlePass or {}
-local BP = WoWPeru_BattlePass
+Jaina_BattlePass = Jaina_BattlePass or {}
+local BP = Jaina_BattlePass
 
 local L = {}
 
 -- ========================================================================
--- IDIOMA POR DEFECTO: ESPAÑOL (Reino Andino)
+-- IDIOMA POR DEFECTO: ESPAÑOL (Project Jaina)
 -- ========================================================================
 L["TITLE"] = "Pase de Batalla"
-L["SUBTITLE"] = "Reino Andino - Temporada 2"
+L["SUBTITLE"] = "Project Jaina - Temporada 2"
 L["HEADER_SEASON"] = "Temporada 2: La Forja Andina"
 L["DAYS_REMAINING"] = "%d días restantes"
 L["LEVEL_FORMAT"] = "Nivel %d"
@@ -52,11 +52,11 @@ L["NO_QUESTS_AVAILABLE"] = "No hay misiones disponibles en este momento."
 L["VIP_TITLE"] = "Beneficios del Pase Premium VIP"
 L["VIP_STATUS_ACTIVE"] = "|cFF00FF00ACTIVO|r - Tienes acceso a todas las recompensas Premium."
 L["VIP_STATUS_INACTIVE"] = "|cFFFF4444INACTIVO|r - Desbloquea el Pase VIP en la tienda web."
-L["VIP_DESCRIPTION"] = "El Pase VIP te otorga acceso inmediato al carril inferior de recompensas en todos los 50 niveles:\n\n• Monturas exclusivas de temporada no obtenibles por otros medios.\n• Auras visuales y efectos épicos para tu personaje.\n• Ilusiones de armas y transformaciones únicas.\n• 100% de recompensas acumuladas: si compras el VIP en nivel 30, ¡desbloquearás al instante las recompensas VIP de los niveles 1 al 30!\n\nVisita nuestra página web oficial para adquirirlo y apoyar el crecimiento de WoW Perú."
-L["VIP_STORE_LINK"] = "Visita: |cFFD4AF37https://wow-peru.lat/|r"
+L["VIP_DESCRIPTION"] = "El Pase VIP te otorga acceso inmediato al carril inferior de recompensas en todos los 50 niveles:\n\n• Monturas exclusivas de temporada no obtenibles por otros medios.\n• Auras visuales y efectos épicos para tu personaje.\n• Ilusiones de armas y transformaciones únicas.\n• 100% de recompensas acumuladas: si compras el VIP en nivel 30, ¡desbloquearás al instante las recompensas VIP de los niveles 1 al 30!\n\nVisita nuestra página web oficial para adquirirlo y apoyar el crecimiento de Project Jaina."
+L["VIP_STORE_LINK"] = "Visita: |cFFD4AF37Portal Oficial de Project Jaina|r"
 
 -- Tooltip de Minimapa
-L["MINIMAP_TOOLTIP_TITLE"] = "|cFFD4AF37WoW Perú|r - Pase de Batalla"
+L["MINIMAP_TOOLTIP_TITLE"] = "|cFFD4AF37Project Jaina|r - Pase de Batalla"
 L["MINIMAP_TOOLTIP_DESC"] = "Haz clic izquierdo para abrir/cerrar la ventana.\nHaz clic derecho y arrastra para mover el botón."
 L["MINIMAP_TOOLTIP_LEVEL"] = "Nivel del Pase: |cFFFFD100%d|r"
 L["MINIMAP_TOOLTIP_XP"] = "Progreso XP: |cFFFFFFFF%d / %d (%d%%)|r"
@@ -76,7 +76,7 @@ L["MSG_COMMAND_HELP"] = "|cFFD4AF37Comandos del Pase de Batalla:|r\n  /bp o /pas
 local locale = GetLocale()
 if locale ~= "esES" and locale ~= "esMX" then
     L["TITLE"] = "Battle Pass"
-    L["SUBTITLE"] = "Reino Andino - Season 2"
+    L["SUBTITLE"] = "Project Jaina - Season 2"
     L["HEADER_SEASON"] = "Season 2: The Andean Forge"
     L["DAYS_REMAINING"] = "%d days remaining"
     L["LEVEL_FORMAT"] = "Level %d"
@@ -104,9 +104,9 @@ if locale ~= "esES" and locale ~= "esMX" then
     L["VIP_TITLE"] = "Premium VIP Pass Benefits"
     L["VIP_STATUS_ACTIVE"] = "|cFF00FF00ACTIVE|r - You have full access to all Premium rewards."
     L["VIP_STATUS_INACTIVE"] = "|cFFFF4444INACTIVE|r - Unlock your VIP Pass on our web store."
-    L["VIP_DESCRIPTION"] = "The VIP Pass unlocks instant access to the lower reward track across all 50 levels:\n\n• Exclusive seasonal mounts not obtainable through other means.\n• Visual auras and epic character effects.\n• Unique weapon illusions and transformations.\n• 100% retroactive rewards: buy at level 30 and instantly unlock VIP rewards for levels 1 to 30!\n\nVisit our official website to acquire it and support WoW Perú."
-    L["VIP_STORE_LINK"] = "Visit: |cFFD4AF37https://wow-peru.lat/|r"
-    L["MINIMAP_TOOLTIP_TITLE"] = "|cFFD4AF37WoW Perú|r - Battle Pass"
+    L["VIP_DESCRIPTION"] = "The VIP Pass unlocks instant access to the lower reward track across all 50 levels:\n\n• Exclusive seasonal mounts not obtainable through other means.\n• Visual auras and epic character effects.\n• Unique weapon illusions and transformations.\n• 100% retroactive rewards: buy at level 30 and instantly unlock VIP rewards for levels 1 to 30!\n\nVisit our official website to acquire it and support Project Jaina."
+    L["VIP_STORE_LINK"] = "Visit: |cFFD4AF37Portal Oficial de Project Jaina|r"
+    L["MINIMAP_TOOLTIP_TITLE"] = "|cFFD4AF37Project Jaina|r - Battle Pass"
     L["MINIMAP_TOOLTIP_DESC"] = "Left click to toggle window.\nRight click and drag to move icon."
     L["MINIMAP_TOOLTIP_LEVEL"] = "Battle Pass Level: |cFFFFD100%d|r"
     L["MINIMAP_TOOLTIP_XP"] = "XP Progress: |cFFFFFFFF%d / %d (%d%%)|r"

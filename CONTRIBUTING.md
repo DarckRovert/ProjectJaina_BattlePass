@@ -1,12 +1,12 @@
-# 🤝 Guía de Contribución - WoW Perú Battle Pass
+# 🤝 Guía de Contribución - Project Jaina Battle Pass
 
-¡Gracias por tu interés en contribuir a **WoWPeru_BattlePass**! Este documento establece las pautas de calidad, arquitectura y flujo de trabajo necesarias para que cualquier aporte sea aceptado en el proyecto oficial de WoW Perú.
+¡Gracias por tu interés en contribuir a **Jaina_BattlePass**! Este documento establece las pautas de calidad, arquitectura y flujo de trabajo necesarias para que cualquier aporte sea aceptado en el proyecto oficial de Project Jaina.
 
 ---
 
 ## 1. Principios de Desarrollo
 
-El Pase de Batalla de WoW Perú opera en un entorno híbrido (Cliente WoW 3.3.5a + Servidor Eluna Lua Engine). Todo código debe cumplir:
+El Pase de Batalla de Project Jaina opera en un entorno híbrido (Cliente WoW 3.3.5a + Servidor Eluna Lua Engine). Todo código debe cumplir:
 
 1. **Lua 5.1 Estricto:** Prohibido el uso de APIs o sintaxis de versiones posteriores.
 2. **Compatibilidad con Cabinas de Internet:** Optimizado para bajo consumo de memoria y CPU. No crear widgets dinámicos en bucles; usar el pool virtual de 5 ranuras en [UI.lua](UI.lua).
@@ -46,7 +46,7 @@ Antes de solicitar la integración de código, debes ejecutar y verificar:
 ## 4. Estilo de Código
 
 - Indentación: 4 espacios (no tabs).
-- Nombres de funciones y tablas globales: Prefijo `WoWPeru_BattlePass_` o dentro del namespace `WP_BP`.
+- Nombres de funciones y tablas globales: Prefijo `Jaina_BattlePass_` o dentro del namespace `WP_BP`.
 - Variables locales: Declarar siempre como `local` para no contaminar el entorno global `_G`.
 - Comentarios: Explicar el "por qué" de las decisiones arquitectónicas, no solo el "qué".
 

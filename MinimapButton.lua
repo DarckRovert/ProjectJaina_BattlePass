@@ -1,15 +1,15 @@
 --[[
     ========================================================================
-    WoW Perú - Pase de Batalla (MinimapButton.lua)
-    Reino: Reino Andino | Servidor: https://wow-peru.lat/
+    Project Jaina - Pase de Batalla (MinimapButton.lua)
+    Reino: Project Jaina | Servidor: https://worldofwanos.com/
     Cliente Compatible: World of Warcraft 3.3.5a (Build 12340)
     ========================================================================
     Botón circular para el Minimapa con órbita matemática libre,
     persistencia de ángulo y tooltip reactivo con el estado del pase.
 ]]
 
-WoWPeru_BattlePass = WoWPeru_BattlePass or {}
-local BP = WoWPeru_BattlePass
+Jaina_BattlePass = Jaina_BattlePass or {}
+local BP = Jaina_BattlePass
 local L = BP.L or {}
 
 BP.Minimap = {}
@@ -32,7 +32,7 @@ end
 -- ========================================================================
 -- CONSTRUCCIÓN DEL BOTÓN DE MINIMAPA
 -- ========================================================================
-local btn = CreateFrame("Button", "WoWPeru_BattlePass_MinimapBtn", Minimap)
+local btn = CreateFrame("Button", "Jaina_BattlePass_MinimapBtn", Minimap)
 btn:SetFrameStrata("MEDIUM")
 btn:SetWidth(32)
 btn:SetHeight(32)
@@ -92,8 +92,8 @@ local function OnDragUpdate(self)
     local angle = math.deg(math.atan2(py - my, px - mx))
     if angle < 0 then angle = angle + 360 end
 
-    WoWPeru_BattlePass_CharDB = WoWPeru_BattlePass_CharDB or {}
-    WoWPeru_BattlePass_CharDB.minimapAngle = angle
+    Jaina_BattlePass_CharDB = Jaina_BattlePass_CharDB or {}
+    Jaina_BattlePass_CharDB.minimapAngle = angle
 
     UpdatePosition(self, angle)
 end
@@ -183,11 +183,11 @@ end)
 -- INICIALIZACIÓN Y CONTROL PÚBLICO
 -- ========================================================================
 function MM:Init()
-    WoWPeru_BattlePass_CharDB = WoWPeru_BattlePass_CharDB or {}
-    local angle = WoWPeru_BattlePass_CharDB.minimapAngle or DEFAULT_ANGLE
+    Jaina_BattlePass_CharDB = Jaina_BattlePass_CharDB or {}
+    local angle = Jaina_BattlePass_CharDB.minimapAngle or DEFAULT_ANGLE
     UpdatePosition(btn, angle)
 
-    if WoWPeru_BattlePass_CharDB.hideMinimap then
+    if Jaina_BattlePass_CharDB.hideMinimap then
         btn:Hide()
     else
         btn:Show()
@@ -204,14 +204,14 @@ function MM:UpdateTooltip()
 end
 
 function MM:Toggle()
-    WoWPeru_BattlePass_CharDB = WoWPeru_BattlePass_CharDB or {}
+    Jaina_BattlePass_CharDB = Jaina_BattlePass_CharDB or {}
     if btn:IsShown() then
         btn:Hide()
-        WoWPeru_BattlePass_CharDB.hideMinimap = true
+        Jaina_BattlePass_CharDB.hideMinimap = true
         BP:Print("Botón del minimapa oculto. Usa /bp minimap para volver a mostrarlo.")
     else
         btn:Show()
-        WoWPeru_BattlePass_CharDB.hideMinimap = false
+        Jaina_BattlePass_CharDB.hideMinimap = false
         BP:Print("Botón del minimapa visible.")
     end
 end

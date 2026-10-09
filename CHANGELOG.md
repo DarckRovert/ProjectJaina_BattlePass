@@ -1,4 +1,4 @@
-# 📋 Registro de Cambios (Changelog) - WoW Perú Battle Pass
+# 📋 Registro de Cambios (Changelog) - Project Jaina Battle Pass
 
 Todos los cambios notables en este proyecto se documentarán en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/) y este proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
@@ -11,7 +11,7 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 
 ### ✨ Nuevas Funcionalidades
 - **Season 2 activa:** `SeasonId = 2`, nombre "Temporada 2: La Forja Andina", 60 días de duración.
-- **Misiones del Ecosistema (IDs 201-203):** Integración con `WoWPeru_RaidSuite` via `EcosystemBridge.lua`:
+- **Misiones del Ecosistema (IDs 201-203):** Integración con `Wanos_RaidSuite` via `EcosystemBridge.lua`:
   - `201` — **Guardián de Banda** (1 raid con el grupo, +400 XP)
   - `202` — **Mazmorrista del Andino** (3 mazmorras semanales, +350 XP)
   - `203` — **Superviviente Hardcore** (1 raid sin morir en modo Hardcore, +750 XP)
@@ -22,15 +22,15 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 
 ## [1.0.0] - 2026-09-27
 
-### 🎉 Lanzamiento Oficial - Temporada 1: Reino Andino
+### 🎉 Lanzamiento Oficial - Temporada 1: Project Jaina
 
-Primera versión de producción del sistema de Pase de Batalla de WoW Perú, diseñada para clientes 3.3.5a (Build 12340) y servidores TrinityCore/AzerothCore con motor Eluna.
+Primera versión de producción del sistema de Pase de Batalla de Project Jaina, diseñada para clientes 3.3.5a (Build 12340) y servidores TrinityCore/AzerothCore con motor Eluna.
 
 ### ✨ Nuevas Funcionalidades
 - **Sistema de Progresión de 50 Niveles:** Vía Gratuita y Vía Premium (VIP) completas con recompensas balanceadas (oro, pociones, gemas, bolsas, emblemas de triunfo/escarcha, mascotas, monturas y títulos).
 - **Carrusel Virtual de 5 Ranuras:** Renderizado de alto rendimiento en [UI.lua](UI.lua) mediante un pool virtual reciclable en memoria, garantizando 60 FPS estables en PCs de cabinas de internet ($800\times600$ a $4\text{K}$).
 - **Protocolo Hexadecimal Bitmask:** Sincronización atómica de los 50 niveles en 13 caracteres hexadecimales (`3FFFFFFFFFFFF`), inmune al límite estricto de 255 bytes por paquete de `SendAddonMessage`.
-- **Caja de Enlace VIP Interactiva:** Widget `EditBox` con auto-selección (`HighlightText()`) para copiar el enlace de donación de [wow-peru.lat](https://wow-peru.lat/) sin fricción en el cliente 3.3.5a.
+- **Caja de Enlace VIP Interactiva:** Widget `EditBox` con auto-selección (`HighlightText()`) para copiar el enlace de donación de [worldofwanos.com](https://worldofwanos.com/) sin fricción en el cliente 3.3.5a.
 - **Botón de Minimapa Reactivo:** Blasón dorado con órbita circular suave y tooltip en tiempo real con estadísticas de nivel, porcentaje y misiones diarias.
 - **Misiones Diarias y Semanales:** Motor de misiones con reinicio determinista a las 04:00 AM (diario) y miércoles 04:00 AM (semanal).
 - **Comandos de Administración `.bp`:** Herramientas para Game Masters (`.bp addxp`, `.bp setlevel`, `.bp setvip`, `.bp resetquests`, `.bp reload`).
@@ -44,4 +44,4 @@ Primera versión de producción del sistema de Pase de Batalla de WoW Perú, dis
 - **Compatibilidad Gráfica 3.3.5a:** Sustitución de llamadas inválidas `SetTexture(r, g, b, a)` por `SetTexture("Interface\\Buttons\\WHITE8X8")` y `SetVertexColor(r, g, b, a)`.
 - **Protección de Registro de Prefijo:** Envoltura condicional en `if RegisterAddonMessagePrefix then ... end`.
 - **Verificación DBC al 100%:** Auditoría empírica de los 100 IDs de recompensa contra el archivo `item_template` y DBC oficial de WotLK 3.3.5a.
-- **Unificación de Git:** Eliminación de rama redundante `master` y establecimiento de `main` como rama canónica única en el repositorio oficial [DarckRovert/WoWPeru_BattlePass](https://github.com/DarckRovert/WoWPeru_BattlePass).
+- **Unificación de Git:** Eliminación de rama redundante `master` y establecimiento de `main` como rama canónica única en el repositorio oficial [DarckRovert/Jaina_BattlePass](https://github.com/DarckRovert/Jaina_BattlePass).

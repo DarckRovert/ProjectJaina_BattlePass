@@ -41,7 +41,7 @@ def test_addon_sanity():
                     assert not re.search(r'(?<![:\.\w])IsInRaid\s*\(', content), f"Forbidden global IsInRaid found in {f}"
     print("[PASS] All Lua files adhere to 3.3.5a engine rules.")
 
-    print("\n>>> ALL WoWPeru_BattlePass SANITY CHECKS PASSED 100% <<<")
+    print("\n>>> ALL Jaina_BattlePass SANITY CHECKS PASSED 100% <<<")
 
 if __name__ == "__main__":
     test_addon_sanity()

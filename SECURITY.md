@@ -1,4 +1,4 @@
-# 🛡️ Política de Seguridad y Anti-Exploits - WoW Perú Battle Pass
+# 🛡️ Política de Seguridad y Anti-Exploits - Project Jaina Battle Pass
 
 **Versión:** 1.0.0  
 **Fecha de Vigencia:** 27 de Septiembre de 2026  
@@ -8,7 +8,7 @@
 
 ## 1. Modelo de Seguridad y Confianza Cero (Zero Trust)
 
-El sistema **WoWPeru_BattlePass** opera bajo el principio de **Autoridad Exclusiva del Servidor**:
+El sistema **Jaina_BattlePass** opera bajo el principio de **Autoridad Exclusiva del Servidor**:
 - El cliente (Addon Lua) actúa únicamente como una terminal visual de presentación.
 - **Ninguna acción de progresión, entrega de ítems, adición de oro o desbloqueo de niveles se decide en el cliente.**
 - Todo reclamo emitido por el cliente (`BP_CLAIM:<nivel>:<track>`) es validado estrictamente por el script de servidor [70_BattlePassSystem.lua](Server/70_BattlePassSystem.lua) antes de interactuar con la base de datos o el inventario del jugador.
@@ -48,8 +48,8 @@ Si descubres una vulnerabilidad de seguridad crítica o un fallo que permita la 
 
 1. **NO divulgarla públicamente:** No crear issues públicos en GitHub ni compartirla en canales de chat abiertos.
 2. **Canal de Contacto Directo:**
-   - Discord oficial de WoW Perú: Contactar directamente a `DarckRovert` (Elnazzareno).
-   - Servidor: [https://wow-peru.lat/](https://wow-peru.lat/)
+   - Discord oficial de Project Jaina: Contactar directamente a `DarckRovert` (Elnazzareno).
+   - Servidor: [https://worldofwanos.com/](https://worldofwanos.com/)
 3. **Información a Proporcionar:**
    - Pasos detallados para reproducir el comportamiento.
    - Capturas de paquetes o logs del emulador (si aplica).

@@ -1,14 +1,14 @@
-# 📜 Aviso Legal y Atribución — WoWPeru_BattlePass
+# 📜 Aviso Legal y Atribución — Jaina_BattlePass
 
-Este repositorio forma parte del ecosistema oficial de **WoW Perú - Reino Andino**.
+Este repositorio forma parte del ecosistema oficial de **Project Jaina - Project Jaina**.
 Contiene el sistema de Pase de Batalla Estacional (Free y VIP) para el cliente World of Warcraft 3.3.5a (Build 12340).
 
 ---
 
 ## 1. Autoría y Desarrollo Oficial
-* **Desarrollador Principal:** DarckRovert (Ingame: `Elnazzareno`) & WoW Perú Team
-* **Ecosistema:** [WoW Perú — Reino Andino](https://wow-peru.lat/)
-* **Repositorio Oficial:** [DarckRovert/WoWPeru_BattlePass](https://github.com/DarckRovert/WoWPeru_BattlePass)
+* **Desarrollador Principal:** DarckRovert (Ingame: `Elnazzareno`) & Project Jaina Team
+* **Ecosistema:** [Project Jaina — Project Jaina](https://worldofwanos.com/)
+* **Repositorio Oficial:** [DarckRovert/Jaina_BattlePass](https://github.com/DarckRovert/Jaina_BattlePass)
 
 ---
 
@@ -21,6 +21,6 @@ Contiene el sistema de Pase de Batalla Estacional (Free y VIP) para el cliente W
 
 ## 3. Cumplimiento de Políticas de Interfaz
 En estricto cumplimiento de la Política de Interfaz de Usuario Personalizada de Blizzard (Blizzard Custom UI Policy):
-1. Este software es gratuito y de código abierto para la comunidad de jugadores del Reino Andino.
+1. Este software es gratuito y de código abierto para la comunidad de jugadores del Project Jaina.
 2. No realiza ingeniería inversa ni altera binarios del juego (`WoW.exe`).
 3. Respeta el aislamiento de ejecución en FrameXML y no genera taint en subsistemas protegidos.

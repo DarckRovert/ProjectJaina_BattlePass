@@ -1,14 +1,14 @@
 --[[
     ========================================================================
-    WoW Perú - Pase de Batalla (Config.lua)
-    Reino: Reino Andino | Servidor: https://wow-peru.lat/
+    Project Jaina - Pase de Batalla (Config.lua)
+    Reino: Project Jaina | Servidor: https://worldofwanos.com/
     Cliente Compatible: World of Warcraft 3.3.5a (Build 12340)
     ========================================================================
     Configuración de Temporadas, Niveles (1-50), Recompensas y Misiones.
 ]]
 
-WoWPeru_BattlePass = WoWPeru_BattlePass or {}
-local BP = WoWPeru_BattlePass
+Jaina_BattlePass = Jaina_BattlePass or {}
+local BP = Jaina_BattlePass
 
 BP.Config = {
     -- Información de la Temporada
@@ -53,7 +53,7 @@ BP.Config = {
             {
                 id = 3,
                 title = "Duelo de Titanes",
-                desc = "Participa en 2 arenas 1v1 en el Reino Andino.",
+                desc = "Participa en 2 arenas 1v1 en el Project Jaina.",
                 icon = "Interface\\Icons\\Ability_Warrior_ChallengingShout",
                 target = 2,
                 xpReward = 200,
@@ -110,13 +110,13 @@ BP.Config = {
             },
         },
 
-        -- Retos de Ecosistema (Temporada 2 — via WoWPeru_RaidSuite)
+        -- Retos de Ecosistema (Temporada 2 — via ProjectJaina_RaidSuite)
         -- Estos IDs (201-210) son reportados automaticamente por EcosystemBridge.lua
         Ecosystem = {
             {
                 id = 201,
                 title = "Guardian de Banda",
-                desc = "Completa 1 estancia de raid con tu banda del Reino Andino usando RaidSuite.",
+                desc = "Completa 1 estancia de raid con tu banda del Project Jaina usando RaidSuite.",
                 icon = "Interface\\Icons\\Achievement_Boss_LichKing",
                 target = 1,
                 xpReward = 400,

@@ -1,12 +1,12 @@
-# 🇵🇪 WoW Perú - Pase de Batalla (Battle Pass Suite v2.0.0)
+# 🇵🇪 Project Jaina - Pase de Batalla (Battle Pass Suite v2.0.0)
 
-[![GitHub](https://img.shields.io/badge/GitHub-DarckRovert%2FWoWPeru__BattlePass-black?logo=github)](https://github.com/DarckRovert/WoWPeru_BattlePass)
-[![WoW Client](https://img.shields.io/badge/WoW%20Client-3.3.5a%20(Build%2012340)-blue.svg)](https://wow-peru.lat/)
-[![Server](https://img.shields.io/badge/Servidor-WoW%20Perú-gold.svg)](https://wow-peru.lat/)
-[![Realm](https://img.shields.io/badge/Reino-Reino%20Andino-red.svg)](https://wow-peru.lat/)
+[![GitHub](https://img.shields.io/badge/GitHub-DarckRovert%2FWanos__BattlePass-black?logo=github)](https://github.com/DarckRovert/Jaina_BattlePass)
+[![WoW Client](https://img.shields.io/badge/WoW%20Client-3.3.5a%20(Build%2012340)-blue.svg)](https://worldofwanos.com/)
+[![Server](https://img.shields.io/badge/Servidor-WoW%20Perú-gold.svg)](https://worldofwanos.com/)
+[![Realm](https://img.shields.io/badge/Reino-Reino%20Andino-red.svg)](https://worldofwanos.com/)
 [![License](https://img.shields.io/badge/Licencia-MIT-green.svg)](LICENSE)
 
-Sistema estacional de Pase de Batalla (Free y Premium VIP) con **50 niveles de progresión**, misiones diarias/semanales y recompensas exclusivas diseñado específicamente para el servidor **WoW Perú** (Reino Andino, 3.3.5a Build 12340).
+Sistema estacional de Pase de Batalla (Free y Premium VIP) con **50 niveles de progresión**, misiones diarias/semanales y recompensas exclusivas diseñado específicamente para el servidor **Project Jaina** (Project Jaina, 3.3.5a Build 12340).
 
 ---
 
@@ -15,9 +15,9 @@ Sistema estacional de Pase de Batalla (Free y Premium VIP) con **50 niveles de p
 * **Progresión Estacional de 50 Niveles:** Sube de nivel realizando actividades cotidianas: mazmorras, campos de batalla (CFBG), arenas 1v1, misiones de mundo y muertes de monstruos.
 * **Modelo Dual Justo:**
   * **Vía Gratuita:** Oro, pociones, bolsas, gemas épicas, emblemas de triunfo/escarcha, mascotas y títulos al alcance de todos los jugadores.
-  * **Vía Premium (VIP):** Monturas exclusivas de temporada, auras visuales y efectos épicos para jugadores que apoyan el proyecto en [wow-peru.lat](https://wow-peru.lat/).
+  * **Vía Premium (VIP):** Monturas exclusivas de temporada, auras visuales y efectos épicos para jugadores que apoyan el proyecto en [worldofwanos.com](https://worldofwanos.com/).
 * **Carrusel Virtual de Alto Rendimiento:** Utiliza un pool de 5 ranuras reciclables en memoria. Cero caídas de FPS incluso en ordenadores de cabinas de internet ($800\times600$ a $4\text{K}$).
-* **Botón de Minimapa Interactivo:** Botón circular con el blasón dorado de WoW Perú, órbita radial libre y tooltip reactivo con el nivel, porcentaje de XP y misiones completadas hoy.
+* **Botón de Minimapa Interactivo:** Botón circular con el blasón dorado de Project Jaina, órbita radial libre y tooltip reactivo con el nivel, porcentaje de XP y misiones completadas hoy.
 * **Protocolo Bitmask Seguro (Inmune al límite de 255 bytes de la 3.3.5a):** Los 50 niveles se sincronizan en 13 caracteres hexadecimales, garantizando estabilidad absoluta y cero duplicación de recompensas.
 
 ---
@@ -36,10 +36,10 @@ Sistema estacional de Pase de Batalla (Free y Premium VIP) con **50 niveles de p
 ## 📁 Estructura del Módulo
 
 ```
-WoWPeru_BattlePass/
-├── WoWPeru_BattlePass.toc      # Metadatos del Addon
+Jaina_BattlePass/
+├── Jaina_BattlePass.toc      # Metadatos del Addon
 ├── Config.lua                  # Temporada, 50 niveles de recompensas y misiones
-├── Locales.lua                 # Localización Español (Reino Andino) / Inglés
+├── Locales.lua                 # Localización Español (Project Jaina) / Inglés
 ├── Core.lua                    # Motor de eventos, parser bitmask y red
 ├── MinimapButton.lua           # Botón de minimapa y tooltip reactivo
 ├── UI.lua                      # Interfaz visual con carrusel virtual reciclable
@@ -78,5 +78,5 @@ Este proyecto está licenciado bajo los términos de la **Licencia MIT**. Consul
 
 ## 👥 Créditos
 
-* **Desarrollo y Arquitectura:** DarckRovert (Ingame: Elnazzareno) & Equipo de WoW Perú
-* **Sitio Web Oficial:** [https://wow-peru.lat/](https://wow-peru.lat/)
+* **Desarrollo y Arquitectura:** DarckRovert (Ingame: Elnazzareno) & Equipo de Project Jaina
+* **Sitio Web Oficial:** [https://worldofwanos.com/](https://worldofwanos.com/)

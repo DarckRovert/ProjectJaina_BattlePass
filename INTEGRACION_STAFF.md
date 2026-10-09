@@ -1,6 +1,6 @@
-# 🛡️ Guía Técnica de Integración para el Staff: WoW Perú Battle Pass (v1.0.0)
+# 🛡️ Guía Técnica de Integración para el Staff: Project Jaina Battle Pass (v1.0.0)
 
-> **Servidor Destino:** [WoW Perú](https://wow-peru.lat/) - Reino Andino  
+> **Servidor Destino:** [Project Jaina](https://worldofwanos.com/) - Project Jaina  
 > **Motor Compatible:** AzerothCore o TrinityCore con **Eluna Lua Engine**  
 > **Cliente:** World of Warcraft 3.3.5a (Build 12340)
 
@@ -8,8 +8,8 @@
 
 ## 1. Visión General de la Arquitectura
 
-El sistema de Pase de Batalla de WoW Perú consta de tres capas desacopladas:
-1. **Frontend (Addon Cliente):** `WoWPeru_BattlePass` embebido en el MPQ del cliente o distribuido en `Interface/AddOns/`.
+El sistema de Pase de Batalla de Project Jaina consta de tres capas desacopladas:
+1. **Frontend (Addon Cliente):** `Jaina_BattlePass` embebido en el MPQ del cliente o distribuido en `Interface/AddOns/`.
 2. **Backend (Script Eluna):** `70_BattlePassSystem.lua` ejecutado en el emulador del servidor.
 3. **Persistencia (MySQL):** Tablas `character_battlepass` y `character_battlepass_quests` en la base de datos `characters`.
 
@@ -49,20 +49,20 @@ Para que los jugadores disfruten del Pase de Batalla sin necesidad de configurac
 
 ### Método Recomendado: Inyección en MPQ Oficial
 1. Abre tu herramienta de edición de MPQs (ej. **MPQEditor**).
-2. Abre el archivo de parches del servidor: `Data/patch-Z-WOWPERU.MPQ`.
+2. Abre el archivo de parches del servidor: `Data/patch-Z-Project Jaina.MPQ`.
 3. Navega hasta:
    ```
-   Interface\AddOns\WoWPeru_BattlePass\
+   Interface\AddOns\Jaina_BattlePass\
    ```
 4. Añade todos los archivos del addon:
-   * `WoWPeru_BattlePass.toc`
+   * `Jaina_BattlePass.toc`
    * `Config.lua`
    * `Locales.lua`
    * `Core.lua`
    * `MinimapButton.lua`
    * `UI.lua`
 5. Guarda y compacta el archivo MPQ.
-6. Distribúyelo mediante el actualizador / launcher oficial de WoW Perú.
+6. Distribúyelo mediante el actualizador / launcher oficial de Project Jaina.
 
 ---
 
@@ -80,7 +80,7 @@ El script de servidor incluye comandos para Game Masters (Rango GM $\ge 2$):
 
 ## 5. Integración con la Tienda Web de Donaciones
 
-Cuando un jugador adquiere el Pase VIP en la página web ([wow-peru.lat](https://wow-peru.lat/)):
+Cuando un jugador adquiere el Pase VIP en la página web ([worldofwanos.com](https://worldofwanos.com/)):
 
 ### Opción 1: Inyección Directa en Base de Datos (Recomendada)
 El backend web (PHP/Node/Python) ejecuta la siguiente consulta en la base de datos `characters`:

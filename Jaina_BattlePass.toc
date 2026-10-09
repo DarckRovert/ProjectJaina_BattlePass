@@ -1,0 +1,13 @@
+## Interface: 30300
+## Title: |cFFD4AF37Project Jaina|r - Pase de Batalla
+## Notes: Sistema estacional de Pase de Batalla (Free y Premium VIP) con misiones diarias y recompensas exclusivas para el Project Jaina.
+## Author: DarckRovert (Elnazzareno) & Project Jaina Team
+## Version: 2.0.0
+## SavedVariables: Jaina_BattlePass_GlobalDB
+## SavedVariablesPerCharacter: Jaina_BattlePass_CharDB
+
+Config.lua
+Locales.lua
+Core.lua
+MinimapButton.lua
+UI.lua

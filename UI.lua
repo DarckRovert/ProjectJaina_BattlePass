@@ -1,15 +1,15 @@
 --[[
     ========================================================================
-    WoW Perú - Pase de Batalla (UI.lua)
-    Reino: Reino Andino | Servidor: https://wow-peru.lat/
+    Project Jaina - Pase de Batalla (UI.lua)
+    Reino: Project Jaina | Servidor: https://worldofwanos.com/
     Cliente Compatible: World of Warcraft 3.3.5a (Build 12340)
     ========================================================================
     Interfaz de Usuario: Carrusel virtual de 5 slots reciclables (Cero lag),
     pestañas de Misiones Diarias/Semanales y Pase VIP, adaptativo a 800x600+.
 ]]
 
-WoWPeru_BattlePass = WoWPeru_BattlePass or {}
-local BP = WoWPeru_BattlePass
+Jaina_BattlePass = Jaina_BattlePass or {}
+local BP = Jaina_BattlePass
 local L = BP.L or {}
 
 BP.UI = {}
@@ -27,7 +27,7 @@ UI.activeTab = 1 -- 1: Recompensas, 2: Misiones, 3: VIP
 -- ========================================================================
 -- CREACIÓN DEL MARCO PRINCIPAL
 -- ========================================================================
-local mainFrame = CreateFrame("Frame", "WoWPeru_BattlePass_MainFrame", UIParent)
+local mainFrame = CreateFrame("Frame", "Jaina_BattlePass_MainFrame", UIParent)
 mainFrame:SetWidth(FRAME_WIDTH)
 mainFrame:SetHeight(FRAME_HEIGHT)
 mainFrame:SetPoint("CENTER", UIParent, "CENTER", 0, 20)
@@ -50,12 +50,12 @@ mainFrame:SetScript("OnDragStart", function(self) self:StartMoving() end)
 mainFrame:SetScript("OnDragStop", function(self)
     self:StopMovingOrSizing()
     local point, _, relPoint, x, y = self:GetPoint()
-    WoWPeru_BattlePass_CharDB = WoWPeru_BattlePass_CharDB or {}
-    WoWPeru_BattlePass_CharDB.pos = { point = point, relPoint = relPoint, x = x, y = y }
+    Jaina_BattlePass_CharDB = Jaina_BattlePass_CharDB or {}
+    Jaina_BattlePass_CharDB.pos = { point = point, relPoint = relPoint, x = x, y = y }
 end)
 
 -- Registro nativo en UISpecialFrames para que la tecla ESCAPE cierre la ventana limpiamente
-tinsert(UISpecialFrames, "WoWPeru_BattlePass_MainFrame")
+tinsert(UISpecialFrames, "Jaina_BattlePass_MainFrame")
 
 -- Sonido nativo al cerrar la ventana (con tecla ESC o botón X)
 mainFrame:SetScript("OnHide", function()
@@ -91,16 +91,16 @@ headerBg:SetAllPoints(header)
 headerBg:SetTexture("Interface\\Buttons\\WHITE8X8")
 headerBg:SetVertexColor(0.05, 0.05, 0.08, 0.9)
 
--- Logo Oficial de WoW Perú
+-- Logo Oficial de Project Jaina
 local logo = header:CreateTexture(nil, "ARTWORK")
 logo:SetSize(100, 50)
 logo:SetPoint("LEFT", header, "LEFT", 10, 0)
-logo:SetTexture("Interface\\AddOns\\WoWPeru_BattlePass\\Textures\\wowperu_logo.tga")
+logo:SetTexture("Interface\\AddOns\\Jaina_BattlePass\\Textures\\jaina_logo.tga")
 
 -- Título Principal Dorado
 local title = header:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge")
 title:SetPoint("TOPLEFT", header, "TOPLEFT", 118, -10)
-title:SetText("|cFFD4AF37WoW Perú|r - " .. L["TITLE"])
+title:SetText("|cFFD4AF37Project Jaina|r - " .. L["TITLE"])
 
 -- Subtítulo / Temporada dinámico
 local seasonText = header:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
@@ -163,7 +163,7 @@ UI.vipBadge = vipBadge
 -- PESTAÑAS DE NAVEGACIÓN (TABS)
 -- ========================================================================
 local function CreateTab(id, text, xOffset)
-    local tab = CreateFrame("Button", "WoWPeru_BP_Tab" .. id, mainFrame)
+    local tab = CreateFrame("Button", "Jaina_BP_Tab" .. id, mainFrame)
     tab:SetWidth(120)
     tab:SetHeight(26)
     tab:SetPoint("TOPLEFT", header, "BOTTOMLEFT", xOffset, -8)
@@ -199,13 +199,13 @@ rewardsContainer:SetPoint("TOPLEFT", tab1, "BOTTOMLEFT", 0, -10)
 rewardsContainer:SetPoint("BOTTOMRIGHT", mainFrame, "BOTTOMRIGHT", -16, 16)
 UI.rewardsContainer = rewardsContainer
 
-local questsContainer = CreateFrame("ScrollFrame", "WoWPeru_BP_QuestsScrollFrame", mainFrame, "UIPanelScrollFrameTemplate")
+local questsContainer = CreateFrame("ScrollFrame", "Jaina_BP_QuestsScrollFrame", mainFrame, "UIPanelScrollFrameTemplate")
 questsContainer:SetPoint("TOPLEFT", tab1, "BOTTOMLEFT", 0, -10)
 questsContainer:SetPoint("BOTTOMRIGHT", mainFrame, "BOTTOMRIGHT", -36, 20)
 questsContainer:Hide()
 UI.questsContainer = questsContainer
 
-local questsContent = CreateFrame("Frame", "WoWPeru_BP_QuestsContent", questsContainer)
+local questsContent = CreateFrame("Frame", "Jaina_BP_QuestsContent", questsContainer)
 questsContent:SetWidth(660)
 questsContent:SetHeight(1)
 questsContainer:SetScrollChild(questsContent)
@@ -733,12 +733,12 @@ vipDesc:SetJustifyH("LEFT")
 vipDesc:SetText(L["VIP_DESCRIPTION"])
 
 -- Caja interactiva para copiar enlace de la tienda web (Ctrl+C en WotLK 3.3.5a)
-local vipCopyBox = CreateFrame("EditBox", "WoWPeru_BattlePass_VIPLinkBox", vipContainer)
+local vipCopyBox = CreateFrame("EditBox", "Jaina_BattlePass_VIPLinkBox", vipContainer)
 vipCopyBox:SetSize(320, 24)
 vipCopyBox:SetPoint("BOTTOMLEFT", vipContainer, "BOTTOMLEFT", 30, 26)
 vipCopyBox:SetFontObject("GameFontHighlight")
 vipCopyBox:SetAutoFocus(false)
-vipCopyBox:SetText("https://wow-peru.lat/")
+vipCopyBox:SetText("https://worldofwanos.com/")
 vipCopyBox:SetBackdrop({
     bgFile = "Interface\\Buttons\\WHITE8X8",
     edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
@@ -838,8 +838,8 @@ end
 function UI:ResetPosition()
     mainFrame:ClearAllPoints()
     mainFrame:SetPoint("CENTER", UIParent, "CENTER", 0, 20)
-    WoWPeru_BattlePass_CharDB = WoWPeru_BattlePass_CharDB or {}
-    WoWPeru_BattlePass_CharDB.pos = nil
+    Jaina_BattlePass_CharDB = Jaina_BattlePass_CharDB or {}
+    Jaina_BattlePass_CharDB.pos = nil
     BP:Print("Posición de la ventana restablecida.")
 end
 
@@ -847,8 +847,8 @@ end
 local initFrame = CreateFrame("Frame")
 initFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 initFrame:SetScript("OnEvent", function(self)
-    if WoWPeru_BattlePass_CharDB and WoWPeru_BattlePass_CharDB.pos then
-        local p = WoWPeru_BattlePass_CharDB.pos
+    if Jaina_BattlePass_CharDB and Jaina_BattlePass_CharDB.pos then
+        local p = Jaina_BattlePass_CharDB.pos
         mainFrame:ClearAllPoints()
         mainFrame:SetPoint(p.point or "CENTER", UIParent, p.relPoint or "CENTER", p.x or 0, p.y or 20)
     end

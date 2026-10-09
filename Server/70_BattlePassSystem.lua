@@ -1,7 +1,7 @@
 --[[
     ========================================================================
-    WoW Perú - Pase de Batalla (70_BattlePassSystem.lua)
-    Reino: Reino Andino | Servidor: https://wow-peru.lat/
+    Project Jaina - Pase de Batalla (70_BattlePassSystem.lua)
+    Reino: Project Jaina | Servidor: https://worldofwanos.com/
     Motor: AzerothCore / TrinityCore con Eluna Lua Engine
     ========================================================================
     Backend de Servidor: Gestión de niveles (1-50), persistencia en MySQL,
@@ -384,7 +384,7 @@ local function DeliverReward(player, rewardDef, level)
         if not addedItem then
             -- BOLSAS LLENAS: Respaldo por correo dentro del juego
             local subject = string.format("Pase de Batalla - Recompensa Nivel %d", level)
-            local body = string.format("¡Felicidades por alcanzar el Nivel %d!\n\nTus bolsas estaban llenas al momento de reclamar, por lo que te enviamos tu recompensa adjunta a este correo.\n\nAtte: Staff de WoW Perú.", level)
+            local body = string.format("¡Felicidades por alcanzar el Nivel %d!\n\nTus bolsas estaban llenas al momento de reclamar, por lo que te enviamos tu recompensa adjunta a este correo.\n\nAtte: Staff de Project Jaina.", level)
             SendMail(subject, body, player:GetGUIDLow(), 0, 61, 0, 0, 0, itemId, count)
             return "MAIL"
         end
@@ -534,7 +534,7 @@ local function ProcessAddonMessage(player, message)
 
         SendClientPacket(player, string.format("BP_RES_CLAIM:%d:%s:1:%s", level, track, tostring(status or "OK")))
 
-    -- Progreso de Misión reportado por el Ecosistema (WoWPeru_RaidSuite / EcosystemBridge)
+    -- Progreso de Misión reportado por el Ecosistema (ProjectJaina_RaidSuite / EcosystemBridge)
     elseif opCode == "BP_QUEST_PROGRESS" then
         local questId = tonumber(parts[2]) or 0
         local delta   = tonumber(parts[3]) or 1
@@ -877,7 +877,7 @@ local function SendCommandReply(player, chatHandler, msg)
     elseif chatHandler and chatHandler.SendSysMessage then
         chatHandler:SendSysMessage(msg)
     else
-        print(string.format("[WoW Perú - BP] %s", tostring(msg):gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")))
+        print(string.format("[Project Jaina - BP] %s", tostring(msg):gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")))
     end
 end
 
@@ -893,7 +893,7 @@ local function OnStaffCommand(event, player, command, chatHandler)
 
         -- Menú de ayuda interactivo (.bp o .bp help)
         if sub == "" or sub == "help" or sub == "ayuda" then
-            SendCommandReply(player, chatHandler, "|cFFD4AF37=== Pase de Batalla (WoW Perú) ===|r")
+            SendCommandReply(player, chatHandler, "|cFFD4AF37=== Pase de Batalla (Project Jaina) ===|r")
             if not isConsole then
                 SendCommandReply(player, chatHandler, "  |cFFFFD100.bp sync|r - Sincroniza tu progreso con el servidor.")
                 SendCommandReply(player, chatHandler, "  |cFFFFD100.bp claim <nivel> [free|premium]|r - Reclama una recompensa.")
@@ -929,17 +929,17 @@ local function OnStaffCommand(event, player, command, chatHandler)
         -- .bp vip <jugador> <1|0|on|off> (Válido para GM y Consola/SOAP)
         elseif sub == "vip" then
             if gmRank < 2 then
-                SendCommandReply(player, chatHandler, "|cFFFF4444[WoW Perú]|r No tienes permisos para usar este comando.")
+                SendCommandReply(player, chatHandler, "|cFFFF4444[Project Jaina]|r No tienes permisos para usar este comando.")
                 return false
             end
             local targetName = args[3]
             if not targetName or targetName == "" then
-                SendCommandReply(player, chatHandler, "|cFFFF4444[WoW Perú]|r Uso: .bp vip <nombre_jugador> <1|0|on|off>")
+                SendCommandReply(player, chatHandler, "|cFFFF4444[Project Jaina]|r Uso: .bp vip <nombre_jugador> <1|0|on|off>")
                 return false
             end
 
             if targetName:find("['\"\\;%s]") or #targetName < 2 or #targetName > 24 then
-                SendCommandReply(player, chatHandler, "|cFFFF4444[WoW Perú]|r Nombre de personaje inválido.")
+                SendCommandReply(player, chatHandler, "|cFFFF4444[Project Jaina]|r Nombre de personaje inválido.")
                 return false
             end
 
@@ -956,13 +956,13 @@ local function OnStaffCommand(event, player, command, chatHandler)
                 tData.is_premium = (flag == 1)
                 SavePlayerData(tGuid)
                 SendSync(target)
-                target:SendBroadcastMessage(flag == 1 and "|cFFD4AF37[WoW Perú]|r ¡Pase VIP activado!" or "|cFFFF4444[WoW Perú]|r Pase VIP revocado.")
-                SendCommandReply(player, chatHandler, string.format("|cFFD4AF37[WoW Perú]|r Estado VIP actualizado a %d para %s (conectado).", flag, targetName))
+                target:SendBroadcastMessage(flag == 1 and "|cFFD4AF37[Project Jaina]|r ¡Pase VIP activado!" or "|cFFFF4444[Project Jaina]|r Pase VIP revocado.")
+                SendCommandReply(player, chatHandler, string.format("|cFFD4AF37[Project Jaina]|r Estado VIP actualizado a %d para %s (conectado).", flag, targetName))
             else
                 -- Jugador desconectado: Validar existencia real en 'characters'
                 local qChar = CharDBQuery(string.format("SELECT guid FROM characters WHERE name = '%s'", targetName))
                 if not qChar then
-                    SendCommandReply(player, chatHandler, string.format("|cFFFF4444[WoW Perú]|r El personaje '%s' no existe en el reino.", targetName))
+                    SendCommandReply(player, chatHandler, string.format("|cFFFF4444[Project Jaina]|r El personaje '%s' no existe en el reino.", targetName))
                     return false
                 end
                 local tGuid = qChar:GetUInt32(0)
@@ -973,45 +973,45 @@ local function OnStaffCommand(event, player, command, chatHandler)
                     VALUES (%d, %d, 1, 0, %d, '0000000000000', '0000000000000')
                     ON DUPLICATE KEY UPDATE is_premium = %d
                 ]], tGuid, SEASON_ID, flag, flag))
-                SendCommandReply(player, chatHandler, string.format("|cFFD4AF37[WoW Perú]|r Estado VIP actualizado a %d para %s (desconectado, guardado en BD).", flag, targetName))
+                SendCommandReply(player, chatHandler, string.format("|cFFD4AF37[Project Jaina]|r Estado VIP actualizado a %d para %s (desconectado, guardado en BD).", flag, targetName))
             end
             return false
 
         -- .bp addxp <jugador> <cantidad> (Válido para GM y Consola/SOAP)
         elseif sub == "addxp" then
             if gmRank < 2 then
-                SendCommandReply(player, chatHandler, "|cFFFF4444[WoW Perú]|r No tienes permisos para usar este comando.")
+                SendCommandReply(player, chatHandler, "|cFFFF4444[Project Jaina]|r No tienes permisos para usar este comando.")
                 return false
             end
             local targetName = args[3]
             if not targetName or targetName == "" then
-                SendCommandReply(player, chatHandler, "|cFFFF4444[WoW Perú]|r Uso: .bp addxp <nombre_jugador> <cantidad>")
+                SendCommandReply(player, chatHandler, "|cFFFF4444[Project Jaina]|r Uso: .bp addxp <nombre_jugador> <cantidad>")
                 return false
             end
 
             if targetName:find("['\"\\;%s]") or #targetName < 2 or #targetName > 24 then
-                SendCommandReply(player, chatHandler, "|cFFFF4444[WoW Perú]|r Nombre de personaje inválido.")
+                SendCommandReply(player, chatHandler, "|cFFFF4444[Project Jaina]|r Nombre de personaje inválido.")
                 return false
             end
 
             local amount = tonumber(args[4])
             if not amount or amount <= 0 then
-                SendCommandReply(player, chatHandler, "|cFFFF4444[WoW Perú]|r Cantidad inválida. Debe ser un número mayor a 0.")
+                SendCommandReply(player, chatHandler, "|cFFFF4444[Project Jaina]|r Cantidad inválida. Debe ser un número mayor a 0.")
                 return false
             end
 
             local target = GetPlayerByName(targetName)
             if target then
                 AddBattlePassXP(target, amount, "Comando Staff")
-                SendCommandReply(player, chatHandler, string.format("|cFFD4AF37[WoW Perú]|r Se otorgaron %d XP a %s", amount, targetName))
+                SendCommandReply(player, chatHandler, string.format("|cFFD4AF37[Project Jaina]|r Se otorgaron %d XP a %s", amount, targetName))
             else
-                SendCommandReply(player, chatHandler, string.format("|cFFFF4444[WoW Perú]|r Jugador '%s' no encontrado o desconectado.", targetName))
+                SendCommandReply(player, chatHandler, string.format("|cFFFF4444[Project Jaina]|r Jugador '%s' no encontrado o desconectado.", targetName))
             end
             return false
 
         -- Subcomando desconocido
         else
-            SendCommandReply(player, chatHandler, "|cFFFF4444[WoW Perú]|r Subcomando desconocido. Usa |cFFFFD100.bp help|r.")
+            SendCommandReply(player, chatHandler, "|cFFFF4444[Project Jaina]|r Subcomando desconocido. Usa |cFFFFD100.bp help|r.")
             return false
         end
     end

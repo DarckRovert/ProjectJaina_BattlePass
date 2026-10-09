@@ -1,15 +1,15 @@
 --[[
     ========================================================================
-    WoW Perú - Pase de Batalla (Core.lua)
-    Reino: Reino Andino | Servidor: https://wow-peru.lat/
+    Project Jaina - Pase de Batalla (Core.lua)
+    Reino: Project Jaina | Servidor: https://worldofwanos.com/
     Cliente Compatible: World of Warcraft 3.3.5a (Build 12340)
     ========================================================================
     Motor central: Máquina de estados, codificador/decodificador bitmask hex,
     despacho de red seguro (SendAddonMessage 255-safe) y sincronización.
 ]]
 
-WoWPeru_BattlePass = WoWPeru_BattlePass or {}
-local BP = WoWPeru_BattlePass
+Jaina_BattlePass = Jaina_BattlePass or {}
+local BP = Jaina_BattlePass
 local L = BP.L or {}
 
 -- ========================================================================
@@ -104,7 +104,7 @@ end
 function BP:Print(msg)
     local chatFrame = DEFAULT_CHAT_FRAME or ChatFrame1
     if chatFrame and chatFrame.AddMessage then
-        chatFrame:AddMessage("|cFFD4AF37[WoW Perú BP]|r " .. tostring(msg))
+        chatFrame:AddMessage("|cFFD4AF37[Project Jaina BP]|r " .. tostring(msg))
     end
 end
 
@@ -273,8 +273,9 @@ end
 -- PERSISTENCIA LOCAL (SAVEDVARIABLES)
 -- ========================================================================
 function BP:LoadFromCharDB()
-    WoWPeru_BattlePass_CharDB = WoWPeru_BattlePass_CharDB or {}
-    local db = WoWPeru_BattlePass_CharDB
+    Jaina_BattlePass_CharDB = Jaina_BattlePass_CharDB or Jaina_BattlePass_CharDB or {}
+    Jaina_BattlePass_CharDB = Jaina_BattlePass_CharDB
+    local db = Jaina_BattlePass_CharDB
 
     local currentSeason = BP.Config.SeasonId or 1
 
@@ -299,8 +300,9 @@ function BP:LoadFromCharDB()
 end
 
 function BP:SaveToCharDB()
-    WoWPeru_BattlePass_CharDB = WoWPeru_BattlePass_CharDB or {}
-    local db = WoWPeru_BattlePass_CharDB
+    Jaina_BattlePass_CharDB = Jaina_BattlePass_CharDB or Jaina_BattlePass_CharDB or {}
+    Jaina_BattlePass_CharDB = Jaina_BattlePass_CharDB
+    local db = Jaina_BattlePass_CharDB
 
     db.seasonId = self.Data.seasonId or BP.Config.SeasonId or 1
     db.level = self.Data.level
@@ -323,7 +325,7 @@ end
 -- ========================================================================
 -- REGISTRO DE EVENTOS DEL CLIENTE
 -- ========================================================================
-local eventFrame = CreateFrame("Frame", "WoWPeru_BattlePass_EventFrame")
+local eventFrame = CreateFrame("Frame", "Jaina_BattlePass_EventFrame")
 eventFrame:RegisterEvent("ADDON_LOADED")
 eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 eventFrame:RegisterEvent("CHAT_MSG_ADDON")
@@ -344,7 +346,7 @@ end)
 eventFrame:SetScript("OnEvent", function(self, event, ...)
     if event == "ADDON_LOADED" then
         local addonName = ...
-        if addonName == "WoWPeru_BattlePass" then
+        if addonName == "Jaina_BattlePass" or addonName == "Jaina_BattlePass" then
             BP:LoadFromCharDB()
             BP:DebugPrint("Addon cargado con éxito.")
         end

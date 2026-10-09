@@ -1,6 +1,6 @@
-# 🌐 Registro de Ecosistema — WoWPeru_BattlePass
+# 🌐 Registro de Ecosistema — Jaina_BattlePass
 
-Ficha técnica oficial de registro en la infraestructura multi-addon de **WoW Perú - Reino Andino**.
+Ficha técnica oficial de registro en la infraestructura multi-addon de **Project Jaina - Project Jaina**.
 
 ---
 
@@ -8,12 +8,12 @@ Ficha técnica oficial de registro en la infraestructura multi-addon de **WoW Pe
 
 | Campo | Valor |
 |---|---|
-| **Nombre Técnico** | `WoWPeru_BattlePass` |
-| **Carpeta Local** | `WoWPeru_BattlePass` |
+| **Nombre Técnico** | `Jaina_BattlePass` |
+| **Carpeta Local** | `Jaina_BattlePass` |
 | **Versión Actual** | `2.0.0` |
 | **Clasificación** | Cliente / Gameplay |
 | **Licencia Formal** | MIT |
-| **Repositorio GitHub** | [WoWPeru_BattlePass](https://github.com/DarckRovert/WoWPeru_BattlePass) |
+| **Repositorio GitHub** | [Jaina_BattlePass](https://github.com/DarckRovert/Jaina_BattlePass) |
 | **Entorno de Juego** | World of Warcraft 3.3.5a (Build 12340) / AzerothCore |
 
 ---
@@ -26,10 +26,10 @@ Todo sistema que persista datos en la base de datos `characters` debe respetar e
 
 | Tabla MySQL | Sistema Propietario | Clave Primaria / Índices | Propósito | Limpieza en Delete (`PLAYER_EVENT_ON_CHARACTER_DELETE`) |
 | :--- | :--- | :--- | :--- | :--- |
-| **`character_battlepass`** | `WoWPeru_BattlePass` | `guid` (INT UNSIGNED, PK) | Almacena nivel actual, XP, estado VIP (0/1), y máscaras de bits hexadecimales de recompensas reclamadas (`free_claims`, `premium_claims`). | **Obligatoria** (Previene herencia indebida de recompensas en LowGUID reciclado). |
-| **`character_battlepass_quests`** | `WoWPeru_BattlePass` | `(guid, quest_id)` (Composite PK) | Almacena el progreso de objetivos (`progress`), estado de completado (`completed`) y timestamp del último reinicio (`last_reset`). | **Obligatoria** (Eliminación en cascada por `guid`). |
-| **`character_gamemodes`** | `WoWPeru_GameModes` | `guid` (INT UNSIGNED, PK) | Almacena el modo seleccionado (Normal, Hardcore, Desafíos), vidas restantes y marcas de tiempo de activación. | **Obligatoria**. |
-| **`character_visuals`** | `WowPeruVisualShop` | `(guid, visual_id)` (Composite PK) | Almacena los efectos visuales, auras y cosméticos adquiridos por el personaje. | **Obligatoria**. |
+| **`character_battlepass`** | `Jaina_BattlePass` | `guid` (INT UNSIGNED, PK) | Almacena nivel actual, XP, estado VIP (0/1), y máscaras de bits hexadecimales de recompensas reclamadas (`free_claims`, `premium_claims`). | **Obligatoria** (Previene herencia indebida de recompensas en LowGUID reciclado). |
+| **`character_battlepass_quests`** | `Jaina_BattlePass` | `(guid, quest_id)` (Composite PK) | Almacena el progreso de objetivos (`progress`), estado de completado (`completed`) y timestamp del último reinicio (`last_reset`). | **Obligatoria** (Eliminación en cascada por `guid`). |
+| **`character_gamemodes`** | `Wanos_GameModes` | `guid` (INT UNSIGNED, PK) | Almacena el modo seleccionado (Normal, Hardcore, Desafíos), vidas restantes y marcas de tiempo de activación. | **Obligatoria**. |
+| **`character_visuals`** | `Project JainaVisualShop` | `(guid, visual_id)` (Composite PK) | Almacena los efectos visuales, auras y cosméticos adquiridos por el personaje. | **Obligatoria**. |
 
 ---
 
@@ -43,9 +43,9 @@ Para evitar sobrescribir hechizos de Blizzard o de otros packs de la comunidad (
 ├───────────────────────────┼─────────────────────────────────────────────────────────────┤
 │ 10000 - 55000 (Items)     │ DBC Oficial Blizzard 3.3.5a (Recompensas BattlePass)        │
 │ 940001 - 940049 (Spells)  │ Pack de 49 Títulos Custom (Inti / Core)                     │
-│ 941001 - 941999 (Spells)  │ Auras Combinadas de Efectos Visuales (`WowPeruVisualShop`)  │
-│ 942001 - 942999 (Spells)  │ Auras de Forma / Druida / Shapeshift (`WowPeruVisualShop`)  │
-│ 943001 - 943018 (Spells)  │ Auras y Modelos de Alas Visuales (`WowPeruVisualShop`)      │
+│ 941001 - 941999 (Spells)  │ Auras Combinadas de Efectos Visuales (`Project JainaVisualShop`)  │
+│ 942001 - 942999 (Spells)  │ Auras de Forma / Druida / Shapeshift (`Project JainaVisualShop`)  │
+│ 943001 - 943018 (Spells)  │ Auras y Modelos de Alas Visuales (`Project JainaVisualShop`)      │
 └───────────────────────────┴─────────────────────────────────────────────────────────────┘
 ```
 
@@ -72,18 +72,18 @@ lua/active/
 
 El servidor distribuye las modificaciones cliente a través de dos mecanismos:
 
-1. **Parche Oficial MPQ (`Data/patch-Z-WOWPERU.MPQ`):**
+1. **Parche Oficial MPQ (`Data/patch-Z-Project Jaina.MPQ`):**
    - Contiene los archivos embebidos que no deben ser eliminados por el usuario.
-   - Embebe `WoWPeru_GameModes`, `WowPeruVisualShop`, texturas personalizadas e iconos `.tga`.
+   - Embebe `Wanos_GameModes`, `Project JainaVisualShop`, texturas personalizadas e iconos `.tga`.
 2. **Carpeta de Addons (`Interface/AddOns/`):**
-   - Módulos actualizables independientemente: `WoWPeru_BattlePass`, `WoWPeru_RaidSuite`.
+   - Módulos actualizables independientemente: `Jaina_BattlePass`, `Wanos_RaidSuite`.
    - Distribución directa o empaquetada mediante releases oficiales en GitHub.
 
 ---
 
 ## 6. Procedimiento de Integración de Nuevos Sistemas
 
-Cuando se planifique crear un nuevo sistema para WoW Perú:
+Cuando se planifique crear un nuevo sistema para Project Jaina:
 1. **Asignación de Prefijo:** Registrar el nuevo prefijo de red en la Sección 1 de este documento.
 2. **Definición de Base de Datos:** Documentar las nuevas tablas en la Sección 2.
 3. **Reserva de Spells/Items:** Confirmar que no exista colisión con los rangos de la Sección 3.
@@ -92,35 +92,35 @@ Cuando se planifique crear un nuevo sistema para WoW Perú:
 
 ---
 
-## 🏛️ Directorio Maestro del Ecosistema WoW Perú (18 Repositorios)
+## 🏛️ Directorio Maestro del Ecosistema Project Jaina (18 Repositorios)
 
 ### A. Módulos Oficiales del Cliente (`Client\Interface\AddOns\`)
 
 | # | Repositorio GitHub | Carpeta Local | Versión | Tipo / Licencia | Propósito en el Ecosistema |
 |:---:|---|---|:---:|:---:|---|
-| 01 | [WoWPeru_AbbreviatedStatus](https://github.com/DarckRovert/WoWPeru_AbbreviatedStatus) | `AbbreviatedStatus` | 1.2.1 | MIT / Fork | Abreviación compacta y formateo legible de salud y maná sin división por cero. |
-| 02 | [WoWPeru_BattlePass](https://github.com/DarckRovert/WoWPeru_BattlePass) | `WoWPeru_BattlePass` | 2.0.0 | MIT | Pase de Batalla estacional de 50 niveles con backend Eluna y bitmask de progreso. |
-| 03 | [WoWPeru_Carbonite](https://github.com/DarckRovert/WoWPeru_Carbonite) | `WoWPeru_Carbonite` | 3.3.4-WP | Other / EULA | Suite satelital HD de cartografía, navegación multi-zona y misiones. |
-| 04 | [WoWPeru_Companion](https://github.com/DarckRovert/WoWPeru_Companion) | `WoWPeru_Companion` | 1.0.3 | MIT | Hub social ligero, cross-faction (/comerciar, /invitar) y telemetría de grupo. |
-| 05 | [WoWPeru_DragonflightUI](https://github.com/DarckRovert/WoWPeru_DragonflightUI) | `cDF` | 1.0.0 | MIT / BSD | Re-implementación visual moderna estilo Dragonflight 10.x para cliente 3.3.5a. |
-| 06 | [WoWPeru_GameModes](https://github.com/DarckRovert/WoWPeru_GameModes) | `WoWPeru_GameModes` | 1.0.0 | MIT | Selector cinemático de modos (Normal, Hardcore, Ironman) con verificación Eluna. |
-| 07 | [WoWPeru_GMGenie](https://github.com/DarckRovert/WoWPeru_GMGenie) | `GMGenie` | 1.3.1 | GPL-3.0 | Suite administrativa integral para Game Masters adaptada a AzerothCore. |
-| 08 | [WoWPeru_IntiObjGPS](https://github.com/DarckRovert/WoWPeru_IntiObjGPS) | `IntiObjGPS` | 1.0.0 | MIT | Editor por lotes de coordenadas GPS de GameObjects para Staff y constructores. |
-| 09 | [WoWPeru_LoreHUD](https://github.com/DarckRovert/WoWPeru_LoreHUD) | `LoreHUD` | 1.0.0 | MIT | Diálogos cinemáticos inmersivos y subtítulos estilizados para misiones y Lore. |
-| 10 | [WoWPeru_PrideTrace](https://github.com/DarckRovert/WoWPeru_PrideTrace) | `WowPeruPrideTrace` | 1.0.0 | MIT | Rastreador de combate y telemetría de eventos de orgullo en tiempo real. |
-| 11 | [WoWPeru_RaidSuite](https://github.com/DarckRovert/WoWPeru_RaidSuite) | `WoWPeru_RaidSuite` | 1.0.0 | MIT | Suite modular de herramientas analíticas para líderes de banda y oficiales. |
-| 12 | [WoWPeru_Talented](https://github.com/DarckRovert/WoWPeru_Talented) | `Talented` | 3.3.5-WP | GPL-2.0 | Árbol de talentos avanzado con soporte para plantillas y compartición. |
-| 13 | [WoWPeru_TBCBalance](https://github.com/DarckRovert/WoWPeru_TBCBalance) | `IntiTBCBalance` | 1.0.0 | MIT | Monitor privado de balance y composición de bandas TBC para Game Masters. |
-| 14 | [WoWPeru_Wardrobe](https://github.com/DarckRovert/WoWPeru_Wardrobe) | `WoWPeru_Wardrobe` | 1.0.0 | MIT | Guardarropa, catálogo cosmético y transfiguración con backend Eluna (60_WardrobeSystem.lua). |
-| 15 | [WowPeruVisualShop](https://github.com/DarckRovert/WowPeruVisualShop) | `WowPeruVisualShop` | 1.0.1 | MIT | Tienda oficial de efectos visuales, auras y alas con backend Eluna (59_SpellVisualCatalog.lua). |
-| 16 | [WoWPeru_Voice](https://github.com/DarckRovert/WoWPeru_Voice) | `WoWPeru_Voice` | 1.0.0 | MIT | Voz espacial 3D por proximidad y vinculación WebRTC con backend Eluna (65_VoiceProximitySync.lua). |
+| 01 | [Wanos_AbbreviatedStatus](https://github.com/DarckRovert/Wanos_AbbreviatedStatus) | `AbbreviatedStatus` | 1.2.1 | MIT / Fork | Abreviación compacta y formateo legible de salud y maná sin división por cero. |
+| 02 | [Jaina_BattlePass](https://github.com/DarckRovert/Jaina_BattlePass) | `Jaina_BattlePass` | 2.0.0 | MIT | Pase de Batalla estacional de 50 niveles con backend Eluna y bitmask de progreso. |
+| 03 | [Wanos_Carbonite](https://github.com/DarckRovert/Wanos_Carbonite) | `Wanos_Carbonite` | 3.3.4-WP | Other / EULA | Suite satelital HD de cartografía, navegación multi-zona y misiones. |
+| 04 | [Wanos_Companion](https://github.com/DarckRovert/Wanos_Companion) | `Wanos_Companion` | 1.0.3 | MIT | Hub social ligero, cross-faction (/comerciar, /invitar) y telemetría de grupo. |
+| 05 | [Wanos_DragonflightUI](https://github.com/DarckRovert/Wanos_DragonflightUI) | `cDF` | 1.0.0 | MIT / BSD | Re-implementación visual moderna estilo Dragonflight 10.x para cliente 3.3.5a. |
+| 06 | [Wanos_GameModes](https://github.com/DarckRovert/Wanos_GameModes) | `Wanos_GameModes` | 1.0.0 | MIT | Selector cinemático de modos (Normal, Hardcore, Ironman) con verificación Eluna. |
+| 07 | [Wanos_GMGenie](https://github.com/DarckRovert/Wanos_GMGenie) | `GMGenie` | 1.3.1 | GPL-3.0 | Suite administrativa integral para Game Masters adaptada a AzerothCore. |
+| 08 | [Wanos_IntiObjGPS](https://github.com/DarckRovert/Wanos_IntiObjGPS) | `IntiObjGPS` | 1.0.0 | MIT | Editor por lotes de coordenadas GPS de GameObjects para Staff y constructores. |
+| 09 | [Wanos_LoreHUD](https://github.com/DarckRovert/Wanos_LoreHUD) | `LoreHUD` | 1.0.0 | MIT | Diálogos cinemáticos inmersivos y subtítulos estilizados para misiones y Lore. |
+| 10 | [Wanos_PrideTrace](https://github.com/DarckRovert/Wanos_PrideTrace) | `Project JainaPrideTrace` | 1.0.0 | MIT | Rastreador de combate y telemetría de eventos de orgullo en tiempo real. |
+| 11 | [Wanos_RaidSuite](https://github.com/DarckRovert/Wanos_RaidSuite) | `Wanos_RaidSuite` | 1.0.0 | MIT | Suite modular de herramientas analíticas para líderes de banda y oficiales. |
+| 12 | [Wanos_Talented](https://github.com/DarckRovert/Wanos_Talented) | `Talented` | 3.3.5-WP | GPL-2.0 | Árbol de talentos avanzado con soporte para plantillas y compartición. |
+| 13 | [Wanos_TBCBalance](https://github.com/DarckRovert/Wanos_TBCBalance) | `IntiTBCBalance` | 1.0.0 | MIT | Monitor privado de balance y composición de bandas TBC para Game Masters. |
+| 14 | [Wanos_Wardrobe](https://github.com/DarckRovert/Wanos_Wardrobe) | `Wanos_Wardrobe` | 1.0.0 | MIT | Guardarropa, catálogo cosmético y transfiguración con backend Eluna (60_WardrobeSystem.lua). |
+| 15 | [Project JainaVisualShop](https://github.com/DarckRovert/Project JainaVisualShop) | `Project JainaVisualShop` | 1.0.1 | MIT | Tienda oficial de efectos visuales, auras y alas con backend Eluna (59_SpellVisualCatalog.lua). |
+| 16 | [Wanos_Voice](https://github.com/DarckRovert/Wanos_Voice) | `Wanos_Voice` | 1.0.0 | MIT | Voz espacial 3D por proximidad y vinculación WebRTC con backend Eluna (65_VoiceProximitySync.lua). |
 
 ### B. Suites Comunitarias Monorepositorio Pre-instaladas (`WoW_Peru_Lab\AddOns\`)
 
 | # | Repositorio GitHub | Carpeta Local | Versión | Tipo / Licencia | Propósito en el Ecosistema |
 |:---:|---|---|:---:|:---:|---|
-| 17 | [WoWPeru_DBM](https://github.com/DarckRovert/WoWPeru_DBM) | `WoWPeru_DBM` | 4.52-WP | CC BY-NC-SA 3.0 | Suite unificada de 13 módulos Deadly Boss Mods para todas las raids y mazmorras WotLK. |
-| 18 | [WoWPeru_GearScore](https://github.com/DarckRovert/WoWPeru_GearScore) | `WoWPeru_GearScore` | 3.1.16-WP | MIT / Comm. | Monorepositorio unificado de GearScore (3.1.16) y BonusScanner (5.3) sin dependencias rotas. |
+| 17 | [Wanos_DBM](https://github.com/DarckRovert/Wanos_DBM) | `Wanos_DBM` | 4.52-WP | CC BY-NC-SA 3.0 | Suite unificada de 13 módulos Deadly Boss Mods para todas las raids y mazmorras WotLK. |
+| 18 | [Wanos_GearScore](https://github.com/DarckRovert/Wanos_GearScore) | `Wanos_GearScore` | 3.1.16-WP | MIT / Comm. | Monorepositorio unificado de GearScore (3.1.16) y BonusScanner (5.3) sin dependencias rotas. |
 
 ---
 
