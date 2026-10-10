@@ -92,8 +92,8 @@ local function OnDragUpdate(self)
     local angle = math.deg(math.atan2(py - my, px - mx))
     if angle < 0 then angle = angle + 360 end
 
-    Jaina_BattlePass_CharDB = Jaina_BattlePass_CharDB or {}
-    Jaina_BattlePass_CharDB.minimapAngle = angle
+    ProjectJaina_BattlePass_CharDB = ProjectJaina_BattlePass_CharDB or Jaina_BattlePass_CharDB or {}
+    ProjectJaina_BattlePass_CharDB.minimapAngle = angle
 
     UpdatePosition(self, angle)
 end
@@ -183,11 +183,11 @@ end)
 -- INICIALIZACIÓN Y CONTROL PÚBLICO
 -- ========================================================================
 function MM:Init()
-    Jaina_BattlePass_CharDB = Jaina_BattlePass_CharDB or {}
-    local angle = Jaina_BattlePass_CharDB.minimapAngle or DEFAULT_ANGLE
+    ProjectJaina_BattlePass_CharDB = ProjectJaina_BattlePass_CharDB or Jaina_BattlePass_CharDB or {}
+    local angle = ProjectJaina_BattlePass_CharDB.minimapAngle or DEFAULT_ANGLE
     UpdatePosition(btn, angle)
 
-    if Jaina_BattlePass_CharDB.hideMinimap then
+    if ProjectJaina_BattlePass_CharDB.hideMinimap then
         btn:Hide()
     else
         btn:Show()
@@ -204,14 +204,14 @@ function MM:UpdateTooltip()
 end
 
 function MM:Toggle()
-    Jaina_BattlePass_CharDB = Jaina_BattlePass_CharDB or {}
+    ProjectJaina_BattlePass_CharDB = ProjectJaina_BattlePass_CharDB or Jaina_BattlePass_CharDB or {}
     if btn:IsShown() then
         btn:Hide()
-        Jaina_BattlePass_CharDB.hideMinimap = true
+        ProjectJaina_BattlePass_CharDB.hideMinimap = true
         BP:Print("Botón del minimapa oculto. Usa /bp minimap para volver a mostrarlo.")
     else
         btn:Show()
-        Jaina_BattlePass_CharDB.hideMinimap = false
+        ProjectJaina_BattlePass_CharDB.hideMinimap = false
         BP:Print("Botón del minimapa visible.")
     end
 end

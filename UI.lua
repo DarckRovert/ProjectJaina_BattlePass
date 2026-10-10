@@ -50,8 +50,8 @@ mainFrame:SetScript("OnDragStart", function(self) self:StartMoving() end)
 mainFrame:SetScript("OnDragStop", function(self)
     self:StopMovingOrSizing()
     local point, _, relPoint, x, y = self:GetPoint()
-    Jaina_BattlePass_CharDB = Jaina_BattlePass_CharDB or {}
-    Jaina_BattlePass_CharDB.pos = { point = point, relPoint = relPoint, x = x, y = y }
+    ProjectJaina_BattlePass_CharDB = ProjectJaina_BattlePass_CharDB or Jaina_BattlePass_CharDB or {}
+    ProjectJaina_BattlePass_CharDB.pos = { point = point, relPoint = relPoint, x = x, y = y }
 end)
 
 -- Registro nativo en UISpecialFrames para que la tecla ESCAPE cierre la ventana limpiamente
@@ -91,15 +91,16 @@ headerBg:SetAllPoints(header)
 headerBg:SetTexture("Interface\\Buttons\\WHITE8X8")
 headerBg:SetVertexColor(0.05, 0.05, 0.08, 0.9)
 
--- Logo Oficial de Project Jaina
+-- Logo Oficial de Project Jaina (Ratio 1:1 circular centrado en header de 75px)
 local logo = header:CreateTexture(nil, "ARTWORK")
-logo:SetSize(100, 50)
-logo:SetPoint("LEFT", header, "LEFT", 10, 0)
-logo:SetTexture("Interface\\AddOns\\Jaina_BattlePass\\Textures\\jaina_logo.tga")
+logo:SetSize(54, 54)
+logo:SetPoint("LEFT", header, "LEFT", 14, 0)
+logo:SetTexture("Interface\\AddOns\\ProjectJaina_BattlePass\\Textures\\jaina_logo.tga")
+logo:SetBlendMode("BLEND")
 
--- Título Principal Dorado
+-- Título Principal Dorado (ajustado para logo simétrico: 14 + 54 + 10 = 78)
 local title = header:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge")
-title:SetPoint("TOPLEFT", header, "TOPLEFT", 118, -10)
+title:SetPoint("TOPLEFT", header, "TOPLEFT", 78, -14)
 title:SetText("|cFFD4AF37Project Jaina|r - " .. L["TITLE"])
 
 -- Subtítulo / Temporada dinámico
@@ -838,8 +839,8 @@ end
 function UI:ResetPosition()
     mainFrame:ClearAllPoints()
     mainFrame:SetPoint("CENTER", UIParent, "CENTER", 0, 20)
-    Jaina_BattlePass_CharDB = Jaina_BattlePass_CharDB or {}
-    Jaina_BattlePass_CharDB.pos = nil
+    ProjectJaina_BattlePass_CharDB = ProjectJaina_BattlePass_CharDB or {}
+    ProjectJaina_BattlePass_CharDB.pos = nil
     BP:Print("Posición de la ventana restablecida.")
 end
 
@@ -847,8 +848,9 @@ end
 local initFrame = CreateFrame("Frame")
 initFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 initFrame:SetScript("OnEvent", function(self)
-    if Jaina_BattlePass_CharDB and Jaina_BattlePass_CharDB.pos then
-        local p = Jaina_BattlePass_CharDB.pos
+    local db = ProjectJaina_BattlePass_CharDB or Jaina_BattlePass_CharDB
+    if db and db.pos then
+        local p = db.pos
         mainFrame:ClearAllPoints()
         mainFrame:SetPoint(p.point or "CENTER", UIParent, p.relPoint or "CENTER", p.x or 0, p.y or 20)
     end

@@ -273,9 +273,8 @@ end
 -- PERSISTENCIA LOCAL (SAVEDVARIABLES)
 -- ========================================================================
 function BP:LoadFromCharDB()
-    Jaina_BattlePass_CharDB = Jaina_BattlePass_CharDB or Jaina_BattlePass_CharDB or {}
-    Jaina_BattlePass_CharDB = Jaina_BattlePass_CharDB
-    local db = Jaina_BattlePass_CharDB
+    ProjectJaina_BattlePass_CharDB = ProjectJaina_BattlePass_CharDB or Jaina_BattlePass_CharDB or {}
+    local db = ProjectJaina_BattlePass_CharDB
 
     local currentSeason = BP.Config.SeasonId or 1
 
@@ -300,9 +299,8 @@ function BP:LoadFromCharDB()
 end
 
 function BP:SaveToCharDB()
-    Jaina_BattlePass_CharDB = Jaina_BattlePass_CharDB or Jaina_BattlePass_CharDB or {}
-    Jaina_BattlePass_CharDB = Jaina_BattlePass_CharDB
-    local db = Jaina_BattlePass_CharDB
+    ProjectJaina_BattlePass_CharDB = ProjectJaina_BattlePass_CharDB or {}
+    local db = ProjectJaina_BattlePass_CharDB
 
     db.seasonId = self.Data.seasonId or BP.Config.SeasonId or 1
     db.level = self.Data.level
@@ -346,7 +344,7 @@ end)
 eventFrame:SetScript("OnEvent", function(self, event, ...)
     if event == "ADDON_LOADED" then
         local addonName = ...
-        if addonName == "Jaina_BattlePass" or addonName == "Jaina_BattlePass" then
+        if addonName == "ProjectJaina_BattlePass" or addonName == "Jaina_BattlePass" then
             BP:LoadFromCharDB()
             BP:DebugPrint("Addon cargado con éxito.")
         end

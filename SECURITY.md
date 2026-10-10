@@ -1,56 +1,35 @@
-# 🛡️ Política de Seguridad y Anti-Exploits - Project Jaina Battle Pass
+# 🛡️ Política de Seguridad — ProjectJaina_BattlePass
 
-**Versión:** 1.0.0  
-**Fecha de Vigencia:** 27 de Septiembre de 2026  
-**Responsable de Seguridad:** DarckRovert (Elnazzareno)  
-
----
-
-## 1. Modelo de Seguridad y Confianza Cero (Zero Trust)
-
-El sistema **ProjectJaina_BattlePass** opera bajo el principio de **Autoridad Exclusiva del Servidor**:
-- El cliente (Addon Lua) actúa únicamente como una terminal visual de presentación.
-- **Ninguna acción de progresión, entrega de ítems, adición de oro o desbloqueo de niveles se decide en el cliente.**
-- Todo reclamo emitido por el cliente (`BP_CLAIM:<nivel>:<track>`) es validado estrictamente por el script de servidor [70_BattlePassSystem.lua](Server/70_BattlePassSystem.lua) antes de interactuar con la base de datos o el inventario del jugador.
+**Proyecto:** Project Jaina  
+**Estándar de Seguridad:** Staff Software Engineer L9 (Mythos 5)  
+**Fecha de Actualización:** 10 de Octubre de 2026  
 
 ---
 
-## 2. Mecanismos de Defensa Implementados
+## 1. Alcance y Filosofía de Seguridad
 
-### 2.1. Prevención de Duplicación mediante Máscara de Bits (Bitmask Tamper-Proof)
-- Las recompensas gratuitas y VIP de los 50 niveles se almacenan como máscaras de bits (`free_claims`, `premium_claims`).
-- Si un usuario manipula el cliente para enviar múltiples paquetes `BP_CLAIM`, el servidor realiza una operación lógica AND a nivel de bit:
-  - Si el bit correspondiente ya está activo, el servidor ignora la petición y registra un intento de reclamo inválido.
-  - La transacción es atómica e idempotente.
-
-### 2.2. Protección Contra Inyecciones SQL
-- Los comandos administrativos in-game (`.bp addxp`, `.bp setvip`, `.bp reset`) reciben nombres de personajes introducidos por Game Masters o Staff.
-- Todo parámetro de texto se somete a filtrado de caracteres maliciosos mediante expresiones regulares de Lua:
-  ```lua
-  local safeTarget = targetName:gsub("['\"\\;%s]", "")
-  ```
-  Esto bloquea comillas, barras invertidas, punto y coma y espacios en blanco antes de ejecutar consultas en MySQL.
-
-### 2.3. Aislamiento de Transporte de Red
-- Toda la comunicación de red utiliza el canal `"WHISPER"` dirigido a `UnitName("player")`.
-- Esto garantiza que ningún otro jugador en la banda, grupo, hermandad o canal global pueda interceptar, espiar o falsear paquetes de respuesta del Pase de Batalla.
-
-### 2.4. Integridad en el Ciclo de Vida de Personajes (Anti LowGUID Collision)
-- En emuladores 3.3.5a, cuando un personaje se elimina, su LowGUID puede ser reasignado a un nuevo personaje en el futuro.
-- El servidor escucha el evento `PLAYER_EVENT_ON_CHARACTER_DELETE` (Evento 2 de Eluna) y purga inmediatamente todos los registros en `character_battlepass` y `character_battlepass_quests`.
-- Esto elimina el riesgo de que un personaje recién creado herede niveles, progreso o estados VIP indebidos.
+La seguridad de **ProjectJaina_BattlePass** se fundamenta en el aislamiento estricto del entorno de ejecución de Lua 5.1 dentro del cliente World of Warcraft 3.3.5a (Build 12340) y en la validación autoritativa en el servidor.
 
 ---
 
-## 3. Notificación Responsable de Vulnerabilidades
+## 2. Principios de Blindaje de Código
 
-Si descubres una vulnerabilidad de seguridad crítica o un fallo que permita la explotación de recompensas:
+1. **Aislamiento de FrameXML y Anti-Taint:**
+   - Las funciones que interactúan con botones de acción protegidos o macros de combate no contaminan las variables de entorno global seguras.
+   - Se evita estrictamente la modificación de tablas globales del sistema sin nombres de espacio propios (`PJ_*` o nombres de addon).
+2. **Límite de Red y Prevención de Desbordamiento:**
+   - La API `SendAddonMessage` está restringida a un máximo absoluto de **255 bytes por paquete**. Todo payload emitido se fragmenta o comprime en estructuras compactas.
+   - Prefijo auditado: `WP_BP`.
+3. **Validación Autoritativa en Servidor:**
+   - El cliente de interfaz es tratado como un medio de presentación potencialmente no confiable. Ninguna transacción de ítems, progreso, monedas o recompensas es decidida por el cliente; el servidor Eluna / C++ (`70_BattlePassSystem.lua y tabla MySQL character_battlepass`) valida y aplica los cambios en MySQL.
+4. **Higiene de Strings y Sanitización:**
+   - Toda entrada de usuario proveniente de cajas de texto (`EditBox`) o comandos slash (`/bp, /battlepass`) es limpiada contra inyecciones de secuencias de escape y caracteres nulos.
 
-1. **NO divulgarla públicamente:** No crear issues públicos en GitHub ni compartirla en canales de chat abiertos.
-2. **Canal de Contacto Directo:**
-   - Discord oficial de Project Jaina: Contactar directamente a `DarckRovert` (Elnazzareno).
-   - Servidor: [https://darckrovert.github.io/ProjectJaina_Web/](https://darckrovert.github.io/ProjectJaina_Web/)
-3. **Información a Proporcionar:**
-   - Pasos detallados para reproducir el comportamiento.
-   - Capturas de paquetes o logs del emulador (si aplica).
-   - Impacto estimado en la economía o estabilidad del servidor.
+---
+
+## 3. Reporte Responsable de Vulnerabilidades
+
+Si descubres una vulnerabilidad de seguridad o un vector de explotación en este AddOn:
+- **No lo divulgues públicamente.**
+- Notifícalo de inmediato a través del canal privado de ingeniería en el portal oficial: [Project Jaina Contacto](https://darckrovert.github.io/ProjectJaina_Web/).
+- El equipo técnico investigará y aplicará el parche correctivo de forma expedita.
