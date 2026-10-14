@@ -1,7 +1,7 @@
 -- ========================================================================
 -- Project JAIna - Pase de Batalla (battlepass_schema.sql)
 -- Reino: Theramore | Servidor: https://darckrovert.github.io/ProjectJaina_Web/
--- Motor Compatible: AzerothCore / TrinityCore con Eluna Lua Engine
+-- Motor Compatible: JainaCore con Eluna Lua Engine
 -- ========================================================================
 -- Importar en la base de datos de 'characters'.
 

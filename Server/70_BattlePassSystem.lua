@@ -2,7 +2,7 @@
     ========================================================================
     Project Jaina - Pase de Batalla (70_BattlePassSystem.lua)
     Reino: Project Jaina | Servidor: https://darckrovert.github.io/ProjectJaina_Web/
-    Motor: AzerothCore / TrinityCore con Eluna Lua Engine
+    Motor: JainaCore con Eluna Lua Engine
     ========================================================================
     Backend de Servidor: Gestión de niveles (1-50), persistencia en MySQL,
     cálculo de XP por eventos del juego, entrega idempotente de recompensas,
@@ -329,10 +329,10 @@ local function SavePlayerData(guid)
 end
 
 -- ========================================================================
--- COMPATIBILIDAD FACCIONARIA RESILIENTE (TRINITYCORE / AZEROTHCORE / ELUNA)
+-- COMPATIBILIDAD FACCIONARIA RESILIENTE (JAINACORE / ELUNA ENGINE)
 -- ========================================================================
 -- En TrinityCore C++, player->GetTeam() retorna Team (469: Alianza, 67: Horda).
--- En AzerothCore / ALE, player->GetTeam() retorna TeamId (0: Alianza, 1: Horda).
+-- En JainaCore / ALE, player->GetTeam() retorna TeamId (0: Alianza, 1: Horda).
 -- En Eluna API, player:IsAlliance() y player:IsHorde() son métodos canónicos universales.
 local function IsPlayerHorde(player)
     if not player then return false end

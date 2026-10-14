@@ -1,7 +1,7 @@
 # 🛡️ Guía Técnica de Integración para el Staff: Project Jaina Battle Pass (v1.0.0)
 
 > **Servidor Destino:** [Project Jaina](https://darckrovert.github.io/ProjectJaina_Web/) - Project Jaina  
-> **Motor Compatible:** AzerothCore o TrinityCore con **Eluna Lua Engine**  
+> **Motor Compatible:** JainaCore con **Eluna Lua Engine**  
 > **Cliente:** World of Warcraft 3.3.5a (Build 12340)
 
 ---
@@ -96,7 +96,7 @@ ON DUPLICATE KEY UPDATE is_premium = 1;
 > **Nota de Resiliencia:** Este query utiliza `UPSERT`. Si el jugador nunca antes ha logueado en la Temporada 1, crea su fila directamente con VIP activado (`is_premium = 1`). Si ya existía, únicamente actualiza su estado VIP preservando su nivel y recompensas. Si el jugador está conectado, al reloguear o al ejecutar `.bp sync` / hacer clic derecho en el botón de minimapa, su Pase VIP se activará de inmediato.
 
 ### Opción 2: Despacho por Soap / RA Console
-Si tu tienda web cuenta con conexión SOAP o Remote Access a la consola de AzerothCore/TrinityCore:
+Si tu tienda web cuenta con conexión SOAP o Remote Access a la consola de JainaCore/TrinityCore:
 ```
 .bp vip NOMBRE_PERSONAJE 1
 ```
