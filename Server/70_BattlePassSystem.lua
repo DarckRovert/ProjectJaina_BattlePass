@@ -1,8 +1,8 @@
 --[[
     ========================================================================
     Project Jaina - Pase de Batalla (70_BattlePassSystem.lua)
-    Reino: Project Jaina | Servidor: https://darckrovert.github.io/ProjectJaina_Web/
-    Motor: JainaCore con Eluna Lua Engine
+    Reino: Project Jaina | Servidor Oficial
+    Motor: JainaCore / TrinityCore con Eluna Lua Engine
     ========================================================================
     Backend de Servidor: Gestión de niveles (1-50), persistencia en MySQL,
     cálculo de XP por eventos del juego, entrega idempotente de recompensas,
@@ -22,6 +22,39 @@ end
 
 -- Caché en memoria de jugadores conectados: [guidLow] = { ... }
 local BP_CACHE = {}
+
+-- Guardián de Discriminación de Bots Robusto (Nivel L9)
+local function IsBot(player)
+    if not player or type(player) ~= "userdata" then return true end
+    if LoreEngine and LoreEngine.IsBot then
+        local okL, isLBot = pcall(function() return LoreEngine:IsBot(player) end)
+        if okL and isLBot ~= nil then return isLBot end
+    end
+    if JainaRuntime and JainaRuntime.IsBot then
+        local okJ, isJBot = pcall(function() return JainaRuntime.IsBot(player) end)
+        if okJ and isJBot ~= nil then return isJBot end
+    end
+
+    local okReal, isReal = pcall(function() return player.IsRealPlayer and player:IsRealPlayer() end)
+    if okReal and not isReal then return true end
+    local okBot, isBot = pcall(function()
+        if player.IsPlayerbot and player:IsPlayerbot() then return true end
+        if player.IsBot and player:IsBot() then return true end
+        if player.GetPlayerbotAI and player:GetPlayerbotAI() then return true end
+        return false
+    end)
+    if okBot and isBot then return true end
+
+    local okName, accName = pcall(function() return player:GetAccountName() end)
+    if okName and accName then
+        local lowerAcc = string.lower(accName)
+        if lowerAcc:find("^rndbot") or lowerAcc:find("^wanibot") or lowerAcc:find("^bot_") then
+            return true
+        end
+    end
+
+    return false
+end
 
 -- ========================================================================
 -- TABLA DE RECOMPENSAS DEL SERVIDOR (Consistente con Config.lua)
@@ -181,6 +214,40 @@ local function SendSync(player)
 end
 
 -- ========================================================================
+-- AUTO-INICIALIZACIÓN DDL Y ESQUEMA DE BASE DE DATOS (CHARACTERS)
+-- ========================================================================
+local function InitDatabase()
+    if not CharDBExecute then return end
+
+    CharDBExecute([[
+        CREATE TABLE IF NOT EXISTS `character_battlepass` (
+            `guid` INT UNSIGNED NOT NULL,
+            `season_id` INT UNSIGNED NOT NULL DEFAULT 2,
+            `level` INT UNSIGNED NOT NULL DEFAULT 1,
+            `xp` INT UNSIGNED NOT NULL DEFAULT 0,
+            `is_premium` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+            `claimed_free` VARCHAR(64) NOT NULL DEFAULT '0000000000000',
+            `claimed_premium` VARCHAR(64) NOT NULL DEFAULT '0000000000000',
+            PRIMARY KEY (`guid`, `season_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    ]])
+
+    CharDBExecute([[
+        CREATE TABLE IF NOT EXISTS `character_battlepass_quests` (
+            `guid` INT UNSIGNED NOT NULL,
+            `quest_id` INT UNSIGNED NOT NULL,
+            `progress` INT UNSIGNED NOT NULL DEFAULT 0,
+            `completed` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+            `reset_time` INT UNSIGNED NOT NULL DEFAULT 0,
+            PRIMARY KEY (`guid`, `quest_id`),
+            KEY `idx_reset` (`reset_time`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    ]])
+end
+
+InitDatabase()
+
+-- ========================================================================
 -- PERSISTENCIA EN BASE DE DATOS (MYSQL)
 -- ========================================================================
 local function LoadPlayerData(player)
@@ -307,7 +374,7 @@ local function LoadPlayerQuests(player)
 end
 
 GetOrLoadPlayerData = function(player)
-    if not player then return nil end
+    if not player or IsBot(player) then return nil end
     local guid = player:GetGUIDLow()
     if not BP_CACHE[guid] then
         LoadPlayerData(player)
@@ -363,6 +430,31 @@ local function DidPlayerWinBG(player, winnerTeamId)
     return false
 end
 
+local function GetPlayerArenaTeamId(player)
+    if not player then return nil end
+    -- En arenas 3.3.5a / AzerothCore, cada equipo recibe auras pasivas de estandarte:
+    -- Equipo Dorado (Team 0 / TEAM_ALLIANCE): 32724 (Alianza) o 35774 (Horda)
+    -- Equipo Verde (Team 1 / TEAM_HORDE): 32725 (Alianza) o 35775 (Horda)
+    -- Estas auras poseen SPELL_ATTR3_DEATH_PERSISTENT (0x10000000) y persisten tras la muerte.
+    if player:HasAura(32724) or player:HasAura(35774) then
+        return 0
+    elseif player:HasAura(32725) or player:HasAura(35775) then
+        return 1
+    end
+    local t = player:GetTeam()
+    if t == 0 or t == 469 then return 0 end
+    if t == 1 or t == 67 then return 1 end
+    return nil
+end
+
+local function DidPlayerWinArena(player, winnerTeamId)
+    if not player or winnerTeamId == nil or (winnerTeamId ~= 0 and winnerTeamId ~= 1) then
+        return false
+    end
+    local arenaTeam = GetPlayerArenaTeamId(player)
+    return arenaTeam ~= nil and arenaTeam == winnerTeamId
+end
+
 -- ========================================================================
 -- ENTREGA SEGURA E IDEMPOTENTE DE RECOMPENSAS
 -- ========================================================================
@@ -385,7 +477,10 @@ local function DeliverReward(player, rewardDef, level)
             -- BOLSAS LLENAS: Respaldo por correo dentro del juego
             local subject = string.format("Pase de Batalla - Recompensa Nivel %d", level)
             local body = string.format("¡Felicidades por alcanzar el Nivel %d!\n\nTus bolsas estaban llenas al momento de reclamar, por lo que te enviamos tu recompensa adjunta a este correo.\n\nAtte: Staff de Project Jaina.", level)
-            SendMail(subject, body, player:GetGUIDLow(), 0, 61, 0, 0, 0, itemId, count)
+            local mailSent = SendMail(subject, body, player:GetGUIDLow(), 0, 61, 0, 0, 0, itemId, count)
+            if not mailSent or mailSent == 0 then
+                return nil
+            end
             return "MAIL"
         end
         return "BAG"
@@ -519,7 +614,16 @@ local function ProcessAddonMessage(player, message)
             return
         end
 
-        -- Actualizar bitmask y base de datos
+        -- Despachar ítem de forma segura y atómica con protección de excepciones (pcall)
+        local rInfo = REWARDS[level]
+        local rewardDef = (track == "free") and (rInfo and rInfo.free) or (rInfo and (rInfo.prem or rInfo.premium))
+        local ok, status = pcall(DeliverReward, player, rewardDef, level)
+        if not ok or not status then
+            SendClientPacket(player, string.format("BP_RES_CLAIM:%d:%s:0:DELIVERY_FAILED", level, track))
+            return
+        end
+
+        -- Actualizar bitmask y base de datos tras entrega confirmada
         if track == "free" then
             data.claimed_free = SetLevelClaimedInHex(data.claimed_free, level)
         else
@@ -527,14 +631,9 @@ local function ProcessAddonMessage(player, message)
         end
         SavePlayerData(guid)
 
-        -- Despachar ítem de forma segura
-        local rInfo = REWARDS[level]
-        local rewardDef = (track == "free") and (rInfo and rInfo.free) or (rInfo and (rInfo.prem or rInfo.premium))
-        local status = DeliverReward(player, rewardDef, level)
-
         SendClientPacket(player, string.format("BP_RES_CLAIM:%d:%s:1:%s", level, track, tostring(status or "OK")))
 
-    -- Progreso de Misión reportado por el Ecosistema (ProjectJaina_RaidSuite / EcosystemBridge)
+    -- Progreso de Misión reportado por el Ecosistema (Jaina_RaidSuite / EcosystemBridge)
     elseif opCode == "BP_QUEST_PROGRESS" then
         local questId = tonumber(parts[2]) or 0
         local delta   = tonumber(parts[3]) or 1
@@ -579,6 +678,7 @@ end
 -- ========================================================================
 -- 1. Al Iniciar Sesión (Login)
 local function OnPlayerLogin(event, player)
+    if not player or IsBot(player) then return end
     LoadPlayerData(player)
     LoadPlayerQuests(player)
     SendSync(player)
@@ -587,6 +687,7 @@ RegisterPlayerEvent(3, OnPlayerLogin)
 
 -- 2. Al Cerrar Sesión (Logout)
 local function OnPlayerLogout(event, player)
+    if not player or IsBot(player) then return end
     local guid = player:GetGUIDLow()
     SavePlayerData(guid)
     BP_CACHE[guid] = nil
@@ -624,7 +725,7 @@ local function OnCreatureKill(event, player, creature)
             local members = group:GetMembers()
             if members then
                 for _, member in ipairs(members) do
-                    if member and member:IsInWorld() and member:GetMapId() == creature:GetMapId() and (member == player or member:IsAlive()) and member:GetDistance(creature) <= maxDist then
+                    if member and member:IsInWorld() and not IsBot(member) and member:GetMapId() == creature:GetMapId() and (member == player or member:IsAlive()) and member:GetDistance(creature) <= maxDist then
                         table.insert(targets, member)
                     end
                 end
@@ -632,10 +733,12 @@ local function OnCreatureKill(event, player, creature)
         end
     end
 
-    -- Fallback si juega en solitario o no había miembros cercanos
-    if #targets == 0 then
+    -- Fallback si juega en solitario o no había miembros cercanos (excluyendo bots)
+    if #targets == 0 and not IsBot(player) then
         table.insert(targets, player)
     end
+
+    if #targets == 0 then return end
 
     for _, p in ipairs(targets) do
         local pLvl = p:GetLevel()
@@ -682,7 +785,7 @@ RegisterPlayerEvent(7, OnCreatureKill)
 
 -- 4. Al Completar Misiones del Mundo (Eluna Event ID 54: PLAYER_EVENT_ON_COMPLETE_QUEST)
 local function OnPlayerCompleteQuest(event, player, quest)
-    if not player or not quest then return end
+    if not player or not quest or IsBot(player) then return end
 
     AddBattlePassXP(player, 35, "Misión Completada")
     -- Progreso Misión Semanal #102: Héroe del Reino (target 15, +500 XP)
@@ -701,7 +804,7 @@ local function OnPvpKill(event, killer, victim)
         local members = group:GetMembers()
         if members then
             for _, m in ipairs(members) do
-                if m and m:IsInWorld() and m:GetMapId() == victim:GetMapId() then
+                if m and m:IsInWorld() and not IsBot(m) and m:GetMapId() == victim:GetMapId() then
                     -- El ejecutor siempre califica; compañeros deben estar vivos y a rango <= 60 yd
                     if m == killer or (m:IsAlive() and (m:GetDistance(victim) <= 60 or m:GetDistance(killer) <= 60)) then
                         table.insert(targets, m)
@@ -711,9 +814,11 @@ local function OnPvpKill(event, killer, victim)
         end
     end
 
-    if #targets == 0 then
+    if #targets == 0 and not IsBot(killer) then
         table.insert(targets, killer)
     end
+
+    if #targets == 0 then return end
 
     local vLvl = victim:GetLevel()
 
@@ -750,40 +855,14 @@ local function OnBattlegroundEnd(event, bg, bgId, instanceId, winner)
 
     if isArena then
         -- MODALIDAD ARENA (1v1, 2v2, 3v3) -> Misión Diaria #3: Duelo de Titanes
-        local arenaWinners = {}
-
-        -- Solo se adjudica victoria si hubo un ganador claro (0 = Alianza/Verde, 1 = Horda/Amarillo)
-        -- Si winner == 2 (TEAM_NEUTRAL / Empate por tiempo), nadie recibe bonificación de victoria
-        if winner == 0 or winner == 1 then
-            local aliveWinnerCount = (bg.GetAlivePlayersCountByTeam and bg:GetAlivePlayersCountByTeam(winner)) or 0
-            if aliveWinnerCount > 0 then
-                for _, p in pairs(players) do
-                    if p and p:IsInWorld() and p:IsAlive() then
-                        arenaWinners[p:GetGUIDLow()] = true
-                        local grp = p:GetGroup()
-                        if grp then
-                            local members = grp:GetMembers()
-                            if members then
-                                for _, m in ipairs(members) do
-                                    if m and m:IsInWorld() then
-                                        arenaWinners[m:GetGUIDLow()] = true
-                                    end
-                                end
-                            end
-                        end
-                    end
-                end
-            end
-        end
-
         for _, p in pairs(players) do
-            if p and p:IsInWorld() then
+            if p and p:IsInWorld() and not IsBot(p) then
                 AddBattlePassXP(p, 50, "Participación en Arena")
                 -- Progreso Misión Diaria #3: Duelo de Titanes (target 2, +200 XP)
                 AdvanceQuestProgress(p, 3, 1, 2, 200)
 
-                -- Bonificación exclusiva al ganador legítimo del encuentro
-                if arenaWinners[p:GetGUIDLow()] then
+                -- Bonificación exclusiva y autoritativa al ganador legítimo del encuentro
+                if DidPlayerWinArena(p, winner) then
                     AddBattlePassXP(p, 25, "Victoria en Arena")
                 end
             end
@@ -791,7 +870,7 @@ local function OnBattlegroundEnd(event, bg, bgId, instanceId, winner)
     else
         -- MODALIDAD CAMPO DE BATALLA (BG) -> Misión Diaria #2: Gloria en Batalla
         for _, p in pairs(players) do
-            if p and p:IsInWorld() then
+            if p and p:IsInWorld() and not IsBot(p) then
                 -- Incentivo de retención: XP por completar el Campo de Batalla sin desertar
                 AddBattlePassXP(p, 35, "Participación en Campo de Batalla")
 
@@ -808,7 +887,7 @@ RegisterBGEvent(2, OnBattlegroundEnd)
 
 -- 7. Al Recolectar Recursos o Materiales de Profesión (Eluna Event ID 32: PLAYER_EVENT_ON_LOOT_ITEM)
 local function OnLootItem(event, player, item, count)
-    if not player or not item then return end
+    if not player or not item or IsBot(player) then return end
     -- Clase de Ítem 7 = ITEM_CLASS_TRADE_GOODS (Gemas, menas, hierbas, cueros, paños, esencias)
     if item:GetClass() == 7 then
         local amount = math.max(1, tonumber(count) or 1)
@@ -822,7 +901,7 @@ RegisterPlayerEvent(32, OnLootItem)
 -- 8. Al Crear Objetos con Profesiones (Eluna Event ID 52: PLAYER_EVENT_ON_CREATE_ITEM)
 -- ========================================================================
 local function OnPlayerCreateItem(event, player, item, count)
-    if not player or not item then return end
+    if not player or not item or IsBot(player) then return end
     local amount = math.max(1, tonumber(count) or 1)
     -- Progreso Misión Diaria #5: Artesano Andino (target 5, +150 XP)
     -- Se elimina AddBattlePassXP no regulado para erradicar el exploit de fundición/vendajes masivos
@@ -834,7 +913,7 @@ RegisterPlayerEvent(52, OnPlayerCreateItem)
 -- 9. Al Aplicar Encantamientos sobre Equipo (Eluna Event ID 5: PLAYER_EVENT_ON_SPELL_CAST)
 -- ========================================================================
 local function OnSpellCast(event, player, spell, skipCheck)
-    if not player or not spell then return end
+    if not player or not spell or IsBot(player) then return end
 
     -- Optimización de alto rendimiento: Solo inspeccionar hechizos cuyo objetivo sea un ítem
     if type(spell) == "userdata" and spell.GetTarget then
@@ -882,12 +961,14 @@ local function SendCommandReply(player, chatHandler, msg)
 end
 
 local function OnStaffCommand(event, player, command, chatHandler)
+    if not command then return true end
     local args = {}
     for w in command:gmatch("%S+") do table.insert(args, w) end
+    if #args == 0 then return true end
 
-    local cmd = (args[1] or ""):lower()
-    if cmd == "bp" or cmd == ".bp" then
-        local sub = (args[2] or ""):lower()
+    local cmd = (args[1] or ""):lower():gsub("^[%.%/%#%!]", "")
+    if cmd == "bp" then
+        local sub = (args[2] or ""):lower():gsub("^[%.%/%#%!]", "")
         local isConsole = (player == nil)
         local gmRank = isConsole and 3 or player:GetGMRank()
 
@@ -920,7 +1001,7 @@ local function OnStaffCommand(event, player, command, chatHandler)
                 return false
             end
             local lvl = tonumber(args[3]) or 0
-            local trk = (args[4] or "free"):lower()
+            local trk = (args[4] or "free"):lower():gsub("^[%.%/%#%!]", "")
             if trk == "" or trk == "gratis" then trk = "free" end
             if trk == "vip" or trk == "prem" then trk = "premium" end
             ProcessAddonMessage(player, string.format("BP_CLAIM:%d:%s", lvl, trk))
@@ -953,7 +1034,9 @@ local function OnStaffCommand(event, player, command, chatHandler)
             if target then
                 local tGuid = target:GetGUIDLow()
                 local tData = GetOrLoadPlayerData(target)
-                tData.is_premium = (flag == 1)
+                if tData then
+                    tData.is_premium = (flag == 1)
+                end
                 SavePlayerData(tGuid)
                 SendSync(target)
                 target:SendBroadcastMessage(flag == 1 and "|cFFD4AF37[Project Jaina]|r ¡Pase VIP activado!" or "|cFFFF4444[Project Jaina]|r Pase VIP revocado.")
@@ -1017,7 +1100,60 @@ local function OnStaffCommand(event, player, command, chatHandler)
     end
     return true
 end
+
+-- Listener de Chat para Comandos Alternativos (!bp, #bp, .bp) (PLAYER_EVENT_ON_CHAT = 18)
+local function OnPlayerChat(event, player, msg, Type, lang)
+    if not player or not msg then return end
+    local clean = msg:gsub("^[%.%/%#%!]", ""):match("^%s*(.-)%s*$"):lower()
+    if clean == "bp" or clean:find("^bp%s") then
+        OnStaffCommand(42, player, msg)
+        return false
+    end
+end
+
 RegisterPlayerEvent(42, OnStaffCommand)
+RegisterPlayerEvent(18, OnPlayerChat)
+
+-- ========================================================================
+-- EXPORTACIÓN DE API CANÓNICA (Para StoreDeliveryEngine y módulos externos)
+-- ========================================================================
+BattlePass = BattlePass or {}
+BattlePass.SetVIP = function(target, isVip)
+    local p = nil
+    local tGuid = nil
+
+    if type(target) == "userdata" then
+        p = target
+        if p.GetGUIDLow then
+            tGuid = p:GetGUIDLow()
+        end
+    elseif type(target) == "number" then
+        tGuid = target
+        if GetPlayerByGUID then
+            p = GetPlayerByGUID(target)
+        end
+    end
+
+    local flag = isVip and 1 or 0
+
+    if p and p:IsInWorld() and not IsBot(p) then
+        local guidLow = tGuid or p:GetGUIDLow()
+        local tData = GetOrLoadPlayerData(p)
+        if tData then
+            tData.is_premium = (flag == 1)
+        end
+        SavePlayerData(guidLow)
+        SendSync(p)
+        p:SendBroadcastMessage(flag == 1 and "|cFFD4AF37[Project Jaina]|r ¡Pase VIP activado!" or "|cFFFF4444[Project Jaina]|r Pase VIP revocado.")
+    elseif tGuid and tGuid > 0 then
+        -- Jugador desconectado: Garantizar persistencia autoritativa directa en MySQL
+        CharDBExecute(string.format([[
+            INSERT INTO character_battlepass (guid, season_id, level, xp, is_premium, claimed_free, claimed_premium)
+            VALUES (%d, %d, 1, 0, %d, '0000000000000', '0000000000000')
+            ON DUPLICATE KEY UPDATE is_premium = %d
+        ]], tGuid, SEASON_ID, flag, flag))
+    end
+end
 
 -- ========================================================================
 -- INICIALIZACIÓN EN CALIENTE (.reload eluna SAFE)
@@ -1026,7 +1162,7 @@ if GetPlayersInWorld then
     local onlinePlayers = GetPlayersInWorld()
     if type(onlinePlayers) == "table" then
         for _, p in pairs(onlinePlayers) do
-            if p and p:IsInWorld() then
+            if p and p:IsInWorld() and not IsBot(p) then
                 GetOrLoadPlayerData(p)
             end
         end
