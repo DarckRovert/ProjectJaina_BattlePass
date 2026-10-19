@@ -1181,6 +1181,44 @@ BattlePass.SetVIP = function(target, isVip)
     end
 end
 
+BattlePass.AddLevels = function(target, levels)
+    levels = tonumber(levels) or 1
+    if levels <= 0 then return end
+
+    local p = nil
+    local tGuid = nil
+
+    if type(target) == "userdata" then
+        p = target
+        if p.GetGUIDLow then
+            tGuid = p:GetGUIDLow()
+        end
+    elseif type(target) == "number" then
+        tGuid = target
+        if GetPlayerByGUID then
+            p = GetPlayerByGUID(target)
+        end
+    end
+
+    if p and p:IsInWorld() and not IsBot(p) then
+        local guidLow = tGuid or p:GetGUIDLow()
+        local tData = GetOrLoadPlayerData(p)
+        if tData then
+            tData.level = m_min(MAX_LEVEL, tData.level + levels)
+            SavePlayerData(guidLow)
+            SendSync(p)
+            p:SendBroadcastMessage(s_format("|cFFD4AF37[Pase de Batalla]|r ¡Has avanzado al |cFF00FF00Nivel %d|r (+%d Niveles acreditados)! Abre /bp para reclamar.", tData.level, levels))
+        end
+    elseif tGuid and tGuid > 0 then
+        CharDBExecute(s_format([[
+            INSERT INTO character_battlepass (guid, season_id, level, xp, is_premium, claimed_free, claimed_premium)
+            VALUES (%d, %d, %d, 0, 0, '0000000000000', '0000000000000')
+            ON DUPLICATE KEY UPDATE level = LEAST(%d, level + %d)
+        ]], tGuid, SEASON_ID, 1 + levels, MAX_LEVEL, levels))
+    end
+end
+
+
 -- ========================================================================
 -- INICIALIZACIÓN EN CALIENTE (.reload eluna SAFE)
 -- ========================================================================
