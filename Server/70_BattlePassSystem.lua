@@ -9,6 +9,16 @@
     prevención de desbordamiento de bolsas (envío por correo) y API para tienda.
 ]]
 
+-- Micro-optimización estándar L9 (Ecosistema CN/RU): Localización de funciones _G
+local t_insert = table.insert
+local m_floor  = math.floor
+local m_min    = math.min
+local m_max    = math.max
+local s_format = string.format
+local s_sub    = string.sub
+local s_find   = string.find
+local s_lower  = string.lower
+
 local SEASON_ID = 2
 local XP_PER_LEVEL = 1000
 local MAX_LEVEL = 50
@@ -474,11 +484,11 @@ local function DeliverReward(player, rewardDef, level)
         -- Intentar añadir a las bolsas
         local addedItem = player:AddItem(itemId, count)
         if not addedItem then
-            -- BOLSAS LLENAS: Respaldo por correo dentro del juego
+            -- BOLSAS LLENAS: Respaldo por correo postal express dentro del juego
             local subject = string.format("Pase de Batalla - Recompensa Nivel %d", level)
             local body = string.format("¡Felicidades por alcanzar el Nivel %d!\n\nTus bolsas estaban llenas al momento de reclamar, por lo que te enviamos tu recompensa adjunta a este correo.\n\nAtte: Staff de Project Jaina.", level)
-            local mailSent = SendMail(subject, body, player:GetGUIDLow(), 0, 61, 0, 0, 0, itemId, count)
-            if not mailSent or mailSent == 0 then
+            local okMail = pcall(SendMail, subject, body, player:GetGUIDLow(), 0, 61, 0, 0, 0, itemId, count)
+            if not okMail then
                 return nil
             end
             return "MAIL"
@@ -679,9 +689,20 @@ end
 -- 1. Al Iniciar Sesión (Login)
 local function OnPlayerLogin(event, player)
     if not player or IsBot(player) then return end
-    LoadPlayerData(player)
-    LoadPlayerQuests(player)
-    SendSync(player)
+    local okG, playerGuid = pcall(function() return player:GetGUID() end)
+    if not okG or not playerGuid then return end
+
+    CreateLuaEvent(function()
+        local p = nil
+        if GetPlayerByGUID then
+            p = GetPlayerByGUID(playerGuid)
+        end
+        if not p or not p:IsInWorld() or IsBot(p) then return end
+
+        LoadPlayerData(p)
+        LoadPlayerQuests(p)
+        SendSync(p)
+    end, 1500, 1)
 end
 RegisterPlayerEvent(3, OnPlayerLogin)
 
@@ -839,7 +860,12 @@ RegisterPlayerEvent(6, OnPvpKill)
 -- 6. Al Concluir un Campo de Batalla o Arena (Eluna BG Event ID 2: BG_EVENT_ON_END)
 local function OnBattlegroundEnd(event, bg, bgId, instanceId, winner)
     if not bg then return end
-    local map = bg:GetMap()
+    local mapId = (bg.GetMapId and bg:GetMapId()) or bgId
+    local map = (mapId and instanceId and GetMapById) and GetMapById(mapId, instanceId) or nil
+    if not map and bg.GetMap then
+        local okM, m = pcall(function() return bg:GetMap() end)
+        if okM and m then map = m end
+    end
     if not map then return end
 
     local players = map:GetPlayers()
