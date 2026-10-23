@@ -22,7 +22,8 @@ local s_lower  = string.lower
 local SEASON_ID = 2
 local XP_PER_LEVEL = 1000
 local MAX_LEVEL = 50
-local ADDON_PREFIX = "WP_BP"
+local ADDON_PREFIX = "JAINA_BP"
+local LEGACY_PREFIX = "WP_BP"
 
 local HEX_CHARS = "0123456789ABCDEF"
 local HEX_MAP = {}
@@ -180,8 +181,10 @@ end
 -- ========================================================================
 local function SendClientPacket(player, payload)
     if not player or not payload then return end
-    -- Tipo 7 = CHAT_MSG_WHISPER (Canal oficial para CHAT_MSG_ADDON en WoW 3.3.5a)
+    -- Despacho primario soberano JAINA_BP
     player:SendAddonMessage(ADDON_PREFIX, payload, 7, player)
+    -- Despacho pasivo de retrocompatibilidad WP_BP
+    player:SendAddonMessage(LEGACY_PREFIX, payload, 7, player)
 end
 
 local GetOrRefreshQuestState -- Declaración previa para SendQuestSync
@@ -962,9 +965,9 @@ RegisterPlayerEvent(5, OnSpellCast)
 -- 10. Captura de Mensajes del Addon (RegisterServerEvent 30)
 -- ========================================================================
 local function OnServerAddonMessage(event, player, type, prefix, message, target)
-    if prefix == ADDON_PREFIX then
+    if prefix == ADDON_PREFIX or prefix == LEGACY_PREFIX then
         ProcessAddonMessage(player, message)
-    elseif type == ADDON_PREFIX then
+    elseif type == ADDON_PREFIX or type == LEGACY_PREFIX then
         ProcessAddonMessage(player, prefix)
     end
 end

@@ -121,7 +121,7 @@ function BP:SendPacket(payload)
     if not payload or payload == "" then return false end
     self:DebugPrint("Enviando paquete: " .. payload)
 
-    local prefix = (BP.Config and BP.Config.AddonPrefix) or "WP_BP"
+    local prefix = (BP.Config and BP.Config.AddonPrefix) or "JAINA_BP"
     local playerName = UnitName("player")
     if not playerName or playerName == "" or playerName == UNKNOWNOBJECT then
         self:DebugPrint("UnitName('player') aún no disponible, paquete pospuesto.")
@@ -172,7 +172,9 @@ end
 -- MANEJADOR DE MENSAJES DE ENTRADA (PARSER DE PROTOCOLO WP_BP)
 -- ========================================================================
 function BP:OnAddonMessage(prefix, message, channel, sender)
-    if prefix ~= BP.Config.AddonPrefix then return end
+    local activePrefix = BP.Config and BP.Config.AddonPrefix or "JAINA_BP"
+    local legacyPrefix = BP.Config and BP.Config.LegacyPrefix or "WP_BP"
+    if prefix ~= activePrefix and prefix ~= legacyPrefix then return end
     self:DebugPrint("Recibido de " .. tostring(sender) .. ": " .. tostring(message))
 
     local parts = {}
@@ -351,7 +353,8 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
 
     elseif event == "PLAYER_ENTERING_WORLD" then
         if RegisterAddonMessagePrefix then
-            RegisterAddonMessagePrefix(BP.Config.AddonPrefix)
+            RegisterAddonMessagePrefix(BP.Config.AddonPrefix or "JAINA_BP")
+            RegisterAddonMessagePrefix(BP.Config.LegacyPrefix or "WP_BP")
         end
         -- Solicitar estado del pase al servidor tras breve delay seguro (1.5s)
         syncDelayElapsed = 0
@@ -367,13 +370,14 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
 end)
 
 -- ========================================================================
--- COMANDOS SLASH (/bp, /pase, /battlepass)
+-- COMANDOS SLASH (/bp, /pase, /battlepass, /jainabp)
 -- ========================================================================
-SLASH_WOWPERUBP1 = "/bp"
-SLASH_WOWPERUBP2 = "/pase"
-SLASH_WOWPERUBP3 = "/battlepass"
+SLASH_JAINA_BP1 = "/bp"
+SLASH_JAINA_BP2 = "/pase"
+SLASH_JAINA_BP3 = "/battlepass"
+SLASH_JAINA_BP4 = "/jainabp"
 
-SlashCmdList["WOWPERUBP"] = function(msg)
+SlashCmdList["JAINA_BP"] = function(msg)
     local args = {}
     for w in (msg or ""):gmatch("%S+") do
         table.insert(args, w)
@@ -419,3 +423,6 @@ SlashCmdList["WOWPERUBP"] = function(msg)
         BP:Print(L["MSG_COMMAND_HELP"])
     end
 end
+
+-- Puente pasivo de retrocompatibilidad arquitectónica
+SlashCmdList["WOWPERUBP"] = SlashCmdList["JAINA_BP"]

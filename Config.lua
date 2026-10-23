@@ -18,8 +18,9 @@ BP.Config = {
     XPPerLevel = 1000,
     MaxLevel = 50,
 
-    -- Comunicación de Red
-    AddonPrefix = "WP_BP",
+    -- Comunicación de Red Soberana
+    AddonPrefix = "JAINA_BP",
+    LegacyPrefix = "WP_BP",
     Command = ".bp",
     Debug = false,
 
