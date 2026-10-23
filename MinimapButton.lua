@@ -47,7 +47,7 @@ local icon = btn:CreateTexture(nil, "BACKGROUND")
 icon:SetWidth(20)
 icon:SetHeight(20)
 icon:SetPoint("CENTER", btn, "CENTER", 0, 0)
-icon:SetTexture("Interface\\Icons\\Achievement_Zone_TolBarad")
+icon:SetTexture("Interface\\Icons\\Achievement_Zone_Wintergrasp")
 icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
 btn.icon = icon
 

@@ -117,7 +117,7 @@ levelBadge:SetPoint("TOPRIGHT", header, "TOPRIGHT", -16, -10)
 
 local levelBg = levelBadge:CreateTexture(nil, "BACKGROUND")
 levelBg:SetAllPoints(levelBadge)
-levelBg:SetTexture("Interface\\Icons\\Achievement_Zone_TolBarad")
+levelBg:SetTexture("Interface\\Icons\\Achievement_Zone_Wintergrasp")
 levelBg:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 
 local levelBorder = levelBadge:CreateTexture(nil, "OVERLAY")
