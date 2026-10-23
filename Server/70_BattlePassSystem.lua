@@ -582,7 +582,7 @@ local function AdvanceQuestProgress(player, questId, amount, target, xpReward)
 end
 
 -- ========================================================================
--- PROCESAMIENTO DE PETICIONES DE CLIENTE (WP_BP)
+-- PROCESAMIENTO DE PETICIONES DE CLIENTE (JAINA_BP / WP_BP)
 -- ========================================================================
 local function ProcessAddonMessage(player, message)
     if not player or not message then return end
