@@ -582,8 +582,11 @@ local function AdvanceQuestProgress(player, questId, amount, target, xpReward)
 end
 
 -- ========================================================================
+-- ========================================================================
 -- PROCESAMIENTO DE PETICIONES DE CLIENTE (JAINA_BP / WP_BP)
 -- ========================================================================
+local lastEcoQuestReport = {}
+
 local function ProcessAddonMessage(player, message)
     if not player or not message then return end
     local guid = player:GetGUIDLow()
@@ -627,6 +630,23 @@ local function ProcessAddonMessage(player, message)
             return
         end
 
+        -- Validación Autoritativa de Modos de Juego (Ironman y Hardcore Muerto)
+        local qMode = CharDBQuery(string.format("SELECT mode, is_dead FROM character_gamemodes WHERE guid = %d", guid))
+        if qMode then
+            local mode = qMode:GetString(0)
+            local isDead = qMode:GetUInt32(1)
+            if isDead == 1 then
+                SendClientPacket(player, string.format("BP_RES_CLAIM:%d:%s:0:HARDCORE_DEAD", level, track))
+                player:SendBroadcastMessage("|cffff3333[Pase de Batalla]|r Tu personaje ha caído en Modo Hardcore. No puedes reclamar recompensas.")
+                return
+            end
+            if mode == "IRONMAN" then
+                SendClientPacket(player, string.format("BP_RES_CLAIM:%d:%s:0:IRONMAN_RESTRICTED", level, track))
+                player:SendBroadcastMessage("|cffff3333[Pase de Batalla]|r El Modo Ironman prohíbe el reclamo de recompensas de oro y suministros externos.")
+                return
+            end
+        end
+
         -- Despachar ítem de forma segura y atómica con protección de excepciones (pcall)
         local rInfo = REWARDS[level]
         local rewardDef = (track == "free") and (rInfo and rInfo.free) or (rInfo and (rInfo.prem or rInfo.premium))
@@ -654,6 +674,13 @@ local function ProcessAddonMessage(player, message)
         -- SEGURIDAD AUTORITATIVA: Solo se aceptan misiones exclusivas de ecosistema (201-203).
         -- Las misiones 1 a 103 son 100% autoritativas del core y no admiten reporte por addon.
         if questId >= 201 and questId <= 203 and delta > 0 then
+            -- Deduplicación e Idempotencia en Servidor (Evita Multi-Trigger JAINA_BP / WP_BP y Macros)
+            local reportKey = guid .. "_" .. questId
+            local now = os.time()
+            if lastEcoQuestReport[reportKey] and (now - lastEcoQuestReport[reportKey]) < 45 then
+                return
+            end
+
             delta = 1 -- Normalización estricta: previene inyecciones en ráfaga
 
             local map = player:GetMap()
@@ -680,6 +707,7 @@ local function ProcessAddonMessage(player, message)
                     end
                 end
 
+                lastEcoQuestReport[reportKey] = now
                 AdvanceQuestProgress(player, questId, delta, def.target, def.xp)
             end
         end
