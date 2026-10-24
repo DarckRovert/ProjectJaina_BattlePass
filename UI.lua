@@ -331,7 +331,7 @@ local function CreateRewardCard(parent, isPremium)
     -- Etiqueta de Pista (FREE vs VIP)
     local trackBadge = card:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     trackBadge:SetPoint("TOP", card, "TOP", 0, -6)
-    trackBadge:SetText(isPremium and "|cFFFF8000★ VIP ★|r" or "|cFF888888GRATIS|r")
+    trackBadge:SetText(isPremium and "|cFFFF8000[VIP]|r" or "|cFF888888[GRATIS]|r")
 
     -- Icono del ítem
     local iconBtn = CreateFrame("Button", nil, card)
@@ -386,7 +386,7 @@ local function CreateRewardCard(parent, isPremium)
 
             -- Distintivo de exclusividad estacional
             if r.isExclusive then
-                GameTooltip:AddLine("|cFFFF8000★ Recompensa Exclusiva de Temporada ★|r", 1, 0.5, 0)
+                GameTooltip:AddLine("|cFFFF8000[Recompensa Exclusiva de Temporada]|r", 1, 0.5, 0)
             end
 
             GameTooltip:Show()
@@ -469,9 +469,9 @@ function UI:RenderPage(pageNum)
 
             -- Estilo del encabezado según si se alcanzó el nivel
             if lvl < currentLvl then
-                slot.header:SetText("|cFF00FF00NIVEL " .. lvl .. " ✓|r")
+                slot.header:SetText("|cFF00FF00NIVEL " .. lvl .. " [OK]|r")
             elseif lvl == currentLvl then
-                slot.header:SetText("|cFFFFD100★ NIVEL " .. lvl .. " ★|r")
+                slot.header:SetText("|cFFFFD100NIVEL " .. lvl .. " (ACTUAL)|r")
             else
                 slot.header:SetText("|cFF888888Nivel " .. lvl .. "|r")
             end
@@ -721,7 +721,7 @@ vipBanner:SetVertexColor(0.06, 0.04, 0.08, 0.9)
 
 local vipTitle = vipContainer:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
 vipTitle:SetPoint("TOPLEFT", vipContainer, "TOPLEFT", 30, -20)
-vipTitle:SetText("|cFFFF8000★ " .. L["VIP_TITLE"] .. " ★|r")
+vipTitle:SetText("|cFFFF8000[ " .. L["VIP_TITLE"] .. " ]|r")
 
 local vipStateText = vipContainer:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 vipStateText:SetPoint("TOPLEFT", vipTitle, "BOTTOMLEFT", 0, -10)
@@ -791,7 +791,7 @@ function UI:Refresh()
 
     -- Distintivo VIP
     if BP.Data.isPremium then
-        vipBadge:SetText("|cFF00FF00★ VIP ACTIVO ★|r")
+        vipBadge:SetText("|cFF00FF00[VIP ACTIVO]|r")
     else
         vipBadge:SetText("|cFFFF4444VIP INACTIVO|r")
     end
