@@ -80,7 +80,7 @@ El script de servidor incluye comandos para Game Masters (Rango GM $\ge 2$):
 
 ## 5. Integración con la Tienda Web de Donaciones
 
-Cuando un jugador adquiere el Pase VIP en la página web ([projectjaina.com](https://darckrovert.github.io/ProjectJaina_Web/)):
+Cuando un jugador adquiere el Pase VIP en la página web ([Portal Oficial](https://darckrovert.github.io/ProjectJaina_Web/)):
 
 ### Opción 1: Inyección Directa en Base de Datos (Recomendada)
 El backend web (PHP/Node/Python) ejecuta la siguiente consulta en la base de datos `characters`:
