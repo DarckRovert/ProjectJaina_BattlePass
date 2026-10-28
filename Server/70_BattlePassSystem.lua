@@ -1174,6 +1174,20 @@ RegisterPlayerEvent(18, OnPlayerChat)
 -- ========================================================================
 -- EXPORTACIÓN DE API CANÓNICA (Para StoreDeliveryEngine y módulos externos)
 -- ========================================================================
+local function ResolvePlayerByGuidLow(guidLow)
+    if not guidLow or guidLow == 0 then return nil end
+    local ok, p = pcall(function()
+        if GetPlayerGUID and GetPlayerByGUID then
+            return GetPlayerByGUID(GetPlayerGUID(guidLow))
+        elseif GetPlayerByGUID then
+            return GetPlayerByGUID(guidLow)
+        end
+        return nil
+    end)
+    if ok and p and p:IsInWorld() then return p end
+    return nil
+end
+
 BattlePass = BattlePass or {}
 BattlePass.SetVIP = function(target, isVip)
     local p = nil
@@ -1186,15 +1200,18 @@ BattlePass.SetVIP = function(target, isVip)
         end
     elseif type(target) == "number" then
         tGuid = target
-        if GetPlayerByGUID then
-            p = GetPlayerByGUID(target)
-        end
+        p = ResolvePlayerByGuidLow(target)
     end
 
     local flag = isVip and 1 or 0
+    local guidLow = tGuid or (p and p:GetGUIDLow())
+
+    -- Blindaje de Caché: sincronizar memoria inmediatamente si existe para evitar sobrescrituras sucias
+    if guidLow and BP_CACHE[guidLow] then
+        BP_CACHE[guidLow].is_premium = (flag == 1)
+    end
 
     if p and p:IsInWorld() and not IsBot(p) then
-        local guidLow = tGuid or p:GetGUIDLow()
         local tData = GetOrLoadPlayerData(p)
         if tData then
             tData.is_premium = (flag == 1)
@@ -1202,13 +1219,13 @@ BattlePass.SetVIP = function(target, isVip)
         SavePlayerData(guidLow)
         SendSync(p)
         p:SendBroadcastMessage(flag == 1 and "|cFFD4AF37[Project Jaina]|r ¡Pase VIP activado!" or "|cFFFF4444[Project Jaina]|r Pase VIP revocado.")
-    elseif tGuid and tGuid > 0 then
+    elseif guidLow and guidLow > 0 then
         -- Jugador desconectado: Garantizar persistencia autoritativa directa en MySQL
         CharDBExecute(string.format([[
             INSERT INTO character_battlepass (guid, season_id, level, xp, is_premium, claimed_free, claimed_premium)
             VALUES (%d, %d, 1, 0, %d, '0000000000000', '0000000000000')
             ON DUPLICATE KEY UPDATE is_premium = %d
-        ]], tGuid, SEASON_ID, flag, flag))
+        ]], guidLow, SEASON_ID, flag, flag))
     end
 end
 
@@ -1226,13 +1243,17 @@ BattlePass.AddLevels = function(target, levels)
         end
     elseif type(target) == "number" then
         tGuid = target
-        if GetPlayerByGUID then
-            p = GetPlayerByGUID(target)
-        end
+        p = ResolvePlayerByGuidLow(target)
+    end
+
+    local guidLow = tGuid or (p and p:GetGUIDLow())
+
+    -- Blindaje de Caché: acumular niveles en memoria inmediatamente si el jugador está instanciado
+    if guidLow and BP_CACHE[guidLow] then
+        BP_CACHE[guidLow].level = m_min(MAX_LEVEL, BP_CACHE[guidLow].level + levels)
     end
 
     if p and p:IsInWorld() and not IsBot(p) then
-        local guidLow = tGuid or p:GetGUIDLow()
         local tData = GetOrLoadPlayerData(p)
         if tData then
             tData.level = m_min(MAX_LEVEL, tData.level + levels)
@@ -1240,12 +1261,12 @@ BattlePass.AddLevels = function(target, levels)
             SendSync(p)
             p:SendBroadcastMessage(s_format("|cFFD4AF37[Pase de Batalla]|r ¡Has avanzado al |cFF00FF00Nivel %d|r (+%d Niveles acreditados)! Abre /bp para reclamar.", tData.level, levels))
         end
-    elseif tGuid and tGuid > 0 then
+    elseif guidLow and guidLow > 0 then
         CharDBExecute(s_format([[
             INSERT INTO character_battlepass (guid, season_id, level, xp, is_premium, claimed_free, claimed_premium)
             VALUES (%d, %d, %d, 0, 0, '0000000000000', '0000000000000')
             ON DUPLICATE KEY UPDATE level = LEAST(%d, level + %d)
-        ]], tGuid, SEASON_ID, 1 + levels, MAX_LEVEL, levels))
+        ]], guidLow, SEASON_ID, 1 + levels, MAX_LEVEL, levels))
     end
 end
 
