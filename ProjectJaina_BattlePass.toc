@@ -1,4 +1,5 @@
 ## Interface: 30300
+## Version: 2.0.0
 ## Title: |cFFD4AF37Project Jaina|r - Pase de Batalla
 ## Notes: Sistema estacional de Pase de Batalla (Free y Premium VIP) con misiones diarias y recompensas exclusivas para el Project Jaina.
 ## Author: DarckRovert (Elnazzareno) & Antigravity (Mythos 5)
