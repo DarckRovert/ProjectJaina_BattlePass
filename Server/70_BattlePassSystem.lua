@@ -2,7 +2,7 @@
     ========================================================================
     Project Jaina - Pase de Batalla (70_BattlePassSystem.lua)
     Reino: Project Jaina | Servidor Oficial
-    Motor: JainaCore / TrinityCore con Eluna Lua Engine
+    Motor: JainaCore C++20 con Eluna Lua Engine
     ========================================================================
     Backend de Servidor: Gestión de niveles (1-50), persistencia en MySQL,
     cálculo de XP por eventos del juego, entrega idempotente de recompensas,
@@ -411,7 +411,7 @@ end
 -- ========================================================================
 -- COMPATIBILIDAD FACCIONARIA RESILIENTE (JAINACORE / ELUNA ENGINE)
 -- ========================================================================
--- En TrinityCore C++, player->GetTeam() retorna Team (469: Alianza, 67: Horda).
+-- En JainaCore C++, player->GetTeam() retorna Team (469: Alianza, 67: Horda).
 -- En JainaCore / ALE, player->GetTeam() retorna TeamId (0: Alianza, 1: Horda).
 -- En Eluna API, player:IsAlliance() y player:IsHorde() son métodos canónicos universales.
 local function IsPlayerHorde(player)
@@ -445,7 +445,7 @@ end
 
 local function GetPlayerArenaTeamId(player)
     if not player then return nil end
-    -- En arenas 3.3.5a / AzerothCore, cada equipo recibe auras pasivas de estandarte:
+    -- En arenas JainaCore 3.3.5a, cada equipo recibe auras pasivas de estandarte:
     -- Equipo Dorado (Team 0 / TEAM_ALLIANCE): 32724 (Alianza) o 35774 (Horda)
     -- Equipo Verde (Team 1 / TEAM_HORDE): 32725 (Alianza) o 35775 (Horda)
     -- Estas auras poseen SPELL_ATTR3_DEATH_PERSISTENT (0x10000000) y persisten tras la muerte.
