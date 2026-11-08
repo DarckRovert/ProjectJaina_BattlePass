@@ -4,6 +4,14 @@ Todos los cambios notables de este proyecto están documentados en este archivo 
 
 ---
 
+## [2.1.0] — 2026-11-07
+### Resolución Faccionaria en Clientes en Español (Mecamoto Horda)
+- **Corrección de Detección Faccionaria (`UI.lua`):**
+  - Sustituida la comprobación frágil `UnitFactionGroup("player") == "Horde"` por la función canónica `IsPlayerHorde()`.
+  - En clientes en español (`esES`/`esMX`), donde `UnitFactionGroup` retorna `"Horda"` como primer valor, ahora se resuelve correctamente la montura Nivel 40 VIP (Entry 41508 / Mecamoto) en tooltip, tarjeta y nombre.
+
+---
+
 ## [2.0.0] — 2026-10-28
 ### Sincronización Autoritativa en Vivo, VIP Atómico y Blindaje Contra Dirty Writes
 - **Sincronización Autoritativa con Backend Eluna (`70_BattlePassSystem.lua`):**

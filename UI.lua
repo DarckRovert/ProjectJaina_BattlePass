@@ -24,6 +24,13 @@ local TOTAL_PAGES = 10 -- 50 niveles / 5 por página
 UI.currentPage = 1
 UI.activeTab = 1 -- 1: Recompensas, 2: Misiones, 3: VIP
 
+-- Función auxiliar canónica anti-desincronización de locale
+local function IsPlayerHorde()
+    if not UnitFactionGroup then return false end
+    local loc, eng = UnitFactionGroup("player")
+    return eng == "Horde" or loc == "Horda" or loc == "Horde"
+end
+
 -- ========================================================================
 -- CREACIÓN DEL MARCO PRINCIPAL
 -- ========================================================================
@@ -355,7 +362,7 @@ local function CreateRewardCard(parent, isPremium)
             GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
             local r = card.rewardData
             local itemId = r.itemId
-            if itemId == 44413 and UnitFactionGroup and UnitFactionGroup("player") == "Horde" then
+            if itemId == 44413 and IsPlayerHorde() then
                 itemId = 41508
             end
 
@@ -532,7 +539,7 @@ function UI:RenderPage(pageNum)
 
                 local premIcon = p.icon or "Interface\\Icons\\INV_Misc_Gift_05"
                 local premItemId = p.itemId
-                if premItemId == 44413 and UnitFactionGroup and UnitFactionGroup("player") == "Horde" then
+                if premItemId == 44413 and IsPlayerHorde() then
                     premItemId = 41508
                 end
                 if premItemId and premItemId > 0 and GetItemIcon then
@@ -542,7 +549,7 @@ function UI:RenderPage(pageNum)
                 slot.premCard.iconTex:SetTexture(premIcon)
                 slot.premCard.iconCount:SetText((p.count and p.count > 1) and ("x" .. p.count) or "")
                 local displayName = p.name or "Recompensa VIP"
-                if p.itemId == 44413 and UnitFactionGroup and UnitFactionGroup("player") == "Horde" then
+                if p.itemId == 44413 and IsPlayerHorde() then
                     displayName = "Montura: Mecamoto (Horda)"
                 end
                 slot.premCard.nameText:SetText(displayName)
