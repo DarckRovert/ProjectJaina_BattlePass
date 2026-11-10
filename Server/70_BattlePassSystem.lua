@@ -1024,7 +1024,7 @@ local function OnStaffCommand(event, player, command, chatHandler)
     if #args == 0 then return true end
 
     local cmd = (args[1] or ""):lower():gsub("^[%.%/%#%!]", "")
-    if cmd == "bp" then
+    if cmd == "bp" or cmd == "pase" or cmd == "battlepass" or cmd == "jainabp" then
         local sub = (args[2] or ""):lower():gsub("^[%.%/%#%!]", "")
         local isConsole = (player == nil)
         local gmRank = isConsole and 3 or player:GetGMRank()
@@ -1158,11 +1158,11 @@ local function OnStaffCommand(event, player, command, chatHandler)
     return true
 end
 
--- Listener de Chat para Comandos Alternativos (!bp, #bp, .bp) (PLAYER_EVENT_ON_CHAT = 18)
+-- Listener de Chat para Comandos Alternativos (!bp, !pase, #bp, .bp) (PLAYER_EVENT_ON_CHAT = 18, PLAYER_EVENT_ON_GROUP_CHAT = 20)
 local function OnPlayerChat(event, player, msg, Type, lang)
     if not player or not msg then return end
     local clean = msg:gsub("^[%.%/%#%!]", ""):match("^%s*(.-)%s*$"):lower()
-    if clean == "bp" or clean:find("^bp%s") then
+    if clean == "bp" or clean:find("^bp%s") or clean == "pase" or clean:find("^pase%s") or clean == "battlepass" or clean:find("^battlepass%s") or clean == "jainabp" or clean:find("^jainabp%s") then
         OnStaffCommand(42, player, msg)
         return false
     end
@@ -1170,6 +1170,9 @@ end
 
 RegisterPlayerEvent(42, OnStaffCommand)
 RegisterPlayerEvent(18, OnPlayerChat)
+RegisterPlayerEvent(20, function(event, player, msg, msgType, lang, group)
+    return OnPlayerChat(event, player, msg, msgType, lang)
+end) -- PLAYER_EVENT_ON_GROUP_CHAT (20)
 
 -- ========================================================================
 -- EXPORTACIÓN DE API CANÓNICA (Para StoreDeliveryEngine y módulos externos)
