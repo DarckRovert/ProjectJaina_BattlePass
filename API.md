@@ -20,7 +20,7 @@ Sistema estacional de Pase de Batalla con 50 niveles de progresión, desafíos d
 ---
 
 ## 📡 Protocolo de Red y Eventos
-- `WP_BATTLEPASS`: Prefijo registrado para sincronización de datos.
+- `JAINA_BP` (primario) / `WP_BP` (legacy retrocompatible): Prefijos registrados para sincronización autoritativa de progreso, experiencia y reclamo VIP con deduplicación anti-eco de `0.30s`.
 
 ### Eventos del Motor 3.3.5a Gestionados
 - `PLAYER_LOGIN` / `ADDON_LOADED`: Inicialización atómica de tablas de configuración y hooks.

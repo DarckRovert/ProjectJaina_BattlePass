@@ -171,10 +171,19 @@ end
 -- ========================================================================
 -- MANEJADOR DE MENSAJES DE ENTRADA (PARSER DE PROTOCOLO WP_BP)
 -- ========================================================================
+local lastAddonMsg, lastAddonPrefix, lastAddonTime = nil, nil, 0
+
 function BP:OnAddonMessage(prefix, message, channel, sender)
     local activePrefix = BP.Config and BP.Config.AddonPrefix or "JAINA_BP"
     local legacyPrefix = BP.Config and BP.Config.LegacyPrefix or "WP_BP"
     if prefix ~= activePrefix and prefix ~= legacyPrefix then return end
+
+    local now = GetTime()
+    if message == lastAddonMsg and prefix ~= lastAddonPrefix and (now - lastAddonTime) < 0.25 then
+        return
+    end
+    lastAddonMsg, lastAddonPrefix, lastAddonTime = message, prefix, now
+
     self:DebugPrint("Recibido de " .. tostring(sender) .. ": " .. tostring(message))
 
     local parts = {}

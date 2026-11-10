@@ -4,6 +4,13 @@ Todos los cambios notables de este proyecto están documentados en este archivo 
 
 ---
 
+## [2.1.1] — 2026-11-10
+### Blindaje IPC Dual-Prefix y Escucha Omnicanal en Grupo (Hito #341 / Bug #5)
+- **Supresión de Eco Cross-Prefix (`Core.lua`):** Implementada ventana de deduplicación temporal (`0.30s`) sobre `lastAddonMsg` / `lastAddonPrefix` en `BP:OnAddonMessage`, evitando el reprocesamiento duplicado cuando servidor o cliente emiten tramas en paralelo entre `JAINA_BP` y `WP_BP`.
+- **Enrutamiento Unificado & Grupo (`Server/70_BattlePassSystem.lua`):** Registro de prefijo preferido por GUID (`playerPrefPrefix`) con limpieza en `OnPlayerLogout`, escucha reactiva en chat de grupo (Evento 20) y alias `.pase`, `.battlepass` y `.jainabp`.
+
+---
+
 ## [2.1.0] — 2026-11-07
 ### Resolución Faccionaria en Clientes en Español (Mecamoto Horda)
 - **Corrección de Detección Faccionaria (`UI.lua`):**

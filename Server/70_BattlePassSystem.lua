@@ -179,12 +179,13 @@ end
 -- ========================================================================
 -- COMUNICACIÓN DE RED (SENDADDONMESSAGE)
 -- ========================================================================
+local playerPrefPrefix = {}
+
 local function SendClientPacket(player, payload)
     if not player or not payload then return end
-    -- Despacho primario soberano JAINA_BP
-    player:SendAddonMessage(ADDON_PREFIX, payload, 7, player)
-    -- Despacho pasivo de retrocompatibilidad WP_BP
-    player:SendAddonMessage(LEGACY_PREFIX, payload, 7, player)
+    local guid = player:GetGUIDLow()
+    local targetPrefix = playerPrefPrefix[guid] or ADDON_PREFIX
+    player:SendAddonMessage(targetPrefix, payload, 7, player)
 end
 
 local GetOrRefreshQuestState -- Declaración previa para SendQuestSync
@@ -743,6 +744,7 @@ local function OnPlayerLogout(event, player)
     local guid = player:GetGUIDLow()
     SavePlayerData(guid)
     BP_CACHE[guid] = nil
+    playerPrefPrefix[guid] = nil
 end
 RegisterPlayerEvent(4, OnPlayerLogout)
 
@@ -750,6 +752,7 @@ RegisterPlayerEvent(4, OnPlayerLogout)
 local function OnCharacterDelete(event, guid)
     if not guid or guid <= 0 then return end
     BP_CACHE[guid] = nil
+    playerPrefPrefix[guid] = nil
     CharDBExecute(string.format("DELETE FROM character_battlepass WHERE guid = %d", guid))
     CharDBExecute(string.format("DELETE FROM character_battlepass_quests WHERE guid = %d", guid))
 end
@@ -993,9 +996,13 @@ RegisterPlayerEvent(5, OnSpellCast)
 -- 10. Captura de Mensajes del Addon (RegisterServerEvent 30)
 -- ========================================================================
 local function OnServerAddonMessage(event, player, type, prefix, message, target)
+    if not player or IsBot(player) then return end
+    local guid = player:GetGUIDLow()
     if prefix == ADDON_PREFIX or prefix == LEGACY_PREFIX then
+        playerPrefPrefix[guid] = prefix
         ProcessAddonMessage(player, message)
     elseif type == ADDON_PREFIX or type == LEGACY_PREFIX then
+        playerPrefPrefix[guid] = type
         ProcessAddonMessage(player, prefix)
     end
 end
@@ -1161,9 +1168,11 @@ end
 -- Listener de Chat para Comandos Alternativos (!bp, !pase, #bp, .bp) (PLAYER_EVENT_ON_CHAT = 18, PLAYER_EVENT_ON_GROUP_CHAT = 20)
 local function OnPlayerChat(event, player, msg, Type, lang)
     if not player or not msg then return end
-    local clean = msg:gsub("^[%.%/%#%!]", ""):match("^%s*(.-)%s*$"):lower()
+    local trimmed = msg:match("^%s*(.-)%s*$") or ""
+    if not trimmed:match("^[%.%/%#%!]") then return end
+    local clean = trimmed:gsub("^[%.%/%#%!]", ""):match("^%s*(.-)%s*$"):lower()
     if clean == "bp" or clean:find("^bp%s") or clean == "pase" or clean:find("^pase%s") or clean == "battlepass" or clean:find("^battlepass%s") or clean == "jainabp" or clean:find("^jainabp%s") then
-        OnStaffCommand(42, player, msg)
+        OnStaffCommand(42, player, trimmed)
         return false
     end
 end
@@ -1251,11 +1260,6 @@ BattlePass.AddLevels = function(target, levels)
 
     local guidLow = tGuid or (p and p:GetGUIDLow())
 
-    -- Blindaje de Caché: acumular niveles en memoria inmediatamente si el jugador está instanciado
-    if guidLow and BP_CACHE[guidLow] then
-        BP_CACHE[guidLow].level = m_min(MAX_LEVEL, BP_CACHE[guidLow].level + levels)
-    end
-
     if p and p:IsInWorld() and not IsBot(p) then
         local tData = GetOrLoadPlayerData(p)
         if tData then
@@ -1265,11 +1269,14 @@ BattlePass.AddLevels = function(target, levels)
             p:SendBroadcastMessage(s_format("|cFFD4AF37[Pase de Batalla]|r ¡Has avanzado al |cFF00FF00Nivel %d|r (+%d Niveles acreditados)! Abre /bp para reclamar.", tData.level, levels))
         end
     elseif guidLow and guidLow > 0 then
+        if BP_CACHE[guidLow] then
+            BP_CACHE[guidLow].level = m_min(MAX_LEVEL, BP_CACHE[guidLow].level + levels)
+        end
         CharDBExecute(s_format([[
             INSERT INTO character_battlepass (guid, season_id, level, xp, is_premium, claimed_free, claimed_premium)
             VALUES (%d, %d, %d, 0, 0, '0000000000000', '0000000000000')
             ON DUPLICATE KEY UPDATE level = LEAST(%d, level + %d)
-        ]], guidLow, SEASON_ID, 1 + levels, MAX_LEVEL, levels))
+        ]], guidLow, SEASON_ID, m_min(MAX_LEVEL, 1 + levels), MAX_LEVEL, levels))
     end
 end
 
