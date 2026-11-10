@@ -2,7 +2,7 @@
   <img src="https://raw.githubusercontent.com/DarckRovert/ProjectJaina_Web/main/images/project_jaina_official_logo.jpg" alt="Project JAIna Official Crest" width="180">
 </p>
 
-# ❄️ Project Jaina - Pase de Batalla (Battle Pass Suite v2.0.0)
+# ❄️ Project Jaina - Pase de Batalla (Battle Pass Suite v2.1.1)
 
 [![GitHub](https://img.shields.io/badge/GitHub-DarckRovert%2FProjectJaina__BattlePass-black?logo=github)](https://github.com/DarckRovert/ProjectJaina_BattlePass)
 [![WoW Client](https://img.shields.io/badge/WoW%20Client-3.3.5a%20(Build%2012340)-blue.svg)](https://darckrovert.github.io/ProjectJaina_Web/)
